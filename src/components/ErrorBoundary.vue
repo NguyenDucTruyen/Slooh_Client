@@ -4,10 +4,10 @@ import { toast } from '@/components/ui/toast'
 onMounted(() => {
   window.addEventListener('unhandledrejection', (event) => {
     event.promise.catch((error) => {
-      const errorMessage = error?.response?.data?.error ?? error?.response?.data?.message[0].message ??  error?.response?.data?.message ?? error?.message
+      const errorMessage = error?.response?.data?.message || error?.message || 'Something went wrong.'
       if (errorMessage) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: errorMessage,
           variant: 'destructive',
           duration: 5000,
@@ -16,8 +16,8 @@ onMounted(() => {
       }
 
       toast({
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem with your request.',
+        title: 'Lỗi',
+        description: 'Có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.',
         variant: 'destructive',
         duration: 5000,
       })

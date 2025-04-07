@@ -8,27 +8,42 @@
   </route>
 
 <script setup lang="ts">
-import type { CallbackTypes } from 'vue3-google-login'
+import { toast } from '@/components/ui/toast'
 import { useAuthStore } from '@/stores/auth'
 import { loginValidator } from '@/utils/validation'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useAsyncState } from '@vueuse/core'
 import { useForm } from 'vee-validate'
 import { RouterLink } from 'vue-router'
-import { GoogleLogin } from 'vue3-google-login'
 
-import z from 'zod'
-
+const route = useRoute()
+const router = useRouter()
+if (route.query.error) {
+  toast({
+    title: 'Lỗi',
+    description: route.query.error as string ?? 'Có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.',
+    variant: 'destructive',
+    duration: 5000,
+  })
+  router.replace({ query: { ...route.query, error: undefined } })
+}
 const authStore = useAuthStore()
-
 const form = useForm({
   validationSchema: toTypedSchema(loginValidator),
 })
 
-const onSubmit = form.handleSubmit(async (values) => {
-  authStore.login(values)
+const { isLoading, execute } = useAsyncState(authStore.login, null, {
+  immediate: false,
+  onError: (error) => {
+    Promise.reject(error)
+  },
 })
-const callback: CallbackTypes.TokenResponseCallback = (response) => {
-  console.log('Access token:', response.access_token)
+
+const onSubmit = form.handleSubmit(async (values) => {
+  await execute(0, values)
+})
+function loginWithGoogle() {
+  window.location.href = `${import.meta.env.VITE_API_URL}/v1/auth/google`
 }
 </script>
 
@@ -46,7 +61,7 @@ const callback: CallbackTypes.TokenResponseCallback = (response) => {
       <CardContent>
         <div class="grid gap-4">
           <div class="grid gap-2">
-            <InputValidator id="email" type="email" label="Email" placeholder="m@gmai.com" name="email" />
+            <InputValidator id="email" type="email" label="Email" placeholder="example@gmai.com" name="email" />
             <div class="grid gap-2">
               <InputValidator id="password" type="password" placeholder="Password" label="Password" name="password" />
               <RouterLink to="/auth/forgot-password" class="ml-auto text-sm underline">
@@ -54,7 +69,10 @@ const callback: CallbackTypes.TokenResponseCallback = (response) => {
               </RouterLink>
             </div>
           </div>
-          <Button type="submit">
+          <Button
+            type="submit"
+            :is-loading="isLoading"
+          >
             Login
           </Button>
         </div>
@@ -65,12 +83,10 @@ const callback: CallbackTypes.TokenResponseCallback = (response) => {
           </RouterLink>
         </div>
         <Separator label="Or" style-label="bg-transparent" class="my-4" />
-        <GoogleLogin :callback="callback" class="w-full" popup-type="TOKEN">
-          <Button type="button" class="w-full">
-            <Icon name="IconGoogle" class="w-8 h-8" />
-            Login with Google
-          </Button>
-        </GoogleLogin>
+        <Button type="button" class="w-full" @click="loginWithGoogle">
+          <Icon name="IconGoogle" class="w-8 h-8" />
+          Login with Google
+        </Button>
       </cardcontent>
     </Card>
   </form>
