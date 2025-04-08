@@ -44,3 +44,8 @@ export const resetPasswordValidator = z
     message: 'Mật khẩu xác nhận không khớp',
     path: ['confirmPassword'],
   })
+
+export const nameSchema = z
+  .string()
+  .min(2, { message: 'Tên phải có ít nhất 2 ký tự' })
+  .max(50, { message: 'Tên không được vượt quá 50 ký tự' })

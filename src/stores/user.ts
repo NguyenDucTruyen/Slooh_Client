@@ -1,8 +1,9 @@
+import type { NguoiDung } from '@/utils/types'
 import { fetchUserData } from '@/api/user'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref(null)
+  const user = ref<NguoiDung | null>(null)
 
   function setUser(newUser: any) {
     user.value = newUser
@@ -20,6 +21,6 @@ export const useUserStore = defineStore('user', () => {
     setUser,
     isAuthenticated,
     removeUser,
-    getUserData
+    getUserData,
   }
 })

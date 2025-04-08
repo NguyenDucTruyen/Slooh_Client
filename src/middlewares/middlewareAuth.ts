@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores/user'
 export async function middlewareAuth(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const authStore = useAuthStore()
   const userStore = useUserStore()
-  const accessToken = localStorage.getItem('accesstoken')
+  const accessToken = localStorage.getItem('Slooh_AccessToken')
 
   if (!accessToken) {
     userStore.removeUser()

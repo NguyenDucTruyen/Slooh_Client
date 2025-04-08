@@ -19,8 +19,8 @@ if (!accessToken || !refreshToken) {
   router.push('/auth/login')
 }
 else {
-  localStorage.setItem('accesstoken', accessToken)
-  localStorage.setItem('refreshtoken', refreshToken)
+  localStorage.setItem('Slooh_AccessToken', accessToken)
+  localStorage.setItem('Slooh_RefreshToken', refreshToken)
   await userStore.getUserData()
   router.push('/')
 }

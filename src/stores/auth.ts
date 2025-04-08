@@ -11,19 +11,19 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials: LoginData) {
     const data = await apiLogin(credentials)
 
-    localStorage.setItem('accesstoken', data.tokens.access.token)
-    localStorage.setItem('refreshtoken', data.tokens.refresh.token)
+    localStorage.setItem('Slooh_AccessToken', data.tokens.access.token)
+    localStorage.setItem('Slooh_RefreshToken', data.tokens.refresh.token)
 
     await userStore.getUserData()
     router.push(returnUrl.value || '/')
   }
 
   function logout() {
-    apiLogout(localStorage.getItem('refreshtoken') || '')
-    
-    localStorage.removeItem('accesstoken')
-    localStorage.removeItem('refreshtoken')
-    
+    apiLogout(localStorage.getItem('Slooh_RefreshToken') || '')
+
+    localStorage.removeItem('Slooh_AccessToken')
+    localStorage.removeItem('Slooh_RefreshToken')
+
     userStore.removeUser()
     router.push('/auth/login')
   }
