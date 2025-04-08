@@ -23,26 +23,17 @@ function redirectProfile() {
 function handleLogout() {
   authStore.logout()
 }
-const firstLetter = userStore.user?.hoTen
-  ?.split(' ')
-  .map(name => name.charAt(0))
-  .join('')
-  .slice(-2)
 </script>
 
 <template>
   <DropdownMenu v-if="userStore?.user">
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" class="relative lg:px-6 py-6 lg:w-60">
-        <Avatar class="h-8 w-8 rounded-lg">
-          <AvatarImage
-            :src="userStore.user.anhDaiDien"
-            :alt="userStore.user.hoTen"
-          />
-          <AvatarFallback class="rounded-lg">
-            <span class="text-white">{{ userStore.user.anhDaiDien || firstLetter }}</span>
-          </AvatarFallback>
-        </Avatar>
+        <img
+          v-lazy="userStore.user.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
+          :alt="userStore.user.hoTen"
+          class="h-8 w-8 rounded-full"
+        >
         <div class="max-lg:hidden grid flex-1 text-left text-sm leading-tight">
           <span class="truncate font-semibold">{{ userStore.user.hoTen || userStore.user.email }}</span>
         </div>

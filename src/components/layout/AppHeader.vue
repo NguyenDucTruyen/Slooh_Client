@@ -17,7 +17,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-end w-full h-full gap-2 p-2 lg:pr-8 bg-card">
+  <div class="flex items-center justify-between w-full h-full gap-2 p-2 lg:pr-8 bg-card">
+    <div class="flex gap-2 pl-6 cursor-pointer" @click="$router.push('/home')">
+      <img src="@/assets/images/Logo_Slooh.png" alt="" class="h-12">
+    </div>
     <div class="flex">
       <UserDropdown v-if="userStore?.user" />
       <template v-else>

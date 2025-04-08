@@ -1,5 +1,4 @@
 <script setup>
-
 const data = ref({
   groupA: [
     {
@@ -51,10 +50,6 @@ const data = ref({
 
 <template>
   <div class="flex flex-col duration-200 w-[15rem] bg-transparent ease-linear">
-    <div class="flex gap-2 pl-6 py-6 cursor-pointer" @click="$router.push('/home')">
-      <Icon name="IconLogo" class="w-9 text-foreground" />
-      <span class="text-secondary-foreground text-3xl font-mono">JamCirle</span>
-    </div>
     <ScrollArea class="w-full" style="height: calc(100% - 6rem)">
       <div
         class="flex flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden gap-0"
