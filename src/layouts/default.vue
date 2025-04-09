@@ -1,19 +1,47 @@
-<script setup>
-</script>
-
 <template>
-  <div class="flex flex-col h-full justify-between">
-    <header class="flex h-16 items-center">
-      <AppHeader />
-    </header>
-    <main class="h-[calc(100%-4rem)] flex flex-col lg:flex-row gap-4 lg:gap-0 lg:overflow-hidden">
-      <AppSideBar class="max-lg:hidden" />
-      <div class="flex flex-col h-full w-full lg:[width:calc(100%-15rem)]">
-        <ScrollArea class="flex flex-1 flex-col gap-4 p-4 bg-muted rounded-lg">
-          <router-view />
-        </ScrollArea>
-      </div>
-
-    </main>
+  <div class="default-layout">
+    <AppHeader class="navbar" />
+    <AppSideBar class="sidebar" />
+    <div class="main-content">
+      <router-view />
+    </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.default-layout {
+  height: 100vh;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: 80px 1fr;
+  grid-template-areas:
+  "navbar navbar"
+  "sidebar main-content";
+  }
+
+  .navbar {
+    grid-area: navbar;
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+  }
+
+  .main-content {
+    @apply bg-card rounded-lg shadow-lg;
+    grid-area: main-content;
+    overflow-y: auto;
+    height: calc(100vh - 80px);
+    padding: 1rem;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .default-layout {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "navbar"
+        "main-content";
+    }
+  }
+</style>

@@ -34,7 +34,7 @@ function handleLogout() {
           :alt="userStore.user.hoTen"
           class="h-8 w-8 rounded-full"
         >
-        <div class="max-lg:hidden grid flex-1 text-left text-sm leading-tight">
+        <div class="sm:grid hidden flex-1 text-left text-sm leading-tight">
           <span class="truncate font-semibold">{{ userStore.user.hoTen || userStore.user.email }}</span>
         </div>
         <Icon name="IconArrowDown" class="ml-4" />

@@ -1,5 +1,5 @@
-import ImgError from '@/assets/images/ImgError.svg'
-import ImgLoading from '@/assets/images/ImgLoading.svg'
+import ImgError from '@/assets/icons/ImgError.svg'
+import ImgLoading from '@/assets/icons/ImgLoading.svg'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import VueLazyload from 'vue-lazyload'

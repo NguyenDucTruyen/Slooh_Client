@@ -34,8 +34,8 @@ const component = computed(() => {
   <component
     :is="component"
     v-bind="props.type === 'router-link' ? { to: props.url } : {}"
-    :class="isActive || props.type !== 'router-link' ? 'opacity-100' : 'opacity-50'"
-    class="flex py-2 lg:pl-4 gap-4 items-center cursor-pointer text-foreground max-lg:flex-col"
+    :class="isActive || props.type !== 'router-link' ? 'bg-primary text-primary-foreground bg-opacity-50' : ''"
+    class="flex py-2 pl-4 gap-4 items-center cursor-pointer text-foreground hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
   >
     <Icon :name="props.icon" class="w-6 h-6" />
     <span class="font-bold" :class="props.textStyle">{{ props.title }}</span>

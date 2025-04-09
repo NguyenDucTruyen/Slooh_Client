@@ -52,10 +52,10 @@ function loginWithGoogle() {
     <Card class="mx-auto max-w-sm">
       <CardHeader>
         <CardTitle class="text-2xl text-center">
-          Login
+          Đăng nhập
         </CardTitle>
         <CardDescription class="text-center">
-          Enter your email below to login to your account
+          Nhập thông tin tài khoản để đăng nhập vào hệ thống
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -63,9 +63,9 @@ function loginWithGoogle() {
           <div class="grid gap-2">
             <InputValidator id="email" type="email" label="Email" placeholder="example@gmai.com" name="email" />
             <div class="grid gap-2">
-              <InputValidator id="password" type="password" placeholder="Password" label="Password" name="password" />
+              <InputValidator id="password" type="password" placeholder="Nhập mật khẩu" label="Mật khẩu" name="password" />
               <RouterLink to="/auth/forgot-password" class="ml-auto text-sm underline">
-                Forgot your password?
+                Quên mật khẩu?
               </RouterLink>
             </div>
           </div>
@@ -73,19 +73,19 @@ function loginWithGoogle() {
             type="submit"
             :is-loading="isLoading"
           >
-            Login
+            Đăng nhập
           </Button>
         </div>
         <div class="mt-4 text-center text-sm">
-          Don't have an account?
+          Bạn không có tài khoản?
           <RouterLink to="/auth/signup" class="underline">
-            Sign up
+            Đăng ký ngay
           </RouterLink>
         </div>
         <Separator label="Or" style-label="bg-transparent" class="my-4" />
         <Button type="button" class="w-full" @click="loginWithGoogle">
           <Icon name="IconGoogle" class="w-8 h-8" />
-          Login with Google
+          <span class="ml-2">Đăng nhập bằng Google</span>
         </Button>
       </cardcontent>
     </Card>

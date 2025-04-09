@@ -1,13 +1,13 @@
 <template>
-  <div class="grid lg:grid-cols-2 grid-cols-1 h-full">
-    <div class="flex justify-center items-center">
+  <div class="flex lg:flex-row flex-col-reverse justify-end h-full">
+    <div class="flex justify-center items-center lg:w-1/2  w-full">
       <RouterView />
     </div>
-    <div class="hidden bg-muted lg:block">
+    <div class="lg:bg-muted flex justify-center lg:w-1/2 ">
       <img
         src="@/assets/images/Logo_Slooh_Vertical.png"
         alt="Image"
-        class="h-full w-full dark:brightness-[0.2] dark:grayscale object-contain"
+        class="lg:h-full h-40 lg:w-full dark:brightness-[0.2] dark:grayscale object-contain"
       >
     </div>
   </div>
