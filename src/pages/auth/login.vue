@@ -84,7 +84,7 @@ function loginWithGoogle() {
         </div>
         <Separator label="Or" style-label="bg-transparent" class="my-4" />
         <Button type="button" class="w-full" @click="loginWithGoogle">
-          <Icon name="IconGoogle" class="w-8 h-8" />
+          <Icon name="IconGoogle" class="w-5 h-5" />
           <span class="ml-2">Đăng nhập bằng Google</span>
         </Button>
       </cardcontent>

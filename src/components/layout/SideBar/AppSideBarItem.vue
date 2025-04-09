@@ -20,7 +20,7 @@ const props = defineProps({
 })
 const userStore = useUserStore()
 const route = useRoute()
-const isActive = computed(() => props.url === route.path)
+const isActive = computed(() => props.url === route.path || (props.url !== '/' && route.path.startsWith(props.url)))
 const component = computed(() => {
   if (userStore.isAuthenticated)
     return props.type
