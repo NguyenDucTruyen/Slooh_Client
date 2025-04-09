@@ -33,7 +33,6 @@
     grid-area: main-content;
     overflow-y: auto;
     height: calc(100vh - 80px);
-    padding: 1rem;
   }
 
   @media screen and (max-width: 1024px) {

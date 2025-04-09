@@ -13,7 +13,7 @@ function showtoast() {
   <Button @click="showtoast">
     Click me
   </Button>
-  <RouterLink to="/project">
+  <RouterLink to="/chanels">
     <Button>
       Go to project
     </Button>

@@ -38,7 +38,7 @@ onMounted(() => {
         >
           <Icon
             name="IconMenu" class="w-6 h-6 text-foreground"
-            :class="sidebarStore.isOpen ? ' text-secondary' : ''"
+            :class="sidebarStore.isOpen ? ' text-secondary-foreground' : ''"
           >
             <title>Menu</title>
           </Icon>

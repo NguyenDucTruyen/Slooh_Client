@@ -6,47 +6,38 @@ const data = ref({
   groupA: [
     {
       id: 1,
-      icon: 'IconPlus',
-      title: 'Home',
-      url: '/home',
+      icon: 'IconHome',
+      iconActive: 'IconHomeActive',
+      title: 'Trang chủ',
+      url: '/',
     },
     {
       id: 2,
-      icon: 'IconPlus',
-      title: 'Your Playlist',
-      url: '/playlist',
-      content: 'Login to view your playlist',
-      requiredAuthen: true,
+      icon: 'IconPublic',
+      iconActive: 'IconPublicActive',
+      title: 'Kênh công khai',
+      url: '/publicRoom',
     },
   ],
   groupB: [
-
     {
       id: 4,
-      icon: 'IconPlus',
-      title: 'Create Song',
-      url: '/song/create',
-      content: 'Login to create and share song',
+      icon: 'IconGroup',
+      iconActive: 'IconGroupActive',
+      title: 'Kênh của tôi',
+      url: '/channels',
+      content: 'Đăng nhập để xem kênh của bạn',
       requiredAuthen: true,
     },
     {
       id: 5,
-      icon: 'IconPlus',
-      title: 'Favorite',
-      url: '/favorite',
-      content: 'Login to view your favorite songs',
+      icon: 'IconJoin',
+      iconActive: 'IconJoinActive',
+      title: 'Kênh đã tham gia',
+      url: '/JoinedChannels',
+      content: 'Đăng nhập để xem kênh đã tham gia',
       requiredAuthen: true,
-    },
-    {
-      id: 3,
-      icon: 'IconPlus',
-      title: 'Create Playlist',
-      url: '/playlist/create',
-      content: 'Login to create and share playlists',
-      requiredAuthen: true,
-      type: 'button',
-
-    },
+    }
   ],
 })
 </script>
@@ -78,6 +69,10 @@ const data = ref({
         </AppSideBarGroup>
 
         <AppSideBarGroup>
+          <template #header>
+            <span>Thư viện</span>
+            <Separator class="w-full bg-border" />
+          </template>
           <template v-for="item in data.groupB" :key="item.id">
             <AppSideBarItem v-bind="item" />
           </template>

@@ -3,6 +3,7 @@ import { useUserStore } from '@/stores/user'
 
 const props = defineProps({
   icon: String,
+  iconActive: String,
   title: String,
   type: {
     type: String,
@@ -37,7 +38,8 @@ const component = computed(() => {
     :class="isActive || props.type !== 'router-link' ? 'bg-primary text-primary-foreground bg-opacity-50' : ''"
     class="flex py-2 pl-4 gap-4 items-center cursor-pointer text-foreground hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
   >
-    <Icon :name="props.icon" class="w-6 h-6" />
+    <Icon v-show="!isActive" :name=" props.icon" class="w-6 h-6" />
+    <Icon v-show="isActive" :name="props.iconActive ?? props.icon" class="w-6 h-6" />
     <span class="font-bold" :class="props.textStyle">{{ props.title }}</span>
   </component>
 </template>
