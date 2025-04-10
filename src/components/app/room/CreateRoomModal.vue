@@ -10,16 +10,16 @@ const { open } = defineProps({
 
 const emit = defineEmits(['update:open', 'create'])
 
-const channelName = ref('')
+const roomName = ref('')
 function handleCreate() {
-  if (!channelName.value.trim())
+  if (!roomName.value.trim())
     return
-  emit('create', channelName.value)
+  emit('create', roomName.value)
   emit('update:open', false)
-  channelName.value = ''
+  roomName.value = ''
 }
 const isCreatable = computed(() => {
-  return channelName.value.trim() !== ''
+  return roomName.value.trim() !== ''
 })
 </script>
 
@@ -27,17 +27,17 @@ const isCreatable = computed(() => {
   <Dialog :open="open" @update:open="(value:boolean) => emit('update:open', value)">
     <DialogContent class="sm:max-w-[425px] p-4">
       <DialogHeader>
-        <DialogTitle>Tạo kênh mới</DialogTitle>
+        <DialogTitle>Tạo phòng mới</DialogTitle>
         <DialogDescription>
-          Nhập tên kênh và nhấn "Tạo" khi bạn sẵn sàng.
+          Nhập tên phòng và nhấn "Tạo" khi bạn sẵn sàng.
         </DialogDescription>
       </DialogHeader>
       <div class="grid grid-cols-5 items-center gap-4">
-        <Label for="channel-name" class="text-left"> Tên kênh </Label>
+        <Label for="room-name" class="text-left"> Tên phòng </Label>
         <Input
-          id="channel-name"
-          v-model="channelName"
-          placeholder="Nhập tên kênh"
+          id="room-name"
+          v-model="roomName"
+          placeholder="Nhập tên phòng"
           class="col-span-4"
           autocomplete="off"
         />

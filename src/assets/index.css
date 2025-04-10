@@ -69,6 +69,7 @@ input:-webkit-autofill:active {
 
   --radius: 0.5rem;
   --success: 120 60% 40%;
+  --warning: 50 90% 50%;
 }
 
 .dark {
@@ -101,6 +102,7 @@ input:-webkit-autofill:active {
 
   --ring: 256 60% 50%; /* Biến thể sáng hơn của primary */
   --success: 120 50% 30%;
+  --warning: 50 90% 30%;
 }
 
   .rose {

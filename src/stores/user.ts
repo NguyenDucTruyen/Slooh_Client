@@ -1,4 +1,4 @@
-import type { NguoiDung } from '@/utils/types'
+import type { NguoiDung } from '@/types'
 import { fetchUserData } from '@/api/user'
 import { defineStore } from 'pinia'
 

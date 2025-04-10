@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Phong } from '@/types'
-import { useConfirmStore } from '@/stores/confirm'
 import { HoatDongPhong, TrangThai } from '@/types'
 import { watchDebounced } from '@vueuse/core'
 
@@ -8,7 +7,6 @@ interface PhongData extends Phong {
   isSelected: boolean
 }
 const route = useRoute()
-const confirmStore = useConfirmStore()
 const maKenh = route.params.id as string
 const searchValue = ref('')
 
@@ -18,7 +16,7 @@ const rooms = ref<PhongData[]>([
     maPhong: 'P001',
     tenPhong: 'Phòng họp 1',
     maKenh,
-    maChuPhong: 'af0a2c32-22b4-4c7c-a8c8-7711c3e6e473',
+    maChuPhong: 'a8c8-7711c3e6e473',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.OFFLINE,
     ngayTao: '2023-01-01',
@@ -29,7 +27,7 @@ const rooms = ref<PhongData[]>([
     maPhong: 'P002',
     tenPhong: 'Phòng họp 2',
     maKenh,
-    maChuPhong: 'af0a2c32-22b4-4c7c-a8c8-7711c3e6e473',
+    maChuPhong: 'a8c8-7711c3e6e473',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.PRESENTING,
     ngayTao: '2023-01-01',
@@ -40,7 +38,7 @@ const rooms = ref<PhongData[]>([
     maPhong: 'P003',
     tenPhong: 'Phòng họp 3',
     maKenh,
-    maChuPhong: 'af0a2c32-22b4-4c7c-a8c8-7711c3e6e473',
+    maChuPhong: 'a8c8-7711c3e6e473',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.WAITING,
     ngayTao: '2023-01-01',
@@ -51,7 +49,7 @@ const rooms = ref<PhongData[]>([
     maPhong: 'P004',
     tenPhong: 'Phòng họp 4',
     maKenh,
-    maChuPhong: 'af0a2c32-22b4-4c7c-a8c8-7711c3e6e473',
+    maChuPhong: 'a8c8-7711c3e6e473',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.OFFLINE,
     ngayTao: '2023-01-01',
@@ -70,33 +68,11 @@ const breadCrumbItems = [
   },
 ]
 
-const selectedRoom = computed(() => {
-  return rooms.value.reduce((acc, cur) => {
-    if (cur.isSelected) {
-      acc.push(cur.maPhong)
-    }
-    return acc
-  }, [] as string[])
-})
 watchDebounced(
   searchValue,
   () => { console.log('change search value:', searchValue.value) },
   { debounce: 500 },
 )
-async function deleteSelectedRoom() {
-  const result = await confirmStore.showConfirmDialog({
-    title: 'Cảnh báo',
-    message: `Bạn có chắc chắn muốn xóa ${selectedRoom.value.length} kênh đã chọn không?`,
-    confirmText: 'Xóa',
-    cancelText: 'Hủy',
-  })
-  if (!result)
-    return
-  console.log('Deleting channels:', selectedRoom.value)
-}
-function openCreateRoomModal() {
-  isCreateRoomModalOpen.value = true
-}
 function handleCreateRoom(name: string) {
   console.log('Creating room with name:', name)
 }
@@ -119,23 +95,6 @@ function handleCreateRoom(name: string) {
             Quay lại
           </Button>
         </RouterLink>
-      </div>
-      <div class="flex gap-4">
-        <Button
-          type="button"
-          variant="destructive"
-          :disabled="selectedRoom.length === 0"
-          @click="deleteSelectedRoom"
-        >
-          Xóa
-        </Button>
-        <Button
-          type="button"
-          @click="openCreateRoomModal"
-        >
-          <Icon name="IconPlus" class="w-6 h-6" />
-          <span>Tạo phòng trình chiếu</span>
-        </Button>
       </div>
     </div>
     <div class="mt-6 w-full">

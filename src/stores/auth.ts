@@ -1,4 +1,4 @@
-import type { EmailData, LoginData, RegisterData, ResetPasswordData } from '@/utils/types'
+import type { EmailData, LoginData, RegisterData, ResetPasswordData } from '@/types'
 import { apiLogin, apiLogout, apiRegister, forgotPassword, requestResetPassword } from '@/api/auth'
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'

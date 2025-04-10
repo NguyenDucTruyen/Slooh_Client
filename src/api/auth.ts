@@ -1,4 +1,4 @@
-import type { EmailData, LoginData, RegisterData, ResetPasswordData } from '@/utils/types'
+import type { EmailData, LoginData, RegisterData, ResetPasswordData } from '@/types'
 import { $post } from './axios'
 
 export function apiLogin(data: LoginData) {

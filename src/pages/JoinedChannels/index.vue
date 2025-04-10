@@ -7,12 +7,11 @@ interface KenhData extends Kenh {
   isSelected: boolean
 }
 
-const confirmStore = useConfirmStore()
-const isCreateChannelModalOpen = ref(false)
+const isJoinChannelModalOpen = ref(false)
 const searchValue = ref('')
 const breadCrumbItems = [
   {
-    text: 'Kênh của tôi',
+    text: 'Kênh đã tham gia',
     disabled: true,
   },
 ]
@@ -35,36 +34,16 @@ const channels = ref<KenhData[]>([
   },
 ])
 
-const selectedChannels = computed(() => {
-  return channels.value.reduce((acc, cur) => {
-    if (cur.isSelected) {
-      acc.push(cur.maKenh)
-    }
-    return acc
-  }, [] as string[])
-})
 watchDebounced(
   searchValue,
   () => { console.log('change:', searchValue.value) },
   { debounce: 500 },
 )
-function handleCreateChannel(name: string) {
-  console.log('Creating channel with name:', name)
+function handleRequestJoinChannel(id: string) {
+  console.log('Sent request join channel :', id)
 }
 function openCreateChannelModal() {
-  isCreateChannelModalOpen.value = true
-}
-
-async function deleteSelectedChannels() {
-  const result = await confirmStore.showConfirmDialog({
-    title: 'Cảnh báo',
-    message: `Bạn có chắc chắn muốn xóa ${selectedChannels.value.length} kênh đã chọn không?`,
-    confirmText: 'Xóa',
-    cancelText: 'Hủy',
-  })
-  if (!result)
-    return
-  console.log('Deleting channels:', selectedChannels.value)
+  isJoinChannelModalOpen.value = true
 }
 </script>
 
@@ -76,27 +55,19 @@ async function deleteSelectedChannels() {
     <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
       <div class="hidden sm:flex flex-col items-center justify-center">
         <h1 class="text-2xl text-center font-bold mb-1">
-          Kênh của tôi
+          Kênh đã tham gia
         </h1>
         <p class="text-lg text-center text-foreground">
-          Danh sách kênh do bạn tạo và có quyền quản lý
+          Bạn có thể tham gia các kênh khác bằng cách nhấn vào nút bên cạnh
         </p>
       </div>
       <div class="flex gap-4">
         <Button
           type="button"
-          variant="destructive"
-          :disabled="selectedChannels.length === 0"
-          @click="deleteSelectedChannels"
-        >
-          Xóa
-        </Button>
-        <Button
-          type="button"
           @click="openCreateChannelModal"
         >
           <Icon name="IconPlus" class="w-6 h-6" />
-          <span>Tạo kênh mới</span>
+          <span>Tham gia bằng mã</span>
         </Button>
       </div>
     </div>
@@ -115,8 +86,8 @@ async function deleteSelectedChannels() {
       />
     </div>
   </div>
-  <CreateChannelModal
-    v-model:open="isCreateChannelModalOpen"
-    @create="handleCreateChannel"
+  <JoinChannelModal
+    v-model:open="isJoinChannelModalOpen"
+    @create="handleRequestJoinChannel"
   />
 </template>
