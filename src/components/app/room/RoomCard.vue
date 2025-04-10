@@ -40,7 +40,7 @@ function formatDate(dateStr: string) {
   <div
     class="rounded-lg border border-border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-300 relative"
   >
-    <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer">
+    <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" :disabled="item.hoatDong !== HoatDongPhong.OFFLINE" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer">
     <!-- Header -->
     <div class="flex items-center justify-between mb-2 pt-6 px-6">
       <h2 class="title">

@@ -6,6 +6,7 @@ import VueLazyload from 'vue-lazyload'
 import App from './App.vue'
 import router from './router'
 import './assets/index.css'
+import './assets/css/custom.css'
 import './utils/zodLocale'
 
 const app = createApp(App)

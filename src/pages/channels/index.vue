@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import { useConfirmStore } from '@/stores/confirm'
-import { type Kenh, TrangThai } from '@/types'
-import { watchDebounced } from '@vueuse/core'
+import { type Kenh, type NguoiDung, TrangThai } from '@/types'
 
 interface KenhData extends Kenh {
   isSelected: boolean
 }
-
 const confirmStore = useConfirmStore()
+
 const isCreateChannelModalOpen = ref(false)
-const searchValue = ref('')
+const searchChannelValue = ref('')
 const breadCrumbItems = [
   {
     text: 'Kênh của tôi',
     disabled: true,
   },
 ]
-const channels = ref<KenhData[]>([
+const channelsResponse = ref<KenhData[]>([
   {
     maKenh: 'K001',
     tenKenh: 'Giáo Dục Quốc Phòng',
@@ -34,6 +33,13 @@ const channels = ref<KenhData[]>([
     isSelected: false,
   },
 ])
+const channels = computed(() => {
+  if (!searchChannelValue.value)
+    return channelsResponse.value
+  return channelsResponse.value.filter((channel) => {
+    return channel.tenKenh?.toLowerCase().includes(searchChannelValue.value.toLowerCase())
+  })
+})
 
 const selectedChannels = computed(() => {
   return channels.value.reduce((acc, cur) => {
@@ -43,14 +49,11 @@ const selectedChannels = computed(() => {
     return acc
   }, [] as string[])
 })
-watchDebounced(
-  searchValue,
-  () => { console.log('change:', searchValue.value) },
-  { debounce: 500 },
-)
+
 function handleCreateChannel(name: string) {
   console.log('Creating channel with name:', name)
 }
+
 function openCreateChannelModal() {
   isCreateChannelModalOpen.value = true
 }
@@ -102,7 +105,7 @@ async function deleteSelectedChannels() {
     </div>
     <div class="mt-6 w-full">
       <InputSearch
-        v-model="searchValue"
+        v-model="searchChannelValue"
         placeholder="Nhập tên kênh để tìm kiếm"
       />
     </div>
@@ -114,6 +117,10 @@ async function deleteSelectedChannels() {
         :item="channel"
       />
     </div>
+    <span
+      v-if="!channels.length"
+      class="text-md font-semibold mb-4 w-full text-center text-muted-foreground"
+    >Không có kết quả</span>
   </div>
   <CreateChannelModal
     v-model:open="isCreateChannelModalOpen"
