@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { type Kenh, TrangThai } from '@/types'
+import { CheckboxIndicator, CheckboxRoot } from 'radix-vue'
 
 interface Props {
   item: Kenh
+  isOwner: boolean
 }
 const { item } = defineProps<Props>()
+defineEmits(['update:id_selected', 'edit'])
+
 const id_selected = defineModel({
   type: Boolean,
 })
+
 // Class badge theo trạng thái
 const badgeClass = computed(() => {
   switch (item.trangThai) {
@@ -35,7 +40,18 @@ function formatDate(dateStr: string) {
   <div
     class="rounded-lg border border-border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-300 relative"
   >
-    <input id="" v-model="id_selected" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer">
+    <CheckboxRoot
+      v-if="isOwner"
+      v-model:checked="id_selected"
+      class="absolute top-2 right-2 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
+    >
+      <CheckboxIndicator class="h-full bg-secondary/50 w-full rounded flex items-center justify-center">
+        <Icon
+          name="IconCheck"
+          class="h-4 w-4 text-grass11"
+        />
+      </CheckboxIndicator>
+    </CheckboxRoot>
     <!-- Header -->
     <div class="flex items-center justify-between mb-2 pt-6 px-6">
       <h2 class="title">
@@ -56,22 +72,39 @@ function formatDate(dateStr: string) {
       <p>
         Ngày tạo: {{ formatDate(item.ngayTao) }}
       </p>
-      <div class="grid grid-cols-2 gap-2">
+      <div
+        v-if="isOwner"
+        class="grid grid-cols-2 gap-2"
+      >
         <Button
           type="button"
           variant="outline"
+          @click="$emit('edit', item)"
         >
           Chỉnh sửa
         </Button>
         <Button
           type="button"
-          @click="$router.push({ name: 'channels-id', params: { id: item.maKenh } })"
           :disabled="item.trangThai === TrangThai.KHOA"
+          @click="$router.push({ name: 'channels-id', params: { id: item.maKenh } })"
         >
           Truy cập
           <Icon name="IconArrowRight" class="w-4 h-4" />
         </Button>
-
+      </div>
+      <div
+        v-else
+        class="grid"
+      >
+        <Button
+          type="button"
+          class="w-full"
+          :disabled="item.trangThai === TrangThai.KHOA"
+          @click="$router.push({ name: 'JoinedChannels-id', params: { id: item.maKenh } })"
+        >
+          Truy cập
+          <Icon name="IconArrowRight" class="w-4 h-4" />
+        </Button>
       </div>
     </div>
   </div>

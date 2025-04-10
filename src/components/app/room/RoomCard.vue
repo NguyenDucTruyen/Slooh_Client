@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { HoatDongPhong, type Phong } from '@/types'
+import { CheckboxIndicator, CheckboxRoot } from 'radix-vue'
 
 interface Props {
   item: Phong
@@ -40,7 +41,21 @@ function formatDate(dateStr: string) {
   <div
     class="rounded-lg border border-border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-300 relative"
   >
-    <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" :disabled="item.hoatDong !== HoatDongPhong.OFFLINE" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer">
+    <!-- <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" :disabled="item.hoatDong !== HoatDongPhong.OFFLINE" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer"> -->
+    <CheckboxRoot
+      v-if="item.maChuPhong === userStore.user?.maNguoiDung" id=""
+      v-model:checked="id_selected"
+      :disabled="item.hoatDong !== HoatDongPhong.OFFLINE"
+      :class="[item.hoatDong !== HoatDongPhong.OFFLINE ? 'cursor-not-allowed' : 'cursor-pointer']"
+      class="absolute top-2 right-2 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
+    >
+      <CheckboxIndicator class="h-full w-full rounded flex items-center justify-center">
+        <Icon
+          name="IconCheck"
+          class="h-4 w-4 text-grass11"
+        />
+      </CheckboxIndicator>
+    </CheckboxRoot>
     <!-- Header -->
     <div class="flex items-center justify-between mb-2 pt-6 px-6">
       <h2 class="title">

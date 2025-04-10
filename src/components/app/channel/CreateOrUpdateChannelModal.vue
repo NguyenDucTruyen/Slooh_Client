@@ -1,20 +1,40 @@
 <script setup lang="ts">
 import { HoatDongPhong, type Kenh, type Phong, TrangThai } from '@/types'
 
-const { open } = defineProps({
+const { open, kenh } = defineProps({
   open: {
     type: Boolean,
     required: true,
   },
+  kenh: {
+    type: Object as () => Kenh,
+    required: false,
+  },
 })
 
-const emit = defineEmits(['update:open', 'create'])
+const emit = defineEmits(['update:open', 'create', 'update'])
 
 const channelName = ref('')
+watch(() => open, (value) => {
+  if (value && kenh) {
+    channelName.value = kenh.tenKenh
+  }
+  else {
+    channelName.value = ''
+  }
+}, { immediate: true })
 function handleCreate() {
   if (!channelName.value.trim())
     return
-  emit('create', channelName.value)
+  if (kenh) {
+    emit('update', {
+      kenh,
+      tenKenh: channelName.value,
+    })
+  }
+  else {
+    emit('create', channelName.value)
+  }
   emit('update:open', false)
   channelName.value = ''
 }
@@ -27,9 +47,9 @@ const isCreatable = computed(() => {
   <Dialog :open="open" @update:open="(value:boolean) => emit('update:open', value)">
     <DialogContent class="sm:max-w-[425px] p-4">
       <DialogHeader>
-        <DialogTitle>Tạo kênh mới</DialogTitle>
+        <DialogTitle>{{ kenh ? 'Cập nhật kênh' : 'Tạo kênh mới' }}</DialogTitle>
         <DialogDescription>
-          Nhập tên kênh và nhấn "Tạo" khi bạn sẵn sàng.
+          Nhập tên kênh và nhấn "{{ kenh ? 'Cập nhật' : 'Tạo' }}" khi bạn sẵn sàng.
         </DialogDescription>
       </DialogHeader>
       <div class="grid grid-cols-5 items-center gap-4">
@@ -48,7 +68,7 @@ const isCreatable = computed(() => {
           :disabled="!isCreatable"
           @click="handleCreate"
         >
-          Tạo
+          {{ kenh ? 'Cập nhật' : 'Tạo' }}
         </Button>
       </DialogFooter>
     </DialogContent>

@@ -34,7 +34,7 @@ const data = ref({
       icon: 'IconJoin',
       iconActive: 'IconJoinActive',
       title: 'Kênh đã tham gia',
-      url: '/JoinedChannels',
+      url: '/joinedchannels',
       content: 'Đăng nhập để xem kênh đã tham gia',
       requiredAuthen: true,
     }

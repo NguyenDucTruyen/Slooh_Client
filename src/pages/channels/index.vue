@@ -8,6 +8,7 @@ interface KenhData extends Kenh {
 const confirmStore = useConfirmStore()
 
 const isCreateChannelModalOpen = ref(false)
+const editingChannel = ref<Kenh | null>(null)
 const searchChannelValue = ref('')
 const breadCrumbItems = [
   {
@@ -49,15 +50,26 @@ const selectedChannels = computed(() => {
     return acc
   }, [] as string[])
 })
-
+watch(isCreateChannelModalOpen, (value) => {
+  if (!value) {
+    editingChannel.value = null
+  }
+})
 function handleCreateChannel(name: string) {
   console.log('Creating channel with name:', name)
+}
+
+function handleUpdateChannel(data: { kenh: Kenh, name: string }) {
+  console.log('Updating channel with name:', data)
 }
 
 function openCreateChannelModal() {
   isCreateChannelModalOpen.value = true
 }
-
+function openUpdateChannelModal(channel: Kenh) {
+  editingChannel.value = channel
+  isCreateChannelModalOpen.value = true
+}
 async function deleteSelectedChannels() {
   const result = await confirmStore.showConfirmDialog({
     title: 'Cảnh báo',
@@ -115,6 +127,8 @@ async function deleteSelectedChannels() {
         :key="channel.maKenh"
         v-model="channel.isSelected"
         :item="channel"
+        :is-owner="true"
+        @edit="openUpdateChannelModal"
       />
     </div>
     <span
@@ -122,8 +136,10 @@ async function deleteSelectedChannels() {
       class="text-md font-semibold mb-4 w-full text-center text-muted-foreground"
     >Không có kết quả</span>
   </div>
-  <CreateChannelModal
+  <CreateOrUpdateChannelModal
     v-model:open="isCreateChannelModalOpen"
+    :kenh="editingChannel"
+    @update="handleUpdateChannel"
     @create="handleCreateChannel"
   />
 </template>

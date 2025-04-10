@@ -21,7 +21,7 @@ const confirmStore = useConfirmStore()
         <Button variant="outline" @click="confirmStore.cancel">
           {{ confirmStore.cancelText }}
         </Button>
-        <Button @click="confirmStore.confirm">
+        <Button variant="destructive" @click="confirmStore.confirm">
           {{ confirmStore.confirmText }}
         </Button>
       </div>

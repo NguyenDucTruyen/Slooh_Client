@@ -16,7 +16,7 @@ const route = useRoute()
 const maKenh = route.params.id as string
 const searchValue = ref('')
 const searchUserValue = ref('')
-
+const isAddUserModalOpen = ref(false)
 const isCreateRoomModalOpen = ref(false)
 const breadCrumbItems = [
   {
@@ -77,28 +77,28 @@ const roomsResponse = ref<PhongData[]>([
 ])
 const membersResponse = ref<Partial<NguoiDungData>[]>([
   {
-    maNguoiDung: 'af0a2c32-22b4-4c7c',
+    maNguoiDung: '1',
     hoTen: 'Nguyễn Đức Truyền',
     email: 'mrtruyenbd1407@gmail.com',
     anhDaiDien: 'https://lh3.googleusercontent.com/ogw/AF2bZyikRnSw99pnnd-22xPQeONKHqwkk_Q3knX6PuPFV_p_RiE=s32-c-mo',
     isSelected: false,
   },
   {
-    maNguoiDung: 'af0a2c32-22b4-4c7c',
+    maNguoiDung: '2',
     hoTen: 'Dương Võ',
     email: 'vttduong@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Duong+Vo&background=random&size=300&bold=true',
     isSelected: false,
   },
   {
-    maNguoiDung: '029852-klsjhkgskjg-2345',
+    maNguoiDung: '3',
     hoTen: 'Trần Nhật Long',
     email: 'longtran@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Long+Tran&background=random&size=300&bold=true',
     isSelected: false,
   },
   {
-    maNguoiDung: 'aaf0a2c32-22b4-4c7c',
+    maNguoiDung: '4',
     hoTen: 'Nguyễn Văn Vĩnh Định',
     email: 'nvvdinh@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Vinh+Dinh&background=random&size=300&bold=true',
@@ -108,28 +108,28 @@ const membersResponse = ref<Partial<NguoiDungData>[]>([
 
 const requestJoinMembers = ref<Partial<NguoiDungData>[]>([
   {
-    maNguoiDung: 'af0a2c32-22b4-4c7c',
+    maNguoiDung: '1a',
     hoTen: 'Nguyễn Đức Truyền',
     email: 'mrtruyenbd1407@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Duc+Truyen&background=random&size=300&bold=true',
     isSelected: false,
   },
   {
-    maNguoiDung: 'af0a2c32-22b4-4c7c',
+    maNguoiDung: '2a',
     hoTen: 'Dương Võ',
     email: 'vttduong@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Duong+Vo&background=random&size=300&bold=true',
     isSelected: false,
   },
   {
-    maNguoiDung: '029852-klsjhkgskjg-2345',
+    maNguoiDung: '3a',
     hoTen: 'Trần Nhật Long',
     email: 'longtran@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Long+Tran&background=random&size=300&bold=true',
     isSelected: false,
   },
   {
-    maNguoiDung: 'aaf0a2c32-22b4-4c7c',
+    maNguoiDung: '4a',
     hoTen: 'Nguyễn Văn Vĩnh Định',
     email: 'nvvdinh@gmail.com',
     anhDaiDien: 'https://ui-avatars.com/api/?name=Vinh+Dinh&background=random&size=300&bold=true',
@@ -161,6 +161,15 @@ const selectedMembers = computed(() => {
     return acc
   }, [] as string[])
 })
+
+const selectedRequestJoinMembers = computed(() => {
+  return requestJoinMembers.value.reduce((acc, cur) => {
+    if (cur.isSelected) {
+      acc.push(cur.maNguoiDung as string)
+    }
+    return acc
+  }, [] as string[])
+})
 const selectedRoom = computed(() => {
   return rooms.value.reduce((acc, cur) => {
     if (cur.isSelected) {
@@ -184,6 +193,9 @@ async function deleteSelectedRoom() {
 function openCreateRoomModal() {
   isCreateRoomModalOpen.value = true
 }
+function openAddUserModal() {
+  isAddUserModalOpen.value = true
+}
 function handleCreateRoom(name: string) {
   console.log('Creating room with name:', name)
 }
@@ -198,6 +210,33 @@ async function deleteSelectedMembers() {
   if (!result)
     return
   console.log('Deleting members:', selectedMembers.value)
+}
+async function handleAcceptMultiRequest(value: boolean) {
+  if (!value) {
+    const result = await confirmStore.showConfirmDialog({
+      title: 'Cảnh báo',
+      message: `Bạn có chắc chắn muốn ${value ? 'chấp nhận' : 'từ chối'} ${selectedRequestJoinMembers.value.length} yêu cầu tham gia đã chọn không?`,
+      confirmText: 'Đồng ý',
+      cancelText: 'Hủy',
+    })
+    if (!result)
+      return
+  }
+  console.log('Accepting multi request:', selectedRequestJoinMembers.value, value)
+}
+async function handleAcceptRequest(user: NguoiDungData, accept: boolean) {
+  console.log('Accepting request:', user.maNguoiDung, accept)
+}
+function selectedAllRequestJoinMembers() {
+  if (!requestJoinMembers.value.length)
+    return
+  const isAllSelected = requestJoinMembers.value.every(member => member.isSelected)
+  requestJoinMembers.value.forEach((member) => {
+    member.isSelected = !isAllSelected
+  })
+}
+async function handleAddUser(ids: string[]) {
+  console.log('Adding users:', ids)
 }
 </script>
 
@@ -267,38 +306,42 @@ async function deleteSelectedMembers() {
         <div
           v-if="!rooms.length"
           class="text-md font-semibold mb-4 w-full text-center text-muted-foreground mx-auto"
-        >Không có kết quả</div>
+        >
+          Không có kết quả
+        </div>
       </TabsContent>
       <!-- Danh sách thành viên -->
       <TabsContent value="members">
-        <div class="flex justify-between">
-          <InputSearch
-            v-model="searchUserValue"
-            placeholder="Tìm kiếm thành viên"
-          />
-          <div class="flex gap-4">
-            <Button
-              type="button"
-              variant="destructive"
-              :disabled="selectedMembers.length === 0"
-              @click="deleteSelectedMembers"
-            >
-              Xóa thành viên
-            </Button>
-            <Button
-              type="button"
-            >
-              <Icon name="IconPlus" class="w-6 h-6" />
-              <span>Thêm thành viên</span>
-            </Button>
+        <h4
+          class="text-lg font-semibold mt-4"
+        >
+          Danh sách thành viên ({{ membersResponse.length }})
+        </h4>
+
+        <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
+          <div class="flex justify-between">
+            <InputSearch
+              v-model="searchUserValue"
+              placeholder="Tìm kiếm thành viên"
+            />
+            <div class="flex gap-4">
+              <Button
+                type="button"
+                variant="destructive"
+                :disabled="selectedMembers.length === 0"
+                @click="deleteSelectedMembers"
+              >
+                Xóa khỏi kênh
+              </Button>
+              <Button
+                type="button"
+                @click="openAddUserModal"
+              >
+                <Icon name="IconPlus" class="w-6 h-6" />
+                <span>Thêm thành viên</span>
+              </Button>
+            </div>
           </div>
-        </div>
-        <div class="mt-4 w-full mx-auto grid grid-cols-1 gap-4">
-          <h4
-            class="text-lg font-semibold mb-4"
-          >
-            Danh sách thành viên ({{ membersResponse.length }})
-          </h4>
           <template
             v-for="member in members"
             :key="member.maNguoiDung"
@@ -320,6 +363,32 @@ async function deleteSelectedMembers() {
           >
             Danh sách yêu cầu tham gia ({{ requestJoinMembers.length }})
           </h4>
+          <div class="flex justify-between mb-4">
+            <Button
+              variant="link"
+              @click="selectedAllRequestJoinMembers"
+              class="text-foreground"
+            >
+              Chọn tất cả
+            </Button>
+            <div class="flex gap-4">
+              <Button
+                type="button"
+                variant="destructive"
+                :disabled="selectedRequestJoinMembers.length === 0"
+                @click="handleAcceptMultiRequest(false)"
+              >
+                Từ chối
+              </Button>
+              <Button
+                type="button"
+                :disabled="selectedRequestJoinMembers.length === 0"
+                @click="handleAcceptMultiRequest(true)"
+              >
+                Chấp nhận
+              </Button>
+            </div>
+          </div>
           <template
             v-for="member in requestJoinMembers"
             :key="member.maNguoiDung"
@@ -328,6 +397,7 @@ async function deleteSelectedMembers() {
               v-model="member.isSelected"
               :user="member"
               type="request"
+              @handle-request="handleAcceptRequest"
             />
           </template>
           <span
@@ -341,5 +411,9 @@ async function deleteSelectedMembers() {
   <CreateRoomModal
     v-model:open="isCreateRoomModalOpen"
     @create="handleCreateRoom"
+  />
+  <AddUserModal
+    v-model:open="isAddUserModalOpen"
+    @add="handleAddUser"
   />
 </template>

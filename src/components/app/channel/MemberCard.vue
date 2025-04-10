@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useConfirmStore } from '@/stores/confirm'
 import { type Kenh, type NguoiDung, TrangThai } from '@/types'
+import { CheckboxIndicator, CheckboxRoot } from 'radix-vue'
 
 interface NguoiDungData extends NguoiDung {
   isSelected: boolean
@@ -47,7 +48,17 @@ async function handleAccept(accept: boolean) {
 
 <template>
   <div class="grid grid-cols-7 gap-4 items-center p-4 border-b border-border hover:bg-secondary hover:text-secondary-foreground transition-colors duration-300 cursor-pointer rounded-md">
-    <input v-model="id_selected" type="checkbox" name="">
+    <CheckboxRoot
+      v-model:checked="id_selected"
+      class="hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
+    >
+      <CheckboxIndicator class="h-full w-full rounded flex items-center justify-center">
+        <Icon
+          name="IconCheck"
+          class="h-4 w-4 text-grass11"
+        />
+      </CheckboxIndicator>
+    </CheckboxRoot>
     <div class="col-span-4 flex items-center gap-4">
       <img v-lazy="`https://ui-avatars.com/api/?name=${user.hoTen}&background=random&size=300&bold=true`" alt="" class="w-10 h-10 rounded-full object-cover">
       <div class="flex flex-col gap-1">
