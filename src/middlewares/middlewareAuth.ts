@@ -8,22 +8,22 @@ export async function middlewareAuth(to: RouteLocationNormalized, from: RouteLoc
   const userStore = useUserStore()
   const accessToken = localStorage.getItem('Slooh_AccessToken')
 
-  if (!accessToken) {
-    userStore.removeUser()
-    const isAuthOrErrorLayout = ['auth', 'error'].includes(to.meta.layout as string)
-    if (isAuthOrErrorLayout)
-      return next()
-    authStore.setReturnUrl(to.fullPath)
-    return next('/auth/login')
-  }
+  // if (!accessToken) {
+  //   userStore.removeUser()
+  //   const isAuthOrErrorLayout = ['auth', 'error'].includes(to.meta.layout as string)
+  //   if (isAuthOrErrorLayout)
+  //     return next()
+  //   authStore.setReturnUrl(to.fullPath)
+  //   return next('/auth/login')
+  // }
 
-  if (!userStore.isAuthenticated) {
+  if (accessToken && !userStore.isAuthenticated) {
     try {
       await userStore.getUserData()
     }
     catch (error) {
       console.error('Error fetching user data:', error)
-      authStore.logout()
+      authStore.clearUserData()
     }
   }
   return next()

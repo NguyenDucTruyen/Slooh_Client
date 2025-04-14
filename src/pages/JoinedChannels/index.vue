@@ -1,3 +1,12 @@
+ <route>
+  {
+      meta: {
+        title: "Kênh đã tham gia",
+        authorized: true,
+      }
+  }
+</route>
+
 <script setup lang="ts">
 import { useConfirmStore } from '@/stores/confirm'
 import { type Kenh, TrangThai } from '@/types'

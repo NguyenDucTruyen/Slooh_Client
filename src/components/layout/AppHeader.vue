@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between w-full h-full gap-2 p-2 lg:pr-8 bg-card shadow-lg">
+  <div class="navbar">
     <div class="flex gap-4">
       <div class="gap-2 pl-6 cursor-pointer hidden lg:flex" @click="$router.push('/')">
         <img src="@/assets/images/Logo_Slooh_Horizontal.png" alt="" class="h-12">
@@ -48,17 +48,23 @@ onMounted(() => {
     <div class="flex">
       <UserDropdown v-if="userStore?.user" />
       <template v-else>
-        <router-link to="/auth/register">
+        <router-link to="/auth/signup">
           <Button class="rounded-full px-6" variant="ghost">
-            Sign up
+            Đăng ký
           </Button>
         </router-link>
         <router-link to="/auth/login">
-          <Button class="rounded-full px-6 bg-foreground">
-            Log in
+          <Button class="rounded-full px-6 ml-4">
+            Đăng nhập
           </Button>
         </router-link>
       </template>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.navbar {
+  @apply flex items-center justify-between w-full h-full gap-2 p-2 lg:pr-8 bg-card shadow-lg;
+}
+</style>

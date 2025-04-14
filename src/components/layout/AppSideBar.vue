@@ -27,7 +27,7 @@ const data = ref({
       title: 'Kênh của tôi',
       url: '/channels',
       content: 'Đăng nhập để xem kênh của bạn',
-      requiredAuthen: true,
+      authorized: true,
     },
     {
       id: 5,
@@ -36,19 +36,19 @@ const data = ref({
       title: 'Kênh đã tham gia',
       url: '/joinedchannels',
       content: 'Đăng nhập để xem kênh đã tham gia',
-      requiredAuthen: true,
-    }
+      authorized: true,
+    },
   ],
 })
 </script>
 
 <template>
   <div
-    class="w-full max-lg:fixed h-[100vh] top-24 sm:w-64 lg:block bg-card z-10 transition-all duration-300 ease-in-out rounded-lg shadow-lg overflow-hidden pt-8 pr-8"
+    class="w-full max-lg:fixed h-[100vh] top-[88px] sm:w-64 lg:block bg-card z-10 transition-all duration-300 ease-in-out rounded-lg shadow-lg overflow-hidden pt-8 pr-8"
     :class="sidebarStore.isOpen ? 'translate-x-0' : 'max-lg:-translate-x-full'"
   >
     <button
-      class="flex lg:hidden items-center justify-center w-10 h-10 rounded-lg transition duration-200 ease-in-out absolute right-2 top-2"
+      class="flex lg:hidden items-center justify-center w-10 h-10 rounded-lg transition duration-200 ease-in-out absolute right-1 top-1"
       :class="sidebarStore.isOpen ? 'bg-muted border border-border' : ''"
       @click="sidebarStore.close()"
     >
@@ -62,7 +62,7 @@ const data = ref({
       <div
         class="flex flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden"
       >
-        <AppSideBarGroup class="mb-8">
+        <AppSideBarGroup class="mb-8 mt-2">
           <template v-for="item in data.groupA" :key="item.id">
             <AppSideBarItem v-bind="item" />
           </template>

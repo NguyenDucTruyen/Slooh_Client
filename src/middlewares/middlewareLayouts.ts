@@ -9,11 +9,20 @@ export async function middlewareLayout(to: RouteLocationNormalized, from: RouteL
   const layout = to.meta.layout as string
 
   if (isAuthenticated && layout === 'auth') {
+    if (authStore.returnUrl) {
+      const returnUrl = authStore.returnUrl
+      authStore.clearReturnUrl()
+      return next(returnUrl)
+    }
     return next('/')
   }
 
   if (!isAuthenticated && !['error', 'auth'].includes(layout)) {
-    authStore.logout()
+    authStore.clearUserData()
+  }
+
+  if (!isAuthenticated && to.meta.authorized) {
+    next('/')
   }
 
   return next()

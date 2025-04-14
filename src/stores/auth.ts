@@ -20,12 +20,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   function logout() {
     apiLogout(localStorage.getItem('Slooh_RefreshToken') || '')
+    clearUserData()
+  }
 
+  function clearUserData() {
     localStorage.removeItem('Slooh_AccessToken')
     localStorage.removeItem('Slooh_RefreshToken')
-
     userStore.removeUser()
-    router.push('/auth/login')
   }
 
   function register(credentials: RegisterData) {
@@ -34,6 +35,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   function setReturnUrl(url: string) {
     returnUrl.value = url
+  }
+
+  function clearReturnUrl() {
+    returnUrl.value = ''
   }
 
   function sendEmailResetPassword(data: EmailData) {
@@ -48,6 +53,8 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     returnUrl,
     setReturnUrl,
+    clearReturnUrl,
+    clearUserData,
     resetPassword,
     sendEmailResetPassword,
   }
