@@ -1,22 +1,13 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const userStore = useUserStore()
-const isDarkMode = ref(localStorage.getItem('dark') === 'true')
-function handleChange(value: boolean) {
-  isDarkMode.value = value
-  localStorage.setItem('dark', String(value))
-}
-watch(
-  isDarkMode,
-  (value) => {
-    document.body.classList.toggle('dark', value)
-  },
-  { immediate: true },
-)
+const themeStore = useThemeStore()
+
 function redirectProfile() {
   router.push({ name: 'Profile' })
 }
@@ -48,7 +39,7 @@ function handleLogout() {
     >
       <DropdownMenuItem>
         <div class="flex justify-between item-centers w-full">
-          <span>Giao diện tối</span><Switch :model-value="isDarkMode" @update:model-value="handleChange" />
+          <span>Giao diện tối</span><Switch :model-value="themeStore.theme === 'dark'" @update:model-value="themeStore.toggleTheme()" />
         </div>
       </DropdownMenuItem>
       <DropdownMenuSeparator />

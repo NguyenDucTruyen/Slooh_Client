@@ -25,9 +25,5 @@ useThemeStore()
   <Toaster />
   <ConfirmationModal
     v-if="confirmStore.visible"
-    :title="confirmStore.title"
-    :message="confirmStore.message"
-    @confirm="confirmStore.confirm"
-    @cancel="confirmStore.cancel"
   />
 </template>
