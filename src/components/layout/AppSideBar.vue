@@ -44,7 +44,7 @@ const data = ref({
 
 <template>
   <div
-    class="w-full max-lg:fixed h-[100vh] top-[88px] sm:w-64 lg:block bg-card z-10 transition-all duration-300 ease-in-out rounded-lg shadow-lg overflow-hidden pt-8 pr-8"
+    class="w-full max-lg:fixed h-[100vh] top-[88px] sm:w-64 lg:hidden bg-card z-10 transition-all duration-300 ease-in-out rounded-lg shadow-lg overflow-hidden pt-8 pr-8"
     :class="sidebarStore.isOpen ? 'translate-x-0' : 'max-lg:-translate-x-full'"
   >
     <button

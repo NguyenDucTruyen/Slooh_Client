@@ -1,7 +1,7 @@
 <template>
+  <AppSideBar class="sidebar" />
   <div class="default-layout">
     <AppHeader class="navbar" />
-    <AppSideBar class="sidebar" />
     <div class="main-content">
       <router-view />
     </div>
@@ -16,16 +16,12 @@
   grid-template-columns: 260px 1fr;
   grid-template-rows: 80px 1fr;
   grid-template-areas:
-  "navbar navbar"
-  "sidebar main-content";
+  "navbar"
+  "main-content";
   }
 
   .navbar {
     grid-area: navbar;
-  }
-
-  .sidebar {
-    grid-area: sidebar;
   }
 
   .main-content {
@@ -35,12 +31,10 @@
     height: calc(100vh - 80px);
   }
 
-  @media screen and (max-width: 1024px) {
-    .default-layout {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "navbar"
-        "main-content";
-    }
+  .default-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "navbar"
+      "main-content";
   }
 </style>

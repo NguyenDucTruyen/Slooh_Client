@@ -9,20 +9,46 @@ function toggleSidebar() {
   sidebarStore.toggle()
 }
 const userStore = useUserStore()
-const route = useRoute()
-const inputSearch = useTemplateRef('input-search')
 
-onMounted(() => {
-  if (route.query.q) {
-    searchValue.value = route.query.q
-  }
-  if (Object.keys(route.query).includes('q'))
-    inputSearch.value.focus()
-})
+const listHeaders = ref([
+
+  {
+    id: 1,
+    icon: 'IconHome',
+    iconActive: 'IconHomeActive',
+    title: 'Trang chủ',
+    url: '/',
+  },
+  {
+    id: 2,
+    icon: 'IconPublic',
+    iconActive: 'IconPublicActive',
+    title: 'Kênh công khai',
+    url: '/publicRoom',
+  },
+  {
+    id: 4,
+    icon: 'IconGroup',
+    iconActive: 'IconGroupActive',
+    title: 'Kênh của tôi',
+    url: '/channels',
+    content: 'Đăng nhập để xem kênh của bạn',
+    authorized: true,
+  },
+  {
+    id: 5,
+    icon: 'IconJoin',
+    iconActive: 'IconJoinActive',
+    title: 'Kênh đã tham gia',
+    url: '/joinedchannels',
+    content: 'Đăng nhập để xem kênh đã tham gia',
+    authorized: true,
+  },
+])
 </script>
 
 <template>
-  <div class="navbar">
+  <div class="app-header">
     <div class="flex gap-4">
       <div class="gap-2 pl-6 cursor-pointer hidden lg:flex" @click="$router.push('/')">
         <img src="@/assets/images/Logo_Slooh_Horizontal.png" alt="" class="h-12">
@@ -45,6 +71,11 @@ onMounted(() => {
         </button>
       </div>
     </div>
+    <div class="hidden lg:flex items-center gap-2">
+      <template v-for="item in listHeaders" :key="item.id">
+        <AppSideBarItem v-bind="item" class="p-4" />
+      </template>
+    </div>
     <div class="flex">
       <UserDropdown v-if="userStore?.user" />
       <template v-else>
@@ -64,7 +95,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.navbar {
-  @apply flex items-center justify-between w-full h-full gap-2 p-2 lg:pr-8 bg-card shadow-lg;
+.app-header {
+  @apply flex items-center justify-between w-full h-full gap-1 p-2 lg:pr-8 bg-card shadow-lg;
 }
 </style>

@@ -43,9 +43,10 @@ const component = computed(() => {
   >
     <component
       :is="component"
-      v-bind="props.type === 'router-link' ? { to: props.url } : {}"
+      :to="props.type === 'router-link' ? props.url : {}"
       :class="isActive || props.type !== 'router-link' ? 'bg-primary text-primary-foreground bg-opacity-50' : ''"
-      class="flex py-2 pl-4 gap-4 items-center cursor-pointer text-foreground hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
+      class="flex py-2 pl-4 gap-2 items-center cursor-pointer text-foreground hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
+      v-bind="$attrs"
     >
       <Icon v-show="!isActive" :name=" props.icon" class="w-6 h-6" />
       <Icon v-show="isActive" :name="props.iconActive ?? props.icon" class="w-6 h-6" />

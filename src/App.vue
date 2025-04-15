@@ -3,7 +3,14 @@ import { useConfirmStore } from '@/stores/confirm'
 import { useThemeStore } from '@/stores/theme'
 
 const confirmStore = useConfirmStore()
-
+const isDarkMode = ref(localStorage.getItem('dark') === 'true')
+watch(
+  isDarkMode,
+  (value) => {
+    document.body.classList.toggle('dark', value)
+  },
+  { immediate: true },
+)
 useThemeStore()
 </script>
 

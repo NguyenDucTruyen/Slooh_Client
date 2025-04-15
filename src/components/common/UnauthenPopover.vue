@@ -11,7 +11,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <Popover class="popover-custom">
+  <Popover>
     <PopoverTrigger v-if="props.isRequired" as-child>
       <slot>
         <Button>
@@ -53,10 +53,10 @@ const props = defineProps({
 
 <style lang="scss">
 .popover-custom {
-    background: url('@/assets/images/Logo_Slooh_Vertical.png') center !important;
-    background-size: contain !important;
-    background-repeat: no-repeat !important;
-    background-color: transparent !important;
-    
+  background: url('@/assets/images/Logo_Slooh_Vertical.png') center !important;
+  background-size: 60px !important;
+  background-repeat: no-repeat !important;
+  background-position: top right !important;
+  background-color: hsl(var(--background)) !important;
 }
 </style>

@@ -77,17 +77,23 @@ function formatDate(dateStr: string) {
         Ngày tạo: {{ formatDate(item.ngayTao) }}
       </p>
       <div v-if="item.maChuPhong === userStore.user?.maNguoiDung" class="grid grid-cols-2 gap-4">
+        <RouterLink
+          :to="`/rooms/${item.maPhong}`"
+        >
+          <Button
+            type="button"
+            variant="outline"
+            class="w-full"
+          >
+          <Icon name="IconEdit" class="w-6 h-6" />
+            Chỉnh sửa
+          </Button>
+        </RouterLink>
         <Button
           type="button"
-          variant="outline"
           class="w-full"
         >
-          Chỉnh sửa
-        </Button>
-        <Button
-          type="button"
-          class="w-full"
-        >
+          <Icon name="IconPlay" class="w-6 h-6" />
           Trình chiếu
         </Button>
       </div>
