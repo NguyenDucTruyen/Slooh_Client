@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Kenh, TrangThai } from '@/types'
-import { CheckboxIndicator, CheckboxRoot } from 'radix-vue'
+import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface Props {
   item: Kenh
@@ -42,7 +42,7 @@ function formatDate(dateStr: string) {
   >
     <CheckboxRoot
       v-if="isOwner"
-      v-model:checked="id_selected"
+      v-model="id_selected"
       class="absolute top-2 right-2 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
     >
       <CheckboxIndicator class="h-full bg-secondary/50 w-full rounded flex items-center justify-center">

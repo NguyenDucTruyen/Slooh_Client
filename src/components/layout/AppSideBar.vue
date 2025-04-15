@@ -58,7 +58,7 @@ const data = ref({
         <title>Close</title>
       </Icon>
     </button>
-    <ScrollArea class="w-full" style="height: calc(100% - 6rem)">
+    <div class="w-full" style="height: calc(100% - 6rem)">
       <div
         class="flex flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden"
       >
@@ -78,6 +78,6 @@ const data = ref({
           </template>
         </AppSideBarGroup>
       </div>
-    </ScrollArea>
+    </div>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { HoatDongPhong, type Phong } from '@/types'
-import { CheckboxIndicator, CheckboxRoot } from 'radix-vue'
+import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface Props {
   item: Phong
@@ -44,7 +44,7 @@ function formatDate(dateStr: string) {
     <!-- <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" :disabled="item.hoatDong !== HoatDongPhong.OFFLINE" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer"> -->
     <CheckboxRoot
       v-if="item.maChuPhong === userStore.user?.maNguoiDung" id=""
-      v-model:checked="id_selected"
+      v-model="id_selected"
       :disabled="item.hoatDong !== HoatDongPhong.OFFLINE"
       :class="[item.hoatDong !== HoatDongPhong.OFFLINE ? 'cursor-not-allowed' : 'cursor-pointer']"
       class="absolute top-2 right-2 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
@@ -85,7 +85,7 @@ function formatDate(dateStr: string) {
             variant="outline"
             class="w-full"
           >
-          <Icon name="IconEdit" class="w-6 h-6" />
+            <Icon name="IconEdit" class="w-6 h-6" />
             Chỉnh sửa
           </Button>
         </RouterLink>

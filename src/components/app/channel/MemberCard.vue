@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useConfirmStore } from '@/stores/confirm'
 import { type Kenh, type NguoiDung, TrangThai } from '@/types'
-import { CheckboxIndicator, CheckboxRoot } from 'radix-vue'
+import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface NguoiDungData extends NguoiDung {
   isSelected: boolean
@@ -49,7 +49,7 @@ async function handleAccept(accept: boolean) {
 <template>
   <div class="grid grid-cols-7 gap-4 items-center p-4 border-b border-border hover:bg-secondary hover:text-secondary-foreground transition-colors duration-300 cursor-pointer rounded-md">
     <CheckboxRoot
-      v-model:checked="id_selected"
+      v-model="id_selected"
       class="hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
     >
       <CheckboxIndicator class="h-full w-full rounded flex items-center justify-center">

@@ -48,7 +48,7 @@ function handleLogout() {
     >
       <DropdownMenuItem>
         <div class="flex justify-between item-centers w-full">
-          <span>Giao diện tối</span><Switch :checked="isDarkMode" @update:checked="handleChange" />
+          <span>Giao diện tối</span><Switch :model-value="isDarkMode" @update:model-value="handleChange" />
         </div>
       </DropdownMenuItem>
       <DropdownMenuSeparator />

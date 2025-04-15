@@ -1,18 +1,18 @@
-// index.vue
-<script setup>
-import { PopoverArrow, PopoverClose, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'radix-vue'
+<script setup lang="ts">
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 </script>
 
 <template>
-  <PopoverRoot>
-    <PopoverTrigger>…</PopoverTrigger>
-    <PopoverPortal>
-      <PopoverContent
-        class="PopoverContent"
-        :side-offset="5"
-      >
-        …
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+  <Popover>
+    <PopoverTrigger>
+      Open popover
+    </PopoverTrigger>
+    <PopoverContent>
+      Some popover content
+    </PopoverContent>
+  </Popover>
 </template>
