@@ -24,7 +24,7 @@ const themes = ref(listThemes)
           </TabsTrigger>
           <TabsTrigger value="thêm">
             <Icon name="IconTheme" class="w-6 h-6" />
-            Chủ đề
+            Hình nền
           </TabsTrigger>
         </TabsList>
         <!-- Edit Slide -->

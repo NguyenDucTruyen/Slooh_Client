@@ -18,8 +18,8 @@ const indexSelectedSlide = computed(() => {
   return slides.value.findIndex(slide => slide.maSlide === selectedSlideId.value)
 })
 const currentBackground = computed(() => {
-  return slides.value[indexSelectedSlide.value].hinhNen
-    ? `url(${slides.value[indexSelectedSlide.value].hinhNen?.replace('/w_300', '')})`
+  return slides.value[indexSelectedSlide.value]?.hinhNen
+    ? `url(${slides.value[indexSelectedSlide.value]?.hinhNen?.replace('/w_300', '')})`
     : 'hsl(var(--card))'
 })
 </script>
@@ -32,6 +32,7 @@ const currentBackground = computed(() => {
         <SlideNavigator
           v-model:selected-slide-id="selectedSlideId"
           v-model:slides="slides"
+          :index-selected-slide="indexSelectedSlide"
         />
       </div>
       <div class="main-content">

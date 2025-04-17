@@ -37,13 +37,6 @@ function handleSaveTitle(title: string) {
         variant="secondary"
         class="text-sm rounded-full"
       >
-        <Icon name="IconTheme" class="w-5 h-5" />
-        Chủ đề chung
-      </Button>
-      <Button
-        variant="secondary"
-        class="text-sm rounded-full"
-      >
         <Icon name="IconEyeOn" class="w-5 h-5" />
         Xem trước
       </Button>
