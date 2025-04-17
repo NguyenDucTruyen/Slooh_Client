@@ -8,6 +8,20 @@
 </route>
 
 <script setup lang="ts">
+import { listSlides } from '@/assets/data/slide-data'
+import { CachTrinhBay, LoaiSlide, type Slide } from '@/types'
+
+const isPanelVisible = ref(true)
+const slides = ref<Slide[]>(listSlides)
+const selectedSlideId = ref<string>(slides.value[0].maSlide)
+const indexSelectedSlide = computed(() => {
+  return slides.value.findIndex(slide => slide.maSlide === selectedSlideId.value)
+})
+const currentBackground = computed(() => {
+  return slides.value[indexSelectedSlide.value].hinhNen
+    ? `url(${slides.value[indexSelectedSlide.value].hinhNen?.replace('/w_300', '')})`
+    : 'hsl(var(--card))'
+})
 </script>
 
 <template>
@@ -15,11 +29,21 @@
     <EditNavBar class="navbar" />
     <div class="body">
       <div class="slide-navigator">
-        <SlideNavigator />
+        <SlideNavigator
+          v-model:selected-slide-id="selectedSlideId"
+          v-model:slides="slides"
+        />
       </div>
       <div class="main-content">
-        <div class="content-area" />
-        <div class="panel-area" />
+        <div
+          class="content-area"
+          :class="[isPanelVisible ? 'w-[calc(100%-260px)]' : 'w-full']"
+          :style="{ backgroundImage: currentBackground }"
+        />
+        <PanelArea
+          v-model:visible="isPanelVisible"
+          v-model:slide="slides[indexSelectedSlide]"
+        />
       </div>
     </div>
   </div>
@@ -51,12 +75,8 @@
     @apply bg-card shadow-lg h-full w-[calc(100%-200px)] relative;
   }
   .content-area{
-    @apply bg-card h-full w-[calc(100%-260px)];
-    background-image: url("@/assets/images/theme-standard.webp");
+    @apply bg-card h-full transition-[width] duration-300;
     background-size: cover;
     overflow-y: auto;
-  }
-  .panel-area {
-    @apply bg-card h-full w-[260px] absolute right-0 top-0;
   }
 </style>

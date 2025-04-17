@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import EditableInput from '@/components/common/EditableInput.vue'
-import UserDropdown from '@/components/common/UserDropdown.vue'
 import Button from '@/components/ui/button/Button.vue'
-import { useSidebarStore } from '@/stores/sidebar'
-import { useUserStore } from '@/stores/user'
 
-const sidebarStore = useSidebarStore()
-function toggleSidebar() {
-  sidebarStore.toggle()
-}
-const userStore = useUserStore()
 function handleSaveTitle(title: string) {
   console.log('Title saved:', title)
 }
@@ -32,7 +24,7 @@ function handleSaveTitle(title: string) {
           @save="handleSaveTitle"
         >
           <div class="flex flex-col cursor-pointer">
-            <span class="border-transparent hover:border-slate-500 text-base">
+            <span class="border-transparent hover:border-slate-500 text-base max-w-[320px] truncate-one-line">
               {{ data }}
             </span>
             <span class="text-xs text-gray-500"> Click để chỉnh sửa </span>

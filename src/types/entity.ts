@@ -137,7 +137,7 @@ export interface Slide {
   cachTrinhBay?: CachTrinhBay
   noiDung?: string
   thoiGianGioiHan?: number
-  diem: Diem
+  diem?: Diem
   loaiCauHoi?: LoaiCauHoi
 }
 
