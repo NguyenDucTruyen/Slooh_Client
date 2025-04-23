@@ -21,7 +21,7 @@ function handleLogout() {
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" class="relative lg:px-6 py-6 lg:w-60">
         <img
-          v-lazy="userStore.user.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
+          :src="userStore.user.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
           :alt="userStore.user.hoTen"
           class="h-8 w-8 rounded-full"
         >

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { type Kenh, TrangThai } from '@/types'
+import { useUserStore } from '@/stores/user'
+import { type Kenh, TrangThai, VaiTroKenh } from '@/types'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface Props {
   item: Kenh
-  isOwner: boolean
 }
 const { item } = defineProps<Props>()
 defineEmits(['update:id_selected', 'edit'])
-
+const userStore = useUserStore()
 const id_selected = defineModel({
   type: Boolean,
 })
@@ -34,6 +34,7 @@ function formatDate(dateStr: string) {
     day: '2-digit',
   })
 }
+const author = computed(() => item.thanhVien.find(member => member.vaiTro === VaiTroKenh.CHU_KENH)?.nguoiDung)
 </script>
 
 <template>
@@ -41,7 +42,7 @@ function formatDate(dateStr: string) {
     class="rounded-lg border border-border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-300 relative"
   >
     <CheckboxRoot
-      v-if="isOwner"
+      v-if="author?.maNguoiDung === userStore.user?.maNguoiDung"
       v-model="id_selected"
       class="absolute top-2 right-2 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
     >
@@ -68,12 +69,33 @@ function formatDate(dateStr: string) {
     <!-- Body -->
     <img v-lazy="`https://ui-avatars.com/api/?name=${item.tenKenh}&background=random&size=300&bold=true`" alt="" class="w-full h-40 mb-2 object-cover">
     <!-- Footer -->
-    <div class="text-muted-foreground text-sm space-y-2  pb-6 px-6">
-      <p>
-        Ngày tạo: {{ formatDate(item.ngayTao) }}
-      </p>
+    <div class="text-muted-foreground text-sm space-y-2  pb-6 px-6 font-medium grid gap-1">
+      <div class="grid gap-1 grid-cols-3">
+        <div class="flex items-center">
+          Chủ kênh
+        </div>
+        <div class="flex gap-1 col-span-2 items-center">
+          {{ author?.hoTen }}
+        </div>
+      </div>
+      <div class="grid gap-1 grid-cols-3">
+        <div class="flex items-center">
+          Ngày tạo
+        </div>
+        <div class="flex gap-1 col-span-2 items-center">
+          {{ formatDate(item.ngayTao) }}
+        </div>
+      </div>
+      <div class="grid gap-1 grid-cols-3">
+        <div class="flex items-center">
+          Số thành viên
+        </div>
+        <div class="flex gap-1 col-span-2 items-center">
+          {{ item.thanhVien.length }}
+        </div>
+      </div>
       <div
-        v-if="isOwner"
+        v-if="author?.maNguoiDung === userStore.user?.maNguoiDung"
         class="grid grid-cols-2 gap-2"
       >
         <Button

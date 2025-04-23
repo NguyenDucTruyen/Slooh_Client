@@ -103,6 +103,7 @@ export interface Kenh {
   trangThai: TrangThai
   ngayTao: string
   ngayXoa?: string
+  thanhVien: ThanhVienKenh[]
 }
 
 export interface ThanhVienKenh {
@@ -112,6 +113,7 @@ export interface ThanhVienKenh {
   vaiTro: VaiTroKenh
   trangThai: TrangThaiThanhVien
   ngayTao: string
+  nguoiDung: NguoiDung
 }
 
 export interface Phong {

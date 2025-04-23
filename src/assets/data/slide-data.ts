@@ -46,6 +46,42 @@ export const listThemes = [
     session: 'Chuyên nghiệp',
     list: [
       {
+        id: 13,
+        name: 'Sáng',
+        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825623/Theme-bg/theme-light_gnyjhb.webp',
+        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825623/Theme-bg/theme-light_gnyjhb.webp',
+      },
+      {
+        id: 8,
+        name: 'Xanh sáng',
+        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825625/Theme-bg/theme-light-blue_zjeled.webp',
+        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825625/Theme-bg/theme-light-blue_zjeled.webp',
+      },
+      {
+        id: 9,
+        name: 'Xanh lá sáng',
+        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825323/Theme-bg/theme-light-green_mxusdq.webp',
+        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825323/Theme-bg/theme-light-green_mxusdq.webp',
+      },
+      {
+        id: 11,
+        name: 'Tím sáng',
+        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825325/Theme-bg/theme-light-purple_gogrs5.webp',
+        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825325/Theme-bg/theme-light-purple_gogrs5.webp',
+      },
+      {
+        id: 12,
+        name: 'Vàng sáng',
+        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825325/Theme-bg/theme-light-yellow_zl3j17.webp',
+        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825325/Theme-bg/theme-light-yellow_zl3j17.webp',
+      },
+      {
+        id: 14,
+        name: 'Cam sáng',
+        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825324/Theme-bg/theme-light-orange_cswyuc.webp',
+        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825324/Theme-bg/theme-light-orange_cswyuc.webp',
+      },
+      {
         id: 15,
         name: 'Xanh lá',
         image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825622/Theme-bg/theme-green_paqavy.webp',
@@ -81,6 +117,7 @@ export const listThemes = [
         image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825326/Theme-bg/theme-orange_nsnved.webp',
         linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825326/Theme-bg/theme-orange_nsnved.webp',
       },
+      
       {
         id: 21,
         name: 'Tối',
@@ -116,48 +153,6 @@ export const listThemes = [
         name: 'Tím tối',
         image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825613/Theme-bg/dark-purple_rbvoey.webp',
         linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825613/Theme-bg/dark-purple_rbvoey.webp',
-      },
-      {
-        id: 13,
-        name: 'Sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825623/Theme-bg/theme-light_gnyjhb.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825623/Theme-bg/theme-light_gnyjhb.webp',
-      },
-      {
-        id: 7,
-        name: 'Nâu sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825625/Theme-bg/theme-light-brown_yduvj7.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825625/Theme-bg/theme-light-brown_yduvj7.webp',
-      },
-      {
-        id: 8,
-        name: 'Xanh sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825625/Theme-bg/theme-light-blue_zjeled.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825625/Theme-bg/theme-light-blue_zjeled.webp',
-      },
-      {
-        id: 9,
-        name: 'Xanh lá sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825323/Theme-bg/theme-light-green_mxusdq.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825323/Theme-bg/theme-light-green_mxusdq.webp',
-      },
-      {
-        id: 11,
-        name: 'Tím sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825325/Theme-bg/theme-light-purple_gogrs5.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825325/Theme-bg/theme-light-purple_gogrs5.webp',
-      },
-      {
-        id: 12,
-        name: 'Vàng sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825325/Theme-bg/theme-light-yellow_zl3j17.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825325/Theme-bg/theme-light-yellow_zl3j17.webp',
-      },
-      {
-        id: 14,
-        name: 'Cam sáng',
-        image: 'https://res.cloudinary.com/dzdfgj03g/image/upload/w_300/v1744825324/Theme-bg/theme-light-orange_cswyuc.webp',
-        linkBackground: 'https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825324/Theme-bg/theme-light-orange_cswyuc.webp',
       },
     ],
   },

@@ -24,8 +24,8 @@ const form = useForm({
 const onSubmit = form.handleSubmit(async (values) => {
   await authStore.register(values)
   toast({
-    title: 'Success',
-    description: 'Account created successfully',
+    title: 'Thành công',
+    description: 'Đăng ký tài khoản thành công',
   })
   router.push('/auth/login')
 })
