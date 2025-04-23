@@ -1,5 +1,6 @@
 import { $delete, $get, $patch, $post } from './axios'
 
+// CRUD Kênh
 export function getChannelList(config: any) {
   return $get('/kenh', {
     params: config,
@@ -14,4 +15,39 @@ export function updateChannel(id: string, name: string) {
 }
 export function deleteChannel(id: string) {
   return $delete(`/kenh/${id}`)
+}
+export function getChannelDetail(id: string) {
+  return $get(`/kenh/${id}`)
+}
+
+// Chủ kênh -  quản lý thành viên
+export function getRequestJoinChannel(id: string) {
+  return $get(`/kenh/${id}/yeuCauThamGia`, {})
+}
+export function addMemberToChannel(id: string, listEmail: string[]) {
+  return $post(`/kenh/${id}/thanhVien`, { listEmail })
+}
+
+export function removeMemberToChannel(id: string, listEmail: string[]) {
+  return $delete(`/kenh/${id}/thanhVien`, { data: { listEmail } })
+}
+
+export function acceptRequestJoinChannel(id: string, listEmail: string[]) {
+  return $post(`/kenh/${id}/yeuCau/dongY`, { listEmail })
+}
+export function rejectRequestJoinChannel(id: string, listEmail: string[]) {
+  return $post(`/kenh/${id}/yeuCau/tuChoi`, { listEmail })
+}
+
+// Thành viên
+export function sendRequestJoinChannel(id: string) {
+  return $post(`/kenh/${id}/yeuCau`, {})
+}
+
+export function cancelRequestJoinChannel(id: string) {
+  return $delete(`/kenh/${id}/yeuCau`, {})
+}
+
+export function leaveChannel(id: string) {
+  return $delete(`/kenh/${id}/roi`, {})
 }

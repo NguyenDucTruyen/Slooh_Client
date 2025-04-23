@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import type { NguoiDung, Phong } from '@/types'
+import type { Kenh, NguoiDung, Phong, ThanhVienKenh } from '@/types'
+import { toast } from '@/components/ui/toast'
+import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
-import { HoatDongPhong, TrangThai } from '@/types'
+import { HoatDongPhong, TrangThai, TrangThaiThanhVien, VaiTroKenh } from '@/types'
+import { useAsyncState } from '@vueuse/core'
 
 interface PhongData extends Phong {
   isSelected: boolean
@@ -12,22 +15,15 @@ interface NguoiDungData extends NguoiDung {
 }
 
 const confirmStore = useConfirmStore()
+const channelStore = useChannelStore()
+
 const route = useRoute()
 const maKenh = route.params.id as string
 const searchValue = ref('')
 const searchUserValue = ref('')
 const isAddUserModalOpen = ref(false)
 const isCreateRoomModalOpen = ref(false)
-const breadCrumbItems = [
-  {
-    text: 'Kênh của tôi',
-    to: '/channels',
-  },
-  {
-    text: 'Kênh 123',
-    disabled: true,
-  },
-]
+const breadCrumbItems = ref<any[]>([])
 
 const roomsResponse = ref<PhongData[]>([
   {
@@ -75,67 +71,9 @@ const roomsResponse = ref<PhongData[]>([
     isSelected: false,
   },
 ])
-const membersResponse = ref<Partial<NguoiDungData>[]>([
-  {
-    maNguoiDung: '1',
-    hoTen: 'Nguyễn Đức Truyền',
-    email: 'mrtruyenbd1407@gmail.com',
-    anhDaiDien: 'https://lh3.googleusercontent.com/ogw/AF2bZyikRnSw99pnnd-22xPQeONKHqwkk_Q3knX6PuPFV_p_RiE=s32-c-mo',
-    isSelected: false,
-  },
-  {
-    maNguoiDung: '2',
-    hoTen: 'Dương Võ',
-    email: 'vttduong@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Duong+Vo&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-  {
-    maNguoiDung: '3',
-    hoTen: 'Trần Nhật Long',
-    email: 'longtran@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Long+Tran&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-  {
-    maNguoiDung: '4',
-    hoTen: 'Nguyễn Văn Vĩnh Định',
-    email: 'nvvdinh@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Vinh+Dinh&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-])
+const membersResponse = ref<Partial<NguoiDungData>[]>([])
 
-const requestJoinMembers = ref<Partial<NguoiDungData>[]>([
-  {
-    maNguoiDung: '1a',
-    hoTen: 'Nguyễn Đức Truyền',
-    email: 'mrtruyenbd1407@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Duc+Truyen&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-  {
-    maNguoiDung: '2a',
-    hoTen: 'Dương Võ',
-    email: 'vttduong@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Duong+Vo&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-  {
-    maNguoiDung: '3a',
-    hoTen: 'Trần Nhật Long',
-    email: 'longtran@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Long+Tran&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-  {
-    maNguoiDung: '4a',
-    hoTen: 'Nguyễn Văn Vĩnh Định',
-    email: 'nvvdinh@gmail.com',
-    anhDaiDien: 'https://ui-avatars.com/api/?name=Vinh+Dinh&background=random&size=300&bold=true',
-    isSelected: false,
-  },
-])
+const requestJoinMembers = ref<Partial<NguoiDungData>[]>([])
 
 const members = computed(() => {
   if (!searchUserValue.value)
@@ -156,19 +94,19 @@ const rooms = computed(() => {
 const selectedMembers = computed(() => {
   return members.value.reduce((acc, cur) => {
     if (cur.isSelected) {
-      acc.push(cur.maNguoiDung as string)
+      acc.push(cur)
     }
     return acc
-  }, [] as string[])
+  }, [] as Partial<NguoiDungData>[])
 })
 
 const selectedRequestJoinMembers = computed(() => {
   return requestJoinMembers.value.reduce((acc, cur) => {
     if (cur.isSelected) {
-      acc.push(cur.maNguoiDung as string)
+      acc.push(cur)
     }
     return acc
-  }, [] as string[])
+  }, [] as Partial<NguoiDungData>[])
 })
 const selectedRoom = computed(() => {
   return rooms.value.reduce((acc, cur) => {
@@ -178,7 +116,49 @@ const selectedRoom = computed(() => {
     return acc
   }, [] as string[])
 })
+const { execute: fetchChannels } = useAsyncState<Kenh>(() => {
+  return (async () => {
+    const response = await channelStore.getChannelDetail(maKenh)
+    console.log('Channel response:', response)
+    if (response) {
+      const members = []
+      const requests = []
+      for (const member of response.thanhVien) {
+        if (member.vaiTro !== VaiTroKenh.CHU_KENH && member.trangThai === TrangThaiThanhVien.THAM_GIA) {
+          members.push({
+            ...member.nguoiDung,
+            isSelected: false,
+          })
+        }
+        if (member.vaiTro !== VaiTroKenh.CHU_KENH && member.trangThai === TrangThaiThanhVien.YEU_CAU) {
+          requests.push({
+            ...member.nguoiDung,
+            isSelected: false,
+          })
+        }
+      }
+      membersResponse.value = members
+      requestJoinMembers.value = requests
 
+      breadCrumbItems.value = [
+        {
+          text: 'Kênh của tôi',
+          disabled: true,
+        },
+        {
+          text: response.tenKenh,
+          disabled: true,
+        },
+      ]
+    }
+    return response
+  })()
+}, null as unknown as Kenh, {
+  immediate: true,
+  onError: (error) => {
+    Promise.reject(error)
+  },
+})
 async function deleteSelectedRoom() {
   const result = await confirmStore.showConfirmDialog({
     title: 'Cảnh báo',
@@ -199,7 +179,10 @@ function openAddUserModal() {
 function handleCreateRoom(name: string) {
   console.log('Creating room with name:', name)
 }
-
+async function handleRemoveMember(user: NguoiDungData) {
+  await channelStore.removeMemberToChannel(maKenh, [user.email] as string[])
+  fetchChannels(0)
+}
 async function deleteSelectedMembers() {
   const result = await confirmStore.showConfirmDialog({
     title: 'Cảnh báo',
@@ -209,7 +192,8 @@ async function deleteSelectedMembers() {
   })
   if (!result)
     return
-  console.log('Deleting members:', selectedMembers.value)
+  await channelStore.removeMemberToChannel(maKenh, selectedMembers.value.map(member => member.email) as string[])
+  fetchChannels(0)
 }
 async function handleAcceptMultiRequest(value: boolean) {
   if (!value) {
@@ -222,10 +206,22 @@ async function handleAcceptMultiRequest(value: boolean) {
     if (!result)
       return
   }
-  console.log('Accepting multi request:', selectedRequestJoinMembers.value, value)
+  if (value) {
+    await channelStore.acceptRequestJoinChannel(maKenh, selectedRequestJoinMembers.value.map(member => member.email) as string[])
+  }
+  else {
+    await channelStore.rejectRequestJoinChannel(maKenh, selectedRequestJoinMembers.value.map(member => member.email) as string[])
+  }
+  fetchChannels(0)
 }
 async function handleAcceptRequest(user: NguoiDungData, accept: boolean) {
-  console.log('Accepting request:', user.maNguoiDung, accept)
+  if (accept) {
+    await channelStore.acceptRequestJoinChannel(maKenh, [user.email] as string[])
+  }
+  else {
+    await channelStore.rejectRequestJoinChannel(maKenh, [user.email] as string[])
+  }
+  fetchChannels(0)
 }
 function selectedAllRequestJoinMembers() {
   if (!requestJoinMembers.value.length)
@@ -236,7 +232,13 @@ function selectedAllRequestJoinMembers() {
   })
 }
 async function handleAddUser(ids: string[]) {
-  console.log('Adding users:', ids)
+  const response = await channelStore.addMemberToChannel(maKenh, ids)
+  console.log('Add user response:', response)
+  fetchChannels(0)
+  toast({
+    title: 'Thành công',
+    description: 'Thêm thành viên thành công',
+  })
 }
 </script>
 
@@ -350,6 +352,7 @@ async function handleAddUser(ids: string[]) {
               v-model="member.isSelected"
               :user="member"
               type="member"
+              @remove="handleRemoveMember"
             />
           </template>
           <span
@@ -366,8 +369,8 @@ async function handleAddUser(ids: string[]) {
           <div class="flex justify-between mb-4">
             <Button
               variant="link"
-              @click="selectedAllRequestJoinMembers"
               class="text-foreground"
+              @click="selectedAllRequestJoinMembers"
             >
               Chọn tất cả
             </Button>
