@@ -164,9 +164,10 @@ watch(() => channelQuery.value.page, () => {
     <div class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4">
       <ChannelCard
         v-for="channel in channels"
-        :key="channel.maKenh"
         v-model="channel.isSelected"
+        :key="channel.maKenh"
         :item="channel"
+        :is-owner="true"
         @edit="openUpdateChannelModal"
       />
     </div>
@@ -176,7 +177,7 @@ watch(() => channelQuery.value.page, () => {
     >Không có kết quả</span>
 
     <template
-      v-if="!isFetchingChannels"
+      v-if="!isFetchingChannels && channels.length"
     >
       <Pagination
         v-slot="{ page }"
@@ -206,6 +207,7 @@ watch(() => channelQuery.value.page, () => {
         </PaginationList>
       </Pagination>
     </template>
+    
   </div>
 
   <CreateOrUpdateChannelModal

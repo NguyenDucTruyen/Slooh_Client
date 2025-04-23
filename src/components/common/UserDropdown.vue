@@ -13,6 +13,7 @@ function redirectProfile() {
 }
 function handleLogout() {
   authStore.logout()
+  router.push('/')
 }
 </script>
 

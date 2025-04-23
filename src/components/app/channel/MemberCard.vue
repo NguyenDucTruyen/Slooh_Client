@@ -9,6 +9,7 @@ interface NguoiDungData extends NguoiDung {
 interface Props {
   user: NguoiDungData
   type: string
+  isOwner: boolean
 }
 
 const props = defineProps<Props>()
@@ -49,6 +50,7 @@ async function handleAccept(accept: boolean) {
 <template>
   <div class="grid grid-cols-7 gap-4 items-center p-4 border-b border-border hover:bg-secondary hover:text-secondary-foreground transition-colors duration-300 cursor-pointer rounded-md">
     <CheckboxRoot
+      v-if="isOwner"
       v-model="id_selected"
       class="hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
     >
@@ -70,7 +72,10 @@ async function handleAccept(accept: boolean) {
         </div>
       </div>
     </div>
-    <div class="flex items-center justify-end gap-2 col-span-2">
+    <div
+      v-if="isOwner"
+      class="flex items-center justify-end gap-2 col-span-2"
+    >
       <Button
         v-if="type === 'member'"
         type="button"

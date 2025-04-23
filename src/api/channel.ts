@@ -49,5 +49,10 @@ export function cancelRequestJoinChannel(id: string) {
 }
 
 export function leaveChannel(id: string) {
-  return $delete(`/kenh/${id}/roi`, {})
+  return $post(`/kenh/${id}/roi`, {})
+}
+export function getChannelsJoined(config: any) {
+  return $get('/kenh/daThamGia', {
+    params: config,
+  })
 }

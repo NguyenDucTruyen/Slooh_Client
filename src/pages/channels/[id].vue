@@ -119,7 +119,6 @@ const selectedRoom = computed(() => {
 const { execute: fetchChannels } = useAsyncState<Kenh>(() => {
   return (async () => {
     const response = await channelStore.getChannelDetail(maKenh)
-    console.log('Channel response:', response)
     if (response) {
       const members = []
       const requests = []
@@ -143,7 +142,7 @@ const { execute: fetchChannels } = useAsyncState<Kenh>(() => {
       breadCrumbItems.value = [
         {
           text: 'Kênh của tôi',
-          disabled: true,
+          to: { name: 'channels' },
         },
         {
           text: response.tenKenh,
@@ -351,6 +350,7 @@ async function handleAddUser(ids: string[]) {
             <MemberCard
               v-model="member.isSelected"
               :user="member"
+              :is-owner="true"
               type="member"
               @remove="handleRemoveMember"
             />
