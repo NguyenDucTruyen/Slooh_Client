@@ -21,9 +21,7 @@ export function getChannelDetail(id: string) {
 }
 
 // Chủ kênh -  quản lý thành viên
-export function getRequestJoinChannel(id: string) {
-  return $get(`/kenh/${id}/yeuCauThamGia`, {})
-}
+
 export function addMemberToChannel(id: string, listEmail: string[]) {
   return $post(`/kenh/${id}/thanhVien`, { listEmail })
 }
@@ -53,6 +51,11 @@ export function leaveChannel(id: string) {
 }
 export function getChannelsJoined(config: any) {
   return $get('/kenh/daThamGia', {
+    params: config,
+  })
+}
+export function getChannelsRequestJoin(config: any) {
+  return $get('/kenh/yeuCauThamGia', {
     params: config,
   })
 }

@@ -366,7 +366,10 @@ async function handleAddUser(ids: string[]) {
           >
             Danh sách yêu cầu tham gia ({{ requestJoinMembers.length }})
           </h4>
-          <div class="flex justify-between mb-4">
+          <div
+            v-if="requestJoinMembers.length"
+            class="flex justify-between mb-4"
+          >
             <Button
               variant="link"
               class="text-foreground"
@@ -398,8 +401,9 @@ async function handleAddUser(ids: string[]) {
           >
             <MemberCard
               v-model="member.isSelected"
-              :user="member"
               type="request"
+              :user="member"
+              :is-owner="true"
               @handle-request="handleAcceptRequest"
             />
           </template>

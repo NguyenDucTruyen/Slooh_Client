@@ -32,7 +32,6 @@ export const useChannelStore = defineStore('channel', () => {
     const res = await apiChannel.removeMemberToChannel(id, listEmail)
     return res.data
   }
-  // Channel - Member
   async function acceptRequestJoinChannel(id: string, listEmail: string[]) {
     const res = await apiChannel.acceptRequestJoinChannel(id, listEmail)
     return res.data
@@ -41,6 +40,7 @@ export const useChannelStore = defineStore('channel', () => {
     const res = await apiChannel.rejectRequestJoinChannel(id, listEmail)
     return res.data
   }
+  // Channel - Member
   async function getChannelsJoined(config: any) {
     const res = await apiChannel.getChannelsJoined(config)
     return res.data
@@ -48,6 +48,19 @@ export const useChannelStore = defineStore('channel', () => {
 
   async function leaveChannel(id: string) {
     const res = await apiChannel.leaveChannel(id)
+    return res.data
+  }
+
+  async function sendRequestJoinChannel(id: string) {
+    const res = await apiChannel.sendRequestJoinChannel(id)
+    return res.data
+  }
+  async function cancelRequestJoinChannel(id: string) {
+    const res = await apiChannel.cancelRequestJoinChannel(id)
+    return res.data
+  }
+  async function getChannelsRequestJoin(config: any) {
+    const res = await apiChannel.getChannelsRequestJoin(config)
     return res.data
   }
   return {
@@ -62,5 +75,8 @@ export const useChannelStore = defineStore('channel', () => {
     rejectRequestJoinChannel,
     getChannelsJoined,
     leaveChannel,
+    sendRequestJoinChannel,
+    cancelRequestJoinChannel,
+    getChannelsRequestJoin
   }
 })

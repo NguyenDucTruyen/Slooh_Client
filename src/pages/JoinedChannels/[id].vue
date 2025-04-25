@@ -13,7 +13,6 @@ interface PhongData extends Phong {
 interface NguoiDungData extends NguoiDung {
   isSelected: boolean
 }
-
 const confirmStore = useConfirmStore()
 const channelStore = useChannelStore()
 
@@ -57,7 +56,7 @@ const rooms = computed(() => {
   })
 })
 
-const { execute: fetchChannels } = useAsyncState<Kenh>(() => {
+useAsyncState<Kenh>(() => {
   return (async () => {
     const response = await channelStore.getChannelDetail(maKenh)
     if (response) {
@@ -185,7 +184,6 @@ async function leaveChannel() {
         >
           Danh sách thành viên ({{ membersResponse.length }})
         </h4>
-
         <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
           <div class="flex justify-between">
             <InputSearch
