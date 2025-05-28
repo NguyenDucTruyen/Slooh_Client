@@ -13,18 +13,6 @@ const id_selected = defineModel({
   type: Boolean,
 })
 
-// Class badge theo trạng thái
-const badgeClass = computed(() => {
-  switch (item.trangThai) {
-    case TrangThai.HOAT_DONG:
-      return 'bg-success text-white'
-    case TrangThai.KHOA:
-      return 'bg-destructive text-white'
-    default:
-      return 'bg-border text-foreground'
-  }
-})
-
 // Format ngày
 function formatDate(dateStr: string) {
   const date = new Date(dateStr)
@@ -57,18 +45,14 @@ function formatDate(dateStr: string) {
       <h2 class="title">
         {{ item.tenKenh }}
       </h2>
-      <span
-        class="text-xs font-medium px-2 py-0.5 rounded-full absolute top-16 left-2"
-        :class="badgeClass"
-      >
-        {{ item.trangThai === TrangThai.HOAT_DONG ? 'Hoạt động' : 'Bị Khóa' }}
-      </span>
     </div>
 
     <!-- Body -->
-    <img v-lazy="`https://ui-avatars.com/api/?name=${item.tenKenh}&background=random&size=300&bold=true`" alt="" class="w-full h-40 mb-2 object-cover">
+    <div class="pt-2">
+      <Icon name="IconChannel" class="w-full h-40 mb-2 object-cover text-primary/90" />
+    </div>
     <!-- Footer -->
-    <div class="text-muted-foreground text-sm space-y-2  pb-6 px-6">
+    <div class="text-sm space-y-2 mt-2 pb-6 px-6">
       <p>
         Ngày tạo: {{ formatDate(item.ngayTao) }}
       </p>

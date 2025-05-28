@@ -20,30 +20,30 @@ function updateThuTu() {
 }
 function addQuestion() {
   const newSlide: Slide = {
-    maSlide: `new-slide-${Math.random()}`,
+    maTrang: `new-slide-${Math.random()}`,
     maPhong: '',
-    loaiSlide: LoaiSlide.CAU_HOI,
+    loaiTrang: LoaiSlide.CAU_HOI,
     tieuDe: 'Câu hỏi mới',
     hinhNen: '',
     thuTu: indexSelectedSlide + 1,
     cachTrinhBay: CachTrinhBay.CO_BAN,
   }
   slides.value.splice(indexSelectedSlide + 1, 0, newSlide)
-  selectedSlideId.value = newSlide.maSlide
+  selectedSlideId.value = newSlide.maTrang
   updateThuTu()
 }
 function addSlide() {
   const newSlide: Slide = {
-    maSlide: `new-slide-${Math.random()}`,
+    maTrang: `new-slide-${Math.random()}`,
     maPhong: '',
-    loaiSlide: LoaiSlide.NOI_DUNG,
+    loaiTrang: LoaiSlide.NOI_DUNG,
     tieuDe: 'Slide mới',
     hinhNen: '',
     thuTu: indexSelectedSlide + 1,
     cachTrinhBay: CachTrinhBay.CO_BAN,
   }
   slides.value.splice(indexSelectedSlide + 1, 0, newSlide)
-  selectedSlideId.value = newSlide.maSlide
+  selectedSlideId.value = newSlide.maTrang
   updateThuTu()
 }
 async function deleteSlide(slide: Slide) {
@@ -55,18 +55,18 @@ async function deleteSlide(slide: Slide) {
   })
   if (!confirm)
     return
-  const index = slides.value.findIndex(s => s.maSlide === slide.maSlide)
+  const index = slides.value.findIndex(s => s.maTrang === slide.maTrang)
   if (index !== -1) {
     slides.value.splice(index, 1)
     updateThuTu()
   }
-  if (selectedSlideId.value === slide.maSlide) {
-    selectedSlideId.value = slides.value[index]?.maSlide || slides.value[index - 1]?.maSlide || ''
+  if (selectedSlideId.value === slide.maTrang) {
+    selectedSlideId.value = slides.value[index]?.maTrang || slides.value[index - 1]?.maTrang || ''
   }
 }
 function duplicateSlide(slide: Slide) {
   const newID = `new-slide-${Math.random()}`
-  const newSlide: Slide = { ...slide, maSlide: newID }
+  const newSlide: Slide = { ...slide, maTrang: newID }
   slides.value.splice(slide.thuTu, 0, newSlide)
   selectedSlideId.value = newID
   updateThuTu()
@@ -86,8 +86,8 @@ function duplicateSlide(slide: Slide) {
         <template #item="{ element }">
           <div
             class="card"
-            :class="{ 'card-active': selectedSlideId === element.maSlide }"
-            @click="selectedSlideId = element.maSlide"
+            :class="{ 'card-active': selectedSlideId === element.maTrang }"
+            @click="selectedSlideId = element.maTrang"
           >
             <div class="action">
               <Button
@@ -109,18 +109,44 @@ function duplicateSlide(slide: Slide) {
             </div>
             <div class="text-sm font-semibold text-gray-600">
               {{ element.thuTu }}.
-              {{ element.loaiSlide === LoaiSlide.NOI_DUNG ? 'Slide' : 'Câu hỏi' }}
+              {{ element.loaiTrang === LoaiSlide.NOI_DUNG ? 'Nội dung' : 'Câu hỏi' }}
             </div>
             <div
               class="card-content"
               :class="[
-                selectedSlideId === element.maSlide ? 'border-accent' : '',
+                selectedSlideId === element.maTrang ? 'border-accent' : '',
               ]"
-              :style="{ backgroundImage: element.hinhNen ? `url(${element.hinhNen})` : 'hsl(var(--card))' }"
+              :style="{
+                backgroundImage: element.hinhNen ? `url(${element.hinhNen})` : 'hsl(var(--card))',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backdropFilter: 'blur(20px)',
+              }"
             >
-              <div class="mt-1 box-border">
-                <p class="text-[13px] font-medium text-black truncate">
+              <div class="box-border">
+                <p class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded">
                   {{ element.tieuDe }}
+                </p>
+              </div>
+              <!-- Img -->
+              <div class="w-12 h-10 bg-gray-200 dark:bg-gray-200/20 rounded-md mx-auto my-1">
+                <img
+                  v-if="element.hinhAnh"
+                  :src="element.hinhAnh"
+                  alt="Slide background"
+                  class="w-full h-full object-cover rounded-md"
+                >
+                <Icon
+                  v-else
+                  name="IconImageSkeleton"
+                  alt="Default slide image"
+                  class="w-full h-full object-cover rounded-md text-gray-600"
+                />
+              </div>
+              <!-- content -->
+              <div v-if="element.loaiTrang === LoaiSlide.NOI_DUNG" class="box-border">
+                <p class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded">
+                  {{ element.noiDung }}
                 </p>
               </div>
             </div>

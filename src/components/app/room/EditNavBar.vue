@@ -2,25 +2,33 @@
 import EditableInput from '@/components/common/EditableInput.vue'
 import Button from '@/components/ui/button/Button.vue'
 
+const roomTitle = defineModel<string>('title', {
+  default: 'Untitled',
+})
+interface Emits {
+  (e: 'save'): void
+  (e: 'back'): void
+}
+defineEmits<Emits>()
 function handleSaveTitle(title: string) {
-  console.log('Title saved:', title)
+  roomTitle.value = title
 }
 </script>
 
 <template>
   <div class="app-header">
     <div class="app-header-part">
-      <RouterLink
-        to="/rooms"
+      <div
         class="gap-2 ml-6 cursor-pointer flex items-center hover:bg-muted rounded-lg py-2 px-4"
+        @click="$emit('back')"
       >
         <Icon name="IconArrowRight" class="w-6 h-6 rotate-180" />
-      </RouterLink>
+      </div>
       <div class="flex items-center mr-4">
         <EditableInput
           v-slot="{ data }"
           class="text-lg font-medium"
-          value="Untitled"
+          :value="roomTitle"
           @save="handleSaveTitle"
         >
           <div class="flex flex-col cursor-pointer">
@@ -50,6 +58,7 @@ function handleSaveTitle(title: string) {
       </Button>
       <Button
         class="text-sm rounded-full"
+        @click="$emit('save')"
       >
         Lưu
       </Button>

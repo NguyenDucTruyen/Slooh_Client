@@ -85,7 +85,7 @@ function formatDate(dateStr: string) {
             variant="outline"
             class="w-full"
           >
-            <Icon name="IconEdit" class="w-6 h-6" />
+            <Icon name="IconEdit" class="w-4 h-4" />
             Chỉnh sửa
           </Button>
         </RouterLink>
@@ -93,7 +93,7 @@ function formatDate(dateStr: string) {
           type="button"
           class="w-full"
         >
-          <Icon name="IconPlay" class="w-6 h-6" />
+          <Icon name="IconPlay" class="w-4 h-4" />
           Trình chiếu
         </Button>
       </div>

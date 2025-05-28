@@ -3,6 +3,7 @@ import type { Kenh, NguoiDung, Phong, ThanhVienKenh } from '@/types'
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
+import { useRoomStore } from '@/stores/room'
 import { HoatDongPhong, TrangThai, TrangThaiThanhVien, VaiTroKenh } from '@/types'
 import { useAsyncState } from '@vueuse/core'
 
@@ -14,8 +15,10 @@ interface NguoiDungData extends NguoiDung {
   isSelected: boolean
 }
 
+const router = useRouter()
 const confirmStore = useConfirmStore()
 const channelStore = useChannelStore()
+const roomStore = useRoomStore()
 
 const route = useRoute()
 const maKenh = route.params.id as string
@@ -30,7 +33,7 @@ const roomsResponse = ref<PhongData[]>([
     maPhong: 'P001',
     tenPhong: 'Phòng họp 1',
     maKenh,
-    maChuPhong: 'a5bd98da-6007-4d8a-b6bd-e3e175a66e3d',
+    maChuPhong: '9486d232-89a2-4bcb-be02-c784422b90e7',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.OFFLINE,
     ngayTao: '2023-01-01',
@@ -41,7 +44,7 @@ const roomsResponse = ref<PhongData[]>([
     maPhong: 'P002',
     tenPhong: 'Phòng họp 2',
     maKenh,
-    maChuPhong: 'a5bd98da-6007-4d8a-b6bd-e3e175a66e3d',
+    maChuPhong: '9486d232-89a2-4bcb-be02-c784422b90e7',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.PRESENTING,
     ngayTao: '2023-01-01',
@@ -52,7 +55,7 @@ const roomsResponse = ref<PhongData[]>([
     maPhong: 'P003',
     tenPhong: 'Phòng họp 3',
     maKenh,
-    maChuPhong: 'a5bd98da-6007-4d8a-b6bd-e3e175a66e3d',
+    maChuPhong: '9486d232-89a2-4bcb-be02-c784422b90e7',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.WAITING,
     ngayTao: '2023-01-01',
@@ -63,7 +66,7 @@ const roomsResponse = ref<PhongData[]>([
     maPhong: 'P004',
     tenPhong: 'Phòng họp 4',
     maKenh,
-    maChuPhong: 'a5bd98da-6007-4d8a-b6bd-e3e175a66e3d',
+    maChuPhong: '9486d232-89a2-4bcb-be02-c784422b90e7',
     trangThai: TrangThai.HOAT_DONG,
     hoatDong: HoatDongPhong.OFFLINE,
     ngayTao: '2023-01-01',
@@ -175,8 +178,12 @@ function openCreateRoomModal() {
 function openAddUserModal() {
   isAddUserModalOpen.value = true
 }
-function handleCreateRoom(name: string) {
-  console.log('Creating room with name:', name)
+async function handleCreateRoom(name: string) {
+  const response = await roomStore.createRoom({
+    tenPhong: name,
+    maKenh,
+  })
+  router.push({ name: 'rooms-id', params: { id: response.maPhong } })
 }
 async function handleRemoveMember(user: NguoiDungData) {
   await channelStore.removeMemberToChannel(maKenh, [user.email] as string[])
@@ -231,8 +238,7 @@ function selectedAllRequestJoinMembers() {
   })
 }
 async function handleAddUser(ids: string[]) {
-  const response = await channelStore.addMemberToChannel(maKenh, ids)
-  console.log('Add user response:', response)
+  await channelStore.addMemberToChannel(maKenh, ids)
   fetchChannels(0)
   toast({
     title: 'Thành công',

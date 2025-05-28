@@ -54,7 +54,7 @@ export enum Diem {
   KHONG_DIEM = 'KHONG_DIEM',
 }
 
-export enum LoaiCauHoi {
+export enum LoaiCauTraLoi {
   SINGLE_SELECT = 'SINGLE_SELECT',
   MULTI_SELECT = 'MULTI_SELECT',
   TRUE_FALSE = 'TRUE_FALSE',
@@ -125,12 +125,13 @@ export interface Phong {
   hoatDong: HoatDongPhong
   ngayTao: string
   ngayXoa?: string
+  trangs?: Slide[]
 }
 
 export interface Slide {
-  maSlide: string
+  maTrang: string
   maPhong: string
-  loaiSlide: LoaiSlide
+  loaiTrang: LoaiSlide
   thuTu: number
   tieuDe: string
   hinhAnh?: string
@@ -140,12 +141,12 @@ export interface Slide {
   noiDung?: string
   thoiGianGioiHan?: number
   diem?: Diem
-  loaiCauHoi?: LoaiCauHoi
+  loaiCauTraLoi?: LoaiCauTraLoi
 }
 
 export interface LuaChon {
   maLuaChon: string
-  maSlide: string
+  maTrang: string
   noiDung: string
   ketQua: boolean
 }
