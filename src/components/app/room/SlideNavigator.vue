@@ -161,7 +161,7 @@ function duplicateSlide(slide: Slide) {
         class="w-full"
         @click="addSlide"
       >
-        Thêm slide
+        Thêm nội dung
       </Button>
       <Button
         class="w-full"
