@@ -2,7 +2,7 @@ import { CachTrinhBay, LoaiSlide } from '@/types'
 
 export const listThemes = [
   {
-    session: 'Phổ biến',
+    section: 'Phổ biến',
     list: [
       {
         id: 1,
@@ -43,7 +43,7 @@ export const listThemes = [
     ],
   },
   {
-    session: 'Chuyên nghiệp',
+    section: 'Chuyên nghiệp',
     list: [
       {
         id: 13,
@@ -157,7 +157,7 @@ export const listThemes = [
     ],
   },
   {
-    session: 'Thể thao',
+    section: 'Thể thao',
     list: [
       {
         id: 27,

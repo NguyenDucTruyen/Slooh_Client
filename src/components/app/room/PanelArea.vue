@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { Slide } from '@/types'
-import { listThemes } from '@/assets/data/slide-data'
+import ThemePanel from './ThemePanel.vue'
 
 const slide = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
 })
 const visible = defineModel('visible')
-const themes = ref(listThemes)
 </script>
 
 <template>
@@ -35,36 +34,9 @@ const themes = ref(listThemes)
               <span class="text-lg">Chỉnh sửa</span>
             </div>
           </div>
-        </TabsContent>
-        <!-- Theme Slide -->
-        <TabsContent value="thêm" class="h-[calc(100vh-130px)] overflow-y-auto p-2">
-          <div
-            v-for="(item, index) in themes"
-            :key="item.session"
-            class="grid"
-            :class="{ ' mt-5': index > 0 }"
-          >
-            <span class="text-lg mb-1">
-              {{ item.session }}
-            </span>
-            <div class="grid grid-cols-2 gap-2">
-              <template
-                v-for="theme in item.list"
-                :key="theme.id"
-              >
-                <div
-                  class="w-full h-20 rounded-md overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300 border-[3px]"
-                  :class="[theme.image === slide?.hinhNen ? 'border-ring' : 'border-transparent']"
-                  @click="slide.hinhNen = theme.image"
-                >
-                  <img :src="theme.image" alt="" class="w-full h-full object-cover rounded-sm">
-                  <span class="absolute left-0 bottom-0 text-sm text-center w-full p-1 bg-gradient-to-tr from-transparent to-black/50 text-white">
-                    {{ theme.name }}
-                  </span>
-                </div>
-              </template>
-            </div>
-          </div>
+        </TabsContent>        <!-- Theme Slide -->
+        <TabsContent value="thêm">
+          <ThemePanel v-model:slide="slide" />
         </TabsContent>
       </Tabs>
       <!-- Icon Toggle Show Panel -->

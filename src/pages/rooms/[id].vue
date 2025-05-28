@@ -32,14 +32,14 @@ const { state: roomDetail, isLoading, error } = useAsyncState<Phong>(() => {
   },
 })
 
-const selectedSlideId = ref<string>(roomDetail.value?.trangs?.[0]?.maTrang || '')
+const selectedSlideId = ref<string>(slides.value?.[0]?.maTrang || '')
 const indexSelectedSlide = computed(() => {
   return slides.value?.findIndex(slide => slide.maTrang === selectedSlideId.value) ?? -1
 })
 
 const currentBackground = computed(() => {
-  return roomDetail.value?.trangs?.[indexSelectedSlide.value]?.hinhNen
-    ? `url(${roomDetail.value?.trangs?.[indexSelectedSlide.value]?.hinhNen?.replace('/w_300', '')})`
+  return slides.value?.[indexSelectedSlide.value]?.hinhNen
+    ? `url(${slides.value?.[indexSelectedSlide.value]?.hinhNen?.replace('/w_300', '')})`
     : 'hsl(var(--card))'
 })
 function handleSave() {
