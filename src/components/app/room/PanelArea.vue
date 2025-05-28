@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Slide } from '@/types'
+import SlideSettingPanel from './SlideSettingPanel.vue'
 import ThemePanel from './ThemePanel.vue'
 
 const slide = defineModel('slide', {
@@ -21,21 +22,15 @@ const visible = defineModel('visible')
             <Icon name="IconEdit" class="w-6 h-6" />
             Điều chỉnh
           </TabsTrigger>
-          <TabsTrigger value="thêm">
+          <TabsTrigger value="theme">
             <Icon name="IconTheme" class="w-6 h-6" />
             Hình nền
           </TabsTrigger>
-        </TabsList>
-        <!-- Edit Slide -->
-        <TabsContent value="edit" class="h-[calc(100%-60px)] ">
-          <div class="w-full h-full flex flex-col items-center justify-center">
-            <div class="w-full h-full flex flex-col items-center justify-center">
-              <Icon name="IconEdit" class="w-6 h-6" />
-              <span class="text-lg">Chỉnh sửa</span>
-            </div>
-          </div>
-        </TabsContent>        <!-- Theme Slide -->
-        <TabsContent value="thêm">
+        </TabsList>        
+        <TabsContent value="edit">
+          <SlideSettingPanel v-model:slide="slide" />
+        </TabsContent>
+        <TabsContent value="theme">
           <ThemePanel v-model:slide="slide" />
         </TabsContent>
       </Tabs>

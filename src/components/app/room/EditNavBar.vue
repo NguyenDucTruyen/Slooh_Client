@@ -68,7 +68,7 @@ function handleSaveTitle(title: string) {
 
 <style lang="scss" scoped>
 .app-header {
-  @apply flex items-center justify-between w-full h-full gap-1 p-2 lg:pr-8 bg-card shadow-lg;
+  @apply flex items-center justify-between w-full h-full gap-1 p-2 lg:pr-8 bg-border/30 shadow-lg border-b border-foreground/30;
 }
 .app-header-part {
     @apply flex items-center gap-2;

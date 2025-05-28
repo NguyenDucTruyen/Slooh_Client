@@ -1,3 +1,4 @@
+import type { BodyUpdateRoom } from '@/types'
 import * as roomApi from '@/api/room'
 import { defineStore } from 'pinia'
 
@@ -12,8 +13,14 @@ export const useRoomStore = defineStore('room', () => {
     return response.data
   }
 
+  async function updateRoom(id: string, data: BodyUpdateRoom) {
+    const response = await roomApi.updateRoom(id, data)
+    return response.data
+  }
+
   return {
     createRoom,
     getRoomDetail,
+    updateRoom,
   }
 })

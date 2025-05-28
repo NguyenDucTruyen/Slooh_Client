@@ -42,10 +42,11 @@ export enum LoaiSlide {
 }
 
 export enum CachTrinhBay {
-  CO_BAN = 'CO_BAN',
-  TIEU_DE_LON = 'TIEU_DE_LON',
-  HAI_COT = 'HAI_COT',
-  DANH_SACH = 'DANH_SACH',
+  CO_BAN = 'CO_BAN', // Classic
+  HAI_COT = 'HAI_COT', //  title & text
+  TRICH_DAN = 'TRICH_DAN', // quote
+  HINH_ANH = 'HINH_ANH', // big media
+  CO_BAN_TEXT = 'CO_BAN_TEXT', // title & text
 }
 
 export enum Diem {
@@ -142,11 +143,12 @@ export interface Slide {
   thoiGianGioiHan?: number
   diem?: Diem
   loaiCauTraLoi?: LoaiCauTraLoi
+  luaChon?: LuaChon[]
 }
 
 export interface LuaChon {
-  maLuaChon: string
-  maTrang: string
+  maLuaChon?: string
+  maTrang?: string
   noiDung: string
   ketQua: boolean
 }
