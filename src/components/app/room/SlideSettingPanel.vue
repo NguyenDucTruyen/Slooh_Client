@@ -17,6 +17,24 @@ const listTimeOption = [
   { value: 180, label: '3 phút' },
   { value: 300, label: '5 phút' },
 ]
+watch(() => slideModel.value.loaiCauTraLoi, (newValue) => {
+  slideModel.value.luaChon = Array.from({ length: newValue === LoaiCauTraLoi.TRUE_FALSE ? 2 : 4 }).map(() => ({
+    noiDung: '',
+    ketQua: false,
+  }))
+})
+watch(() => slideModel.value.loaiTrang, (newValue) => {
+  if (newValue === LoaiSlide.NOI_DUNG) {
+    slideModel.value.cachTrinhBay = CachTrinhBay.CO_BAN
+    slideModel.value.luaChon = []
+  }
+  else {
+    slideModel.value.thoiGianGioiHan = 5
+    slideModel.value.diem = Diem.BINH_THUONG
+    slideModel.value.loaiCauTraLoi = LoaiCauTraLoi.SINGLE_SELECT
+    slideModel.value.noiDung = ''
+  }
+})
 </script>
 
 <template>

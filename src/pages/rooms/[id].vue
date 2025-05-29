@@ -9,9 +9,11 @@
 
 <script setup lang="ts">
 import type { BodyUpdateRoom, Phong, Slide, UpdateSlide } from '@/types'
+import RichTextEditor from '@/components/common/RichTextEditor.vue'
 import { toast } from '@/components/ui/toast'
 import { useRoomStore } from '@/stores/room'
 import { useAsyncState } from '@vueuse/core'
+import { computed, ref } from 'vue'
 
 const router = useRouter()
 const roomStore = useRoomStore()
@@ -25,7 +27,6 @@ const { state: roomDetail, isLoading, error, execute: fetchDetail } = useAsyncSt
     const response = await roomStore.getRoomDetail(route.params.id as string)
     slides.value = response.trangs
     selectedSlideId.value = response.trangs?.[0]?.maTrang || ''
-    console.log('slides', slides.value)
     return response
   })()
 }, null as unknown as Phong, {
@@ -41,8 +42,14 @@ const indexSelectedSlide = computed(() => {
 
 const currentBackground = computed(() => {
   return slides.value?.[indexSelectedSlide.value]?.hinhNen
-    ? `url(${slides.value?.[indexSelectedSlide.value]?.hinhNen?.replace('/w_300', '')})`
-    : 'hsl(var(--card))'
+    ? {
+        backgroundImage: `url(${slides.value[indexSelectedSlide.value].hinhNen})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : {
+        backgroundColor: '#e5e7eb',
+      }
 })
 async function handleSave() {
   const formatData: BodyUpdateRoom = {
@@ -117,8 +124,17 @@ function handleBack() {
           <div
             class="content-area"
             :class="[isPanelVisible ? 'w-[calc(100%-260px)]' : 'w-full']"
-            :style="{ backgroundImage: currentBackground }"
-          />
+            :style="currentBackground"
+          >
+            <div v-if="slides?.length && indexSelectedSlide !== -1" class="flex flex-col items-center justify-start h-full pt-20">
+              <div class="w-4/5">
+                <RichTextEditor
+                  v-model="slides[indexSelectedSlide].tieuDe"
+                  placeholder="Click để nhập tiêu đề..."
+                />
+              </div>
+            </div>
+          </div>
           <PanelArea
             v-if="slides?.length && indexSelectedSlide !== -1"
             v-model:visible="isPanelVisible"
