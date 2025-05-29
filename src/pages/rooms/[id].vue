@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { BodyUpdateRoom, Phong, Slide, UpdateSlide } from '@/types'
-import RichTextEditor from '@/components/common/RichTextEditor.vue'
+import SlideEditor from '@/components/common/SlideEditor.vue'
 import { toast } from '@/components/ui/toast'
 import { useRoomStore } from '@/stores/room'
 import { useAsyncState } from '@vueuse/core'
@@ -40,17 +40,6 @@ const indexSelectedSlide = computed(() => {
   return slides.value?.findIndex(slide => slide.maTrang === selectedSlideId.value) ?? -1
 })
 
-const currentBackground = computed(() => {
-  return slides.value?.[indexSelectedSlide.value]?.hinhNen
-    ? {
-        backgroundImage: `url(${slides.value[indexSelectedSlide.value].hinhNen})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }
-    : {
-        backgroundColor: '#e5e7eb',
-      }
-})
 async function handleSave() {
   const formatData: BodyUpdateRoom = {
     tenPhong: roomDetail.value.tenPhong,
@@ -121,20 +110,11 @@ function handleBack() {
           />
         </div>
         <div class="main-content">
-          <div
-            class="content-area"
-            :class="[isPanelVisible ? 'w-[calc(100%-260px)]' : 'w-full']"
-            :style="currentBackground"
-          >
-            <div v-if="slides?.length && indexSelectedSlide !== -1" class="flex flex-col items-center justify-start h-full pt-20">
-              <div class="w-4/5">
-                <RichTextEditor
-                  v-model="slides[indexSelectedSlide].tieuDe"
-                  placeholder="Click để nhập tiêu đề..."
-                />
-              </div>
-            </div>
-          </div>
+          <SlideEditor
+            v-if="slides?.length && indexSelectedSlide !== -1"
+            v-model:slide="slides[indexSelectedSlide]"
+            :visible="isPanelVisible"
+          />
           <PanelArea
             v-if="slides?.length && indexSelectedSlide !== -1"
             v-model:visible="isPanelVisible"
@@ -170,10 +150,5 @@ function handleBack() {
   }
   .main-content {
     @apply bg-card shadow-lg h-full w-[calc(100%-200px)] relative;
-  }
-  .content-area{
-    @apply bg-card h-full transition-[width] duration-300;
-    background-size: cover;
-    overflow-y: auto;
-  }
+  }  /* content-area styles moved to SlideEditor.vue */
 </style>

@@ -18,7 +18,7 @@ const slide = defineModel('slide', {
     :class="[visible ? 'w-[calc(100%-260px)]' : 'w-full']"
     :style="slide?.hinhNen
       ? {
-        backgroundImage: `url(${slide.hinhNen})`,
+        backgroundImage: `url(${slide.hinhNen.replace('/w_300', '')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }
@@ -31,6 +31,7 @@ const slide = defineModel('slide', {
         <RichTextEditor
           v-model="slide.tieuDe"
           placeholder="Click để nhập tiêu đề..."
+          class="max-h-[110px]"
         />
       </div>
     </div>

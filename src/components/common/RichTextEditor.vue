@@ -57,7 +57,7 @@ function handleKeyDown(e: KeyboardEvent) {
   <div class="w-full space-y-2 group relative">
     <!-- Formatting toolbar (ẩn mặc định, chỉ hiện khi hover/focus vào editor) -->
     <div
-      class="flex gap-2 justify-center bg-card/80 backdrop-blur-sm p-2 rounded-md absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition"
+      class="flex gap-2 justify-center bg-card/80 backdrop-blur-sm p-2 rounded-md absolute -top-[50px] left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition"
     >
       <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Bold" @click="format('bold')">
         <strong>B</strong>
@@ -81,7 +81,8 @@ function handleKeyDown(e: KeyboardEvent) {
       <div
         ref="editor"
         contenteditable
-        class="w-full min-h-[60px] text-3xl text-center bg-card/80 backdrop-blur-sm p-4 rounded-md border-0 focus:outline-none focus:ring-0 empty:before:content-[attr(placeholder)] empty:before:text-gray-400/50 max-h-[110px] overflow-hidden"
+        class="w-full min-h-[60px] text-3xl text-center bg-card/80 backdrop-blur-sm p-4 rounded-md border-0 focus:outline-none focus:ring-0 empty:before:content-[attr(placeholder)] empty:before:text-gray-400/50 overflow-hidden"
+        v-bind="$attrs"
         :placeholder="placeholder"
         @blur="handleUpdate"
         v-html="decode(modelValue)"

@@ -17,13 +17,8 @@ const listTimeOption = [
   { value: 180, label: '3 phút' },
   { value: 300, label: '5 phút' },
 ]
-watch(() => slideModel.value.loaiCauTraLoi, (newValue) => {
-  slideModel.value.luaChon = Array.from({ length: newValue === LoaiCauTraLoi.TRUE_FALSE ? 2 : 4 }).map(() => ({
-    noiDung: '',
-    ketQua: false,
-  }))
-})
-watch(() => slideModel.value.loaiTrang, (newValue) => {
+function handleUpdateLoaiTrang(newValue: LoaiSlide) {
+  slideModel.value.loaiTrang = newValue
   if (newValue === LoaiSlide.NOI_DUNG) {
     slideModel.value.cachTrinhBay = CachTrinhBay.CO_BAN
     slideModel.value.luaChon = []
@@ -34,7 +29,14 @@ watch(() => slideModel.value.loaiTrang, (newValue) => {
     slideModel.value.loaiCauTraLoi = LoaiCauTraLoi.SINGLE_SELECT
     slideModel.value.noiDung = ''
   }
-})
+}
+function handleUpdateLoaiCauTraLoi(newValue: LoaiCauTraLoi) {
+  slideModel.value.loaiCauTraLoi = newValue
+  slideModel.value.luaChon = Array.from({ length: newValue === LoaiCauTraLoi.TRUE_FALSE ? 2 : 4 }).map(() => ({
+    noiDung: '',
+    ketQua: false,
+  }))
+}
 </script>
 
 <template>
@@ -42,8 +44,9 @@ watch(() => slideModel.value.loaiTrang, (newValue) => {
     <div class="flex flex-col mb-4">
       <Label class="mb-1">Loại Trang</Label>
       <Select
-        v-model="slideModel.loaiTrang"
+        :model-value="slideModel.loaiTrang"
         class="w-full mb-4"
+        @update:model-value="handleUpdateLoaiTrang"
       >
         <SelectTrigger class="w-full">
           <SelectValue placeholder="Chọn loại trang" />
@@ -147,8 +150,9 @@ watch(() => slideModel.value.loaiTrang, (newValue) => {
       <div v-if="slideModel.loaiTrang === LoaiSlide.CAU_HOI" class="flex flex-col mb-4">
         <Label class="mb-1">Loại câu trả lời</Label>
         <Select
-          v-model="slideModel.loaiCauTraLoi"
+          :model-value="slideModel.loaiCauTraLoi"
           class="w-full mb-4"
+          @update:model-value="handleUpdateLoaiCauTraLoi"
         >
           <SelectTrigger class="w-full">
             <SelectValue placeholder="Chọn loại câu trả lời" class="text-foreground" />

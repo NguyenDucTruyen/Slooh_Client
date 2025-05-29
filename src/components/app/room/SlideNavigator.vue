@@ -125,7 +125,7 @@ function duplicateSlide(slide: Slide) {
               }"
             >
               <div class="box-border">
-                <div class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded max-h-6 overflow-hidden" v-html="decode(element.tieuDe)" />
+                <div class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.tieuDe)" />
               </div>
               <!-- Img -->
               <div class="w-12 h-10 bg-gray-200 dark:bg-gray-200/20 rounded-md mx-auto my-1">
