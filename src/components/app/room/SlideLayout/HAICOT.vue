@@ -74,7 +74,7 @@ function handleDrop(e: DragEvent) {
       />
     </div>
     <div
-      class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden bg-slate-300 backdrop-blur-sm col-span-2"
+      class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden bg-slate-300/30 backdrop-blur-md col-span-2"
     >
       <img
         v-if="slide.hinhAnh"
@@ -84,7 +84,6 @@ function handleDrop(e: DragEvent) {
       >
       <div
         class="rounded-md w-full h-full flex-1 min-h-0 relative group"
-        role="button"
         tabindex="0"
         :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"
       >

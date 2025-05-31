@@ -63,7 +63,7 @@ function handleDrop(e: DragEvent) {
   <div class="flex flex-col w-full h-full gap-6">
     <!-- Image area (chiếm hết phần còn lại) -->
     <div
-      class="flex-1 relative rounded-lg overflow-hidden bg-slate-300 backdrop-blur-sm group min-h-0"
+      class="flex-1 relative rounded-lg overflow-hidden bg-slate-300/30 backdrop-blur-md group min-h-0"
     >
       <input
         ref="fileInput"
