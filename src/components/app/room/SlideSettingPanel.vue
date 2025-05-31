@@ -90,7 +90,7 @@ function handleUpdateLoaiCauTraLoi(newValue: LoaiCauTraLoi) {
               Hình ảnh
             </SelectItem>
             <SelectItem :value="CachTrinhBay.CO_BAN_TEXT">
-              Cơ bản với văn bản
+              Văn bản
             </SelectItem>
           </SelectGroup>
         </SelectContent>

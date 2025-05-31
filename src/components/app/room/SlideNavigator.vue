@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defaultSlideData } from '@/constants/slide'
 import { useConfirmStore } from '@/stores/confirm'
 import { CachTrinhBay, LoaiSlide, type Slide } from '@/types'
 import { decode } from 'html-entities'
@@ -25,7 +26,7 @@ function addQuestion() {
     maPhong: '',
     loaiTrang: LoaiSlide.CAU_HOI,
     tieuDe: 'Câu hỏi mới',
-    hinhNen: '',
+    hinhNen: defaultSlideData.hinhNen,
     thuTu: indexSelectedSlide + 1,
     cachTrinhBay: CachTrinhBay.CO_BAN,
   }
@@ -39,9 +40,10 @@ function addSlide() {
     maPhong: '',
     loaiTrang: LoaiSlide.NOI_DUNG,
     tieuDe: 'Slide mới',
-    hinhNen: '',
+    hinhNen: defaultSlideData.hinhNen,
     thuTu: indexSelectedSlide + 1,
     cachTrinhBay: CachTrinhBay.CO_BAN,
+    noiDung: '',
   }
   slides.value.splice(indexSelectedSlide + 1, 0, newSlide)
   selectedSlideId.value = newSlide.maTrang
@@ -144,9 +146,7 @@ function duplicateSlide(slide: Slide) {
               </div>
               <!-- content -->
               <div v-if="element.loaiTrang === LoaiSlide.NOI_DUNG" class="box-border">
-                <p class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded">
-                  {{ element.noiDung }}
-                </p>
+                <div class="text-xs font-medium text-black truncate bg-white py-0.5 px-1 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.noiDung)" />
               </div>
             </div>
           </div>
@@ -177,7 +177,8 @@ function duplicateSlide(slide: Slide) {
 .card {
   @apply p-2 pl-8 cursor-pointer bg-card relative;
   .card-content {
-    @apply rounded-md p-2 border-2 bg-gray-200 dark:bg-gray-200/20 h-28;
+    @apply rounded-md p-2 border-2 bg-gray-200 dark:bg-gray-200/20 h-28 relative;
+
   }
   .action {
     @apply absolute flex-col top-1/2 -translate-y-3 left-1 space-y-1 hidden;

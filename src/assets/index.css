@@ -39,8 +39,32 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--foreground) !important;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
 
+::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #f1f1f1;
+}
 
+::-webkit-scrollbar-thumb {
+  background: hsl(256 30% 70%);
+  border-radius: 100vh;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(256 30% 60%);
+}
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
 @layer base {
   :root {
   --background: 0 0% 100%;
