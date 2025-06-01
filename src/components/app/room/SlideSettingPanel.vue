@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import type { Slide } from '@/types'
+import type { LuaChon, Slide } from '@/types'
+import { useOptionStore } from '@/stores/option'
 import { CachTrinhBay, Diem, LoaiCauTraLoi, LoaiSlide } from '@/types'
 
 const slideModel = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
 })
+const optionStore = useOptionStore()
 const listTimeOption = [
   { value: 5, label: '5 giây' },
   { value: 10, label: '10 giây' },
@@ -21,21 +23,36 @@ function handleUpdateLoaiTrang(newValue: LoaiSlide) {
   slideModel.value.loaiTrang = newValue
   if (newValue === LoaiSlide.NOI_DUNG) {
     slideModel.value.cachTrinhBay = CachTrinhBay.CO_BAN
-    slideModel.value.luaChon = []
+    slideModel.value.luaChon = undefined
   }
   else {
     slideModel.value.thoiGianGioiHan = 5
     slideModel.value.diem = Diem.BINH_THUONG
     slideModel.value.loaiCauTraLoi = LoaiCauTraLoi.SINGLE_SELECT
     slideModel.value.noiDung = ''
+    handleUpdateLoaiCauTraLoi(LoaiCauTraLoi.SINGLE_SELECT)
   }
 }
 function handleUpdateLoaiCauTraLoi(newValue: LoaiCauTraLoi) {
   slideModel.value.loaiCauTraLoi = newValue
-  slideModel.value.luaChon = Array.from({ length: newValue === LoaiCauTraLoi.TRUE_FALSE ? 2 : 4 }).map(() => ({
-    noiDung: '',
-    ketQua: false,
-  }))
+  if (!slideModel.value.luaChon) {
+    slideModel.value.luaChon = []
+  }
+  const keepLuaChon = newValue === LoaiCauTraLoi.TRUE_FALSE ? 2 : 4
+  if (slideModel.value.luaChon.length > keepLuaChon && slideModel.value.loaiCauTraLoi === LoaiCauTraLoi.TRUE_FALSE) {
+    slideModel.value.luaChon = slideModel.value.luaChon.slice(0, keepLuaChon)
+  }
+  while (slideModel.value.luaChon.length < keepLuaChon) {
+    const newOption: LuaChon = {
+      noiDung: '',
+      ketQua: false,
+    }
+    slideModel.value.luaChon.push(newOption)
+  }
+  // reset ketQua
+  slideModel.value.luaChon.forEach((option: LuaChon) => {
+    option.ketQua = false
+  })
 }
 </script>
 
@@ -171,6 +188,15 @@ function handleUpdateLoaiCauTraLoi(newValue: LoaiCauTraLoi) {
             </SelectGroup>
           </SelectContent>
         </Select>
+        <Button
+          v-if="slideModel.luaChon && slideModel.luaChon.length < 6 && slideModel.loaiCauTraLoi !== LoaiCauTraLoi.TRUE_FALSE"
+          class="mt-2"
+          variant="secondary"
+          @click="optionStore.addOption"
+        >
+          <Icon name="IconPlus" class="w-4 h-4" />
+          Thêm lựa chọn
+        </Button>
       </div>
     </template>
   </div>

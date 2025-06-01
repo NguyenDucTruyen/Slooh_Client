@@ -1,0 +1,64 @@
+<script setup lang="ts">
+import type { LuaChon } from '@/types'
+
+const props = defineProps<{
+  index: number
+  deletable?: boolean
+}>()
+const emit = defineEmits<{
+  (e: 'updateResult', value: LuaChon): void
+  (e: 'deleteOption', index: number): void
+}>()
+const option = defineModel('option', {
+  type: Object as () => LuaChon,
+  required: true,
+})
+const LIST_OPTIONS = ['A', 'B', 'C', 'D', 'E', 'F']
+watch(() => option.value.ketQua, (newValue) => {
+  if (newValue) {
+    emit('updateResult', option.value)
+  }
+})
+</script>
+
+<template>
+  <div
+    class="flex w-full h-full relative p-x rounded-md lg:rounded-lg text-white max-h-[160px] min-h-[100px]"
+    :class="{
+      'bg-blue-700': props.index === 0,
+      'bg-red-700': props.index === 1,
+      'bg-green-700': props.index === 2,
+      'bg-yellow-700': props.index === 3,
+      'bg-slate-700': props.index === 4,
+      'bg-purple-700': props.index === 5,
+
+    }"
+  >
+    <div class="flex items-center justify-center font-bold text-2xl w-12 min-w-12 text-foreground/80 h-full bg-slate-100 rounded-s-md lg:rounded-s-lg">
+      {{ LIST_OPTIONS[props.index] }}
+    </div>
+    <div class="flex-1 max-w-[calc(100%-96px)] h-full">
+      <RichTextEditor
+        v-model="option.noiDung"
+        special-type="question"
+        placeholder="Nhập nội dung câu trả lời..."
+        class="w-full bg-transparent border-none max-h-[140px] h-full text-xl"
+      />
+    </div>
+    <div class="flex flex-col gap-2 items-center justify-center font-bold text-2xl w-12 min-w-12 text-foreground/80 h-full rounded-e-md lg:rounded-e-lg">
+      <input
+        v-model="option.ketQua"
+        type="checkbox"
+        class="w-6 h-6 accent-primary rounded-full cursor-pointer"
+      >
+      <Button
+        v-if="props.deletable"
+        variant="destructive"
+        class="p-2 shadow-md border border-slate-50"
+        @click=" $emit('deleteOption', index)"
+      >
+        <Icon name="IconTrash" class="w-4 h-4" />
+      </Button>
+    </div>
+  </div>
+</template>

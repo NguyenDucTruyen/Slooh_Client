@@ -51,8 +51,8 @@ function addSlide() {
 }
 async function deleteSlide(slide: Slide) {
   const confirm = await confirmStore.showConfirmDialog({
-    title: 'Xóa slide',
-    message: 'Bạn có chắc chắn muốn xóa slide này?',
+    title: 'Xóa trang',
+    message: 'Bạn có chắc chắn muốn xóa trang này?',
     cancelText: 'Hủy',
     confirmText: 'Xóa',
   })
@@ -130,7 +130,7 @@ function duplicateSlide(slide: Slide) {
                 <div class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.tieuDe)" />
               </div>
               <!-- Img -->
-              <div class="w-12 h-10 bg-gray-400/80 rounded-lg backdrop:blur-md mx-auto my-1 flex items-center justify-center">
+              <div class="w-12 h-10 bg-slate-100/80 rounded-lg backdrop:blur-md mx-auto my-1 flex items-center justify-center">
                 <img
                   v-if="element.hinhAnh"
                   :src="element.hinhAnh"
@@ -141,7 +141,7 @@ function duplicateSlide(slide: Slide) {
                   v-else
                   name="IconImageSkeleton"
                   alt="Default slide image"
-                  class="w-8 h-8 object-cover rounded-md text-gray-600"
+                  class="w-8 h-8 object-cover rounded-md text-slate-600"
                 />
               </div>
               <!-- content -->
@@ -176,8 +176,10 @@ function duplicateSlide(slide: Slide) {
 <style scoped lang="scss">
 .card {
   @apply p-2 pl-8 cursor-pointer bg-card relative;
+
   .card-content {
     @apply rounded-md p-2 border-2 bg-gray-200 dark:bg-gray-200/20 h-28 relative;
+    @apply before:absolute before:inset-0 before:bg-gray-800/60 before:rounded-md;
 
   }
   .action {
@@ -193,6 +195,10 @@ function duplicateSlide(slide: Slide) {
   }
 }
 .card-active {
-  @apply bg-accent/10
+  @apply bg-accent/10;
+  .card-content {
+  @apply before:bg-gray-800/0;
+
+  }
 }
 </style>

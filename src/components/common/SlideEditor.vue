@@ -45,6 +45,11 @@ const LayoutSlide = computed(() => {
       <!-- Title Editor - Fixed height -->
       <component
         :is="LayoutSlide"
+        v-if="slide.loaiTrang === LoaiSlide.NOI_DUNG"
+        v-model:slide="slide"
+      />
+      <QuestionLayout
+        v-else-if="slide.loaiTrang === LoaiSlide.CAU_HOI"
         v-model:slide="slide"
       />
     </div>

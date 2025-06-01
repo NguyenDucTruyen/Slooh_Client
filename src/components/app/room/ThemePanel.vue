@@ -35,7 +35,7 @@ function handleThemeSelect(themeImage: string) {
         >
           <div
             class="w-full h-20 rounded-md overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300 border-[3px]"
-            :class="[theme.image === slide?.hinhNen ? 'border-ring' : 'border-transparent']"
+            :class="[theme.image === slide?.hinhNen ? 'border-ring' : 'border-transparent before:absolute before:inset-0 before:bg-gray-800/60 before:rounded-md']"
             @click="handleThemeSelect(theme.image)"
           >
             <img :src="theme.image" alt="" class="w-full h-full object-cover rounded-sm">

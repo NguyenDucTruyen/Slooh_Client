@@ -4,6 +4,7 @@ import { decode } from 'html-entities'
 defineProps<{
   modelValue: string
   placeholder?: string
+  specialType?: 'question' | 'answer'
 }>()
 
 const emit = defineEmits<{
@@ -14,17 +15,21 @@ const editor = ref<HTMLElement | null>(null)
 
 type FormatCommand = 'bold' | 'italic' | 'superscript' | 'subscript' | 'removeFormat'
 const LIST_ALIGN = [{
-  name: 'left',
-  icon: 'IconAlignLeft',
-}, {
   name: '',
+  icon: 'IconAlignLeft',
+  shortcut: 'Align left (Ctrl + L)',
+}, {
+  name: 'center',
   icon: 'IconAlignCenter',
+  shortcut: 'Align center (Ctrl + E)',
 }, {
   name: 'right',
   icon: 'IconAlignRight',
+  shortcut: 'Align right (Ctrl + R)',
 }, {
   name: 'justify',
   icon: 'IconAlignJustify',
+  shortcut: 'Align justify (Ctrl + J)',
 }]
 const currentAlign = ref<string>('')
 function format(command: FormatCommand) {
@@ -75,13 +80,13 @@ function handleKeyDown(e: KeyboardEvent) {
 
         e.preventDefault()
         e.stopPropagation()
-        handleAlign('left')
+        handleAlign('')
         break
       case 'e':
 
         e.preventDefault()
         e.stopPropagation()
-        handleAlign('')
+        handleAlign('center')
         break
       case 'r':
 
@@ -105,38 +110,43 @@ function handleAlign(name: string) {
 </script>
 
 <template>
-  <div class="w-full space-y-2 group relative">
+  <div class="w-full group relative flex items-center">
     <!-- Formatting toolbar (ẩn mặc định, chỉ hiện khi hover/focus vào editor) -->
     <div
-      class="flex gap-2 justify-center items-center bg-card/80 backdrop-blur-sm p-2 rounded-md absolute -top-[46px] left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition"
+      v-if="specialType !== 'answer'"
+      class="flex gap-2 justify-center items-center bg-card/80 backdrop-blur-sm p-2 rounded-md absolute -top-[46px] left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition !text-foreground"
     >
-      <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Bold" @click="format('bold')">
+      <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Bold (Ctrl + B)" @click="format('bold')">
         <strong>B</strong>
       </Button>
-      <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Italic" @click="format('italic')">
+      <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Italic (Ctrl + I)" @click="format('italic')">
         <i>I</i>
       </Button>
-      <Button variant="outline" size="sm" class="w-8 h-8 p-0 text-xs" title="Subscript" @click="format('subscript')">
+      <Button variant="outline" size="sm" class="w-8 h-8 p-0 text-xs" title="Subscript (Ctrl + ,)" @click="format('subscript')">
         <p>X<sub>2</sub></p>
       </Button>
-      <Button variant="outline" size="sm" class="w-8 h-8 p-0 text-xs" title="Superscript" @click="format('superscript')">
+      <Button variant="outline" size="sm" class="w-8 h-8 p-0 text-xs" title="Superscript (Ctrl + .)" @click="format('superscript')">
         <p>X<sup>2</sup></p>
       </Button>
-      <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Remove Formatting" @click="format('removeFormat')">
+      <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Clear (Ctrl + /)" @click="format('removeFormat')">
         <Icon name="IconClear" class="w-4 h-4" />
       </Button>
-      |
-      <Button
-        v-for="item in LIST_ALIGN"
-        :key="item.name"
-        variant="outline" size="sm" class="w-8 h-8 p-0" :title="`Align ${item.name || 'center'}`" :class="{ 'bg-accent': item.name === currentAlign }"
-        @click="handleAlign(item.name)"
+      <template
+        v-if="!specialType"
       >
-        <Icon
-          :name="item.icon" class="w-4 h-4"
-          :class="{ 'text-background': item.name === currentAlign }"
-        />
-      </Button>
+        |
+        <Button
+          v-for="item in LIST_ALIGN"
+          :key="item.name"
+          variant="outline" size="sm" class="w-8 h-8 p-0" :title="item.shortcut" :class="{ 'bg-accent': item.name === currentAlign }"
+          @click="handleAlign(item.name)"
+        >
+          <Icon
+            :name="item.icon" class="w-4 h-4"
+            :class="{ 'text-background': item.name === currentAlign }"
+          />
+        </Button>
+      </template>
     </div>
 
     <!-- Editable title -->
@@ -146,10 +156,10 @@ function handleAlign(name: string) {
         contenteditable
         class="w-full min-h-[60px] text-3xl bg-card/80 backdrop-blur-sm p-4 rounded-md border-0 focus:outline-none focus:ring-0 empty:before:content-[attr(placeholder)] empty:before:text-gray-400/50 overflow-auto scrollbar-hidden"
         :class="{
-          'text-center': !currentAlign,
+          'text-center': currentAlign === 'center',
           'text-right': currentAlign === 'right',
           'text-justify': currentAlign === 'justify',
-          'text-left': currentAlign === 'left',
+          'text-left': currentAlign === '',
         }"
         v-bind="$attrs"
         :placeholder="placeholder"
@@ -157,7 +167,10 @@ function handleAlign(name: string) {
         @paste="handlePaste"
         v-html="decode(modelValue)"
       />
-      <div class="absolute inset-x-0 bottom-0 h-0.5 bg-primary scale-x-0 group-focus-within:scale-x-100 transition-transform" />
+      <div
+        v-if="!specialType"
+        class="absolute inset-x-0 bottom-0 h-0.5 bg-primary scale-x-0 group-focus-within:scale-x-100 transition-transform"
+      />
     </div>
   </div>
 </template>

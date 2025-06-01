@@ -91,7 +91,7 @@ function handleDrop(e: DragEvent) {
 
   <!-- Image Area with preview -->
   <div
-    class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden bg-slate-300/30 backdrop-blur-md"
+    class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden"
   >
     <img
       v-if="slide.hinhAnh"

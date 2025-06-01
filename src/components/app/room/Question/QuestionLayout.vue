@@ -1,16 +1,26 @@
 <script setup lang="ts">
-import type { Slide } from '@/types'
 import { uploadImage } from '@/api/upload'
 import { toast } from '@/components/ui/toast'
+import { useOptionStore } from '@/stores/option'
+import { LoaiCauTraLoi, type LuaChon, type Slide } from '@/types'
 import { Loader2 } from 'lucide-vue-next'
 
 const slide = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
 })
+const optionStore = useOptionStore()
+
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const uploading = ref(false)
+
+watch(() => optionStore.option, (newOption) => {
+  if (slide.value && newOption) {
+    slide.value.luaChon?.push(newOption)
+    optionStore.clearOption()
+  }
+})
 function handleUploadImage() {
   fileInput.value?.click()
 }
@@ -80,21 +90,40 @@ function handleDrop(e: DragEvent) {
     reader.readAsDataURL(file)
   }
 }
+function handleUpdateResult(option: LuaChon) {
+  if (slide.value.luaChon && slide.value.loaiCauTraLoi !== LoaiCauTraLoi.MULTI_SELECT) {
+    slide.value.luaChon.forEach((item) => {
+      if (item !== option) {
+        item.ketQua = false
+      }
+    })
+  }
+}
+const deletableOption = computed(() => {
+  return slide.value.luaChon && slide.value.luaChon.length > 2
+})
 </script>
 
 <template>
+  <RichTextEditor
+    v-model="slide.tieuDe"
+    placeholder="Click để nhập tiêu đề..."
+    class="shrink-0 max-h-[110px]"
+  />
+
+  <!-- Image Area with preview -->
   <div
-    class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden  max-w-[400px] max-h-[400px] group"
+    class="w-full h-full relative rounded-lg overflow-hidden "
   >
     <img
       v-if="slide.hinhAnh"
       :src="slide.hinhAnh"
-      :class="{ 'blur-md': uploading }"
       alt="Slide image"
       class="absolute inset-0 w-full h-full object-contain rounded-lg"
+      :class="{ 'blur-md': uploading }"
     >
     <div
-      class="rounded-md w-full h-full flex-1 min-h-0 relative group"
+      class="rounded-md w-full h-full flex-1 relative group"
       tabindex="0"
       :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"
     >
@@ -168,14 +197,19 @@ function handleDrop(e: DragEvent) {
       </div>
     </div>
   </div>
-  <RichTextEditor
-    v-model="slide.tieuDe"
-    placeholder="Click để nhập tiêu đề..."
-    class="shrink-0 max-h-[110px]"
-  />
-  <RichTextEditor
-    v-model="slide.noiDung"
-    placeholder="Click để nhập tiêu đề..."
-    class="max-h-[330px] text-xl col-span-2"
-  />
+  <!-- Dynamic Area - Fixed height -->
+<div
+    v-if="slide.luaChon"
+    class="grid grid-cols-2 gap-x-5 gap-y-2.5 lg:gap-x-10 lg:gap-y-4 shrink-0 w-full rounded-lg"
+  >
+    <template v-for="(option, index) in slide.luaChon" :key="index">
+      <AnswerOption
+        v-model:option="slide.luaChon[index]"
+        :index="index"
+        :deletable="deletableOption"
+        @update-result="handleUpdateResult"
+        @delete-option="slide.luaChon.splice(index, 1)"
+      />
+    </template>
+  </div>
 </template>
