@@ -130,7 +130,7 @@ function duplicateSlide(slide: Slide) {
                 <div class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.tieuDe)" />
               </div>
               <!-- Img -->
-              <div class="w-12 h-10 bg-gray-200 dark:bg-gray-200/20 rounded-md mx-auto my-1">
+              <div class="w-12 h-10 bg-gray-400/80 rounded-lg backdrop:blur-md mx-auto my-1 flex items-center justify-center">
                 <img
                   v-if="element.hinhAnh"
                   :src="element.hinhAnh"
@@ -141,12 +141,12 @@ function duplicateSlide(slide: Slide) {
                   v-else
                   name="IconImageSkeleton"
                   alt="Default slide image"
-                  class="w-full h-full object-cover rounded-md text-gray-600"
+                  class="w-8 h-8 object-cover rounded-md text-gray-600"
                 />
               </div>
               <!-- content -->
               <div v-if="element.loaiTrang === LoaiSlide.NOI_DUNG" class="box-border">
-                <div class="text-xs font-medium text-black truncate bg-white py-0.5 px-1 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.noiDung)" />
+                <div class="text-xs font-medium text-black truncate bg-white py-0.5 px-1 rounded max-h-6 overflow-hidden text-center min-h-6" v-html="decode(element.noiDung)" />
               </div>
             </div>
           </div>
