@@ -3,6 +3,7 @@ import { CachTrinhBay, LoaiSlide, type Slide } from '@/types'
 
 defineProps<{
   visible?: boolean
+  specailType?: 'preview'
 }>()
 
 const slide = defineModel('slide', {
@@ -12,17 +13,17 @@ const slide = defineModel('slide', {
 const LayoutSlide = computed(() => {
   switch (slide.value.cachTrinhBay) {
     case CachTrinhBay.CO_BAN:
-      return defineAsyncComponent(() => import('@/components/app/room/SlideLayout/COBAN.vue'))
+      return defineAsyncComponent(() => import('@/components/app/room/slide-layout/COBAN.vue'))
     case CachTrinhBay.HAI_COT:
-      return defineAsyncComponent(() => import('@/components/app/room/SlideLayout/HAICOT.vue'))
+      return defineAsyncComponent(() => import('@/components/app/room/slide-layout/HAICOT.vue'))
     case CachTrinhBay.TRICH_DAN:
-      return defineAsyncComponent(() => import('@/components/app/room/SlideLayout/TRICHDAN.vue'))
+      return defineAsyncComponent(() => import('@/components/app/room/slide-layout/TRICHDAN.vue'))
     case CachTrinhBay.HINH_ANH:
-      return defineAsyncComponent(() => import('@/components/app/room/SlideLayout/HINHANH.vue'))
+      return defineAsyncComponent(() => import('@/components/app/room/slide-layout/HINHANH.vue'))
     case CachTrinhBay.CO_BAN_TEXT:
-      return defineAsyncComponent(() => import('@/components/app/room/SlideLayout/VANBAN.vue'))
+      return defineAsyncComponent(() => import('@/components/app/room/slide-layout/VANBAN.vue'))
     default:
-      return defineAsyncComponent(() => import('@/components/app/room/SlideLayout/COBAN.vue'))
+      return defineAsyncComponent(() => import('@/components/app/room/slide-layout/COBAN.vue'))
   }
 })
 </script>

@@ -2,6 +2,7 @@
 import { uploadImage } from '@/api/upload'
 import { toast } from '@/components/ui/toast'
 import { useOptionStore } from '@/stores/option'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { LoaiCauTraLoi, type LuaChon, type Slide } from '@/types'
 import { Loader2 } from 'lucide-vue-next'
 
@@ -10,7 +11,7 @@ const slide = defineModel('slide', {
   required: true,
 })
 const optionStore = useOptionStore()
-
+const previewSlideStore = usePreviewSlideStore()
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const uploading = ref(false)
@@ -123,6 +124,7 @@ const deletableOption = computed(() => {
       :class="{ 'blur-md': uploading }"
     >
     <div
+      v-if="!previewSlideStore.isPreviewing"
       class="rounded-md w-full h-full flex-1 relative group"
       tabindex="0"
       :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"
@@ -198,7 +200,7 @@ const deletableOption = computed(() => {
     </div>
   </div>
   <!-- Dynamic Area - Fixed height -->
-<div
+  <div
     v-if="slide.luaChon"
     class="grid grid-cols-2 gap-x-5 gap-y-2.5 lg:gap-x-10 lg:gap-y-4 shrink-0 w-full rounded-lg"
   >
@@ -207,6 +209,7 @@ const deletableOption = computed(() => {
         v-model:option="slide.luaChon[index]"
         :index="index"
         :deletable="deletableOption"
+        :is-previewing="previewSlideStore.isPreviewing"
         @update-result="handleUpdateResult"
         @delete-option="slide.luaChon.splice(index, 1)"
       />

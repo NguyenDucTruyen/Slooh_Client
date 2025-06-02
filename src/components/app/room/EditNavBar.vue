@@ -2,17 +2,19 @@
 import EditableInput from '@/components/common/EditableInput.vue'
 import Button from '@/components/ui/button/Button.vue'
 
+defineEmits<Emits>()
 const roomTitle = defineModel<string>('title', {
   default: 'Untitled',
 })
 interface Emits {
   (e: 'save'): void
   (e: 'back'): void
+  (e: 'preview'): void
 }
-defineEmits<Emits>()
 function handleSaveTitle(title: string) {
   roomTitle.value = title
 }
+
 </script>
 
 <template>
@@ -44,6 +46,7 @@ function handleSaveTitle(title: string) {
       <Button
         variant="secondary"
         class="text-sm rounded-full"
+        @click="$emit('preview')"
       >
         <Icon name="IconEyeOn" class="w-5 h-5" />
         Xem trước

@@ -2,12 +2,14 @@
 import type { Slide } from '@/types'
 import { uploadImage } from '@/api/upload'
 import { toast } from '@/components/ui/toast'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { Loader2 } from 'lucide-vue-next'
 
 const slide = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
 })
+const previewSlideStore = usePreviewSlideStore()
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const uploading = ref(false)
@@ -83,18 +85,21 @@ function handleDrop(e: DragEvent) {
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full gap-6">
-    <!-- Image area (chiếm hết phần còn lại) -->
-    <div
-      class="flex-1 relative rounded-lg overflow-hidden  group min-h-0"
+  <div
+    class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden  max-w-[400px] max-h-[400px] group"
+  >
+    <img
+      v-if="slide.hinhAnh"
+      :src="slide.hinhAnh"
+      :class="{ 'blur-md': uploading }"
+      alt="Slide image"
+      class="absolute inset-0 w-full h-full object-contain rounded-lg"
     >
-      <img
-        v-if="slide.hinhAnh"
-        :src="slide.hinhAnh"
-        :class="{ 'blur-md': uploading }"
-        alt="Slide image"
-        class="absolute inset-0 w-full h-full object-contain rounded-lg"
-      >
+    <div
+      class="rounded-md w-full h-full flex-1 min-h-0 relative group"
+      tabindex="0"
+      :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"
+    >
       <input
         ref="fileInput"
         type="file"
@@ -104,7 +109,7 @@ function handleDrop(e: DragEvent) {
         @change="handleFileChange"
       >
       <div
-        v-if="!slide.hinhAnh || uploading"
+        v-if="(!slide.hinhAnh || uploading) && !previewSlideStore.isPreviewing"
         class="absolute max-w-[400px] max-h-[400px] backdrop-blur-md flex flex-col items-center justify-center gap-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200/50 p-6 rounded-md text-center cursor-pointer"
         @click="handleUploadImage"
         @dragenter.prevent="handleDragEnter"
@@ -164,12 +169,15 @@ function handleDrop(e: DragEvent) {
         </Button>
       </div>
     </div>
-
-    <!-- Editor (chiều cao cố định) -->
-    <RichTextEditor
-      v-model="slide.tieuDe"
-      placeholder="Click để nhập tiêu đề..."
-      class="shrink-0 max-h-[110px] text-xl"
-    />
   </div>
+  <RichTextEditor
+    v-model="slide.tieuDe"
+    placeholder="Click để nhập tiêu đề..."
+    class="shrink-0 max-h-[110px]"
+  />
+  <RichTextEditor
+    v-model="slide.noiDung"
+    placeholder="Click để nhập tiêu đề..."
+    class="max-h-[330px] text-xl col-span-2"
+  />
 </template>

@@ -2,12 +2,15 @@
 import type { Slide } from '@/types'
 import { uploadImage } from '@/api/upload'
 import { toast } from '@/components/ui/toast'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { Loader2 } from 'lucide-vue-next'
 
 const slide = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
 })
+const previewSlideStore = usePreviewSlideStore()
+
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const uploading = ref(false)
@@ -83,17 +86,25 @@ function handleDrop(e: DragEvent) {
 </script>
 
 <template>
+  <RichTextEditor
+    v-model="slide.tieuDe"
+    placeholder="Click để nhập tiêu đề..."
+    class="shrink-0 max-h-[110px]"
+  />
+
+  <!-- Image Area with preview -->
   <div
-    class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden  max-w-[400px] max-h-[400px] group"
+    class="w-full flex-1 min-h-0 relative rounded-lg overflow-hidden"
   >
     <img
       v-if="slide.hinhAnh"
       :src="slide.hinhAnh"
-      :class="{ 'blur-md': uploading }"
       alt="Slide image"
       class="absolute inset-0 w-full h-full object-contain rounded-lg"
+      :class="{ 'blur-md': uploading }"
     >
     <div
+      v-if="!previewSlideStore.isPreviewing"
       class="rounded-md w-full h-full flex-1 min-h-0 relative group"
       tabindex="0"
       :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"
@@ -168,14 +179,14 @@ function handleDrop(e: DragEvent) {
       </div>
     </div>
   </div>
-  <RichTextEditor
-    v-model="slide.tieuDe"
-    placeholder="Click để nhập tiêu đề..."
-    class="shrink-0 max-h-[110px]"
-  />
-  <RichTextEditor
-    v-model="slide.noiDung"
-    placeholder="Click để nhập tiêu đề..."
-    class="max-h-[330px] text-xl col-span-2"
-  />
+  <!-- Dynamic Area - Fixed height -->
+  <div
+    class="grid grid-cols-2 gap-6 lg:gap-10 shrink-0 w-full"
+  >
+    <RichTextEditor
+      v-model="slide.noiDung"
+      placeholder="Click để nhập tiêu đề..."
+      class="max-h-[330px] text-xl col-span-2"
+    />
+  </div>
 </template>

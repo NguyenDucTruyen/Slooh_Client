@@ -2,12 +2,16 @@
 import type { Slide } from '@/types'
 import { uploadImage } from '@/api/upload'
 import { toast } from '@/components/ui/toast'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { Loader2 } from 'lucide-vue-next'
 
 const slide = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
 })
+
+const previewSlideStore = usePreviewSlideStore()
+
 const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const uploading = ref(false)
@@ -107,6 +111,7 @@ function handleDrop(e: DragEvent) {
         class="absolute inset-0 w-full h-full object-contain rounded-lg"
       >
       <div
+        v-if="!previewSlideStore.isPreviewing"
         class="rounded-md w-full h-full flex-1 min-h-0 relative group"
         tabindex="0"
         :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"

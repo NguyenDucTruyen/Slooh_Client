@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usePreviewSlideStore } from '@/stores/preview'
 import { decode } from 'html-entities'
 
 defineProps<{
@@ -10,7 +11,7 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
-
+const previewSlideStore = usePreviewSlideStore()
 const editor = ref<HTMLElement | null>(null)
 
 type FormatCommand = 'bold' | 'italic' | 'superscript' | 'subscript' | 'removeFormat'
@@ -113,7 +114,7 @@ function handleAlign(name: string) {
   <div class="w-full group relative flex items-center">
     <!-- Formatting toolbar (ẩn mặc định, chỉ hiện khi hover/focus vào editor) -->
     <div
-      v-if="specialType !== 'answer'"
+      v-if="specialType !== 'answer' && !previewSlideStore.isPreviewing"
       class="flex gap-2 justify-center items-center bg-card/80 backdrop-blur-sm p-2 rounded-md absolute -top-[46px] left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition !text-foreground"
     >
       <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Bold (Ctrl + B)" @click="format('bold')">
@@ -153,7 +154,7 @@ function handleAlign(name: string) {
     <div class="relative w-full">
       <div
         ref="editor"
-        contenteditable
+        :contenteditable="!previewSlideStore.isPreviewing && specialType !== 'answer'"
         class="w-full min-h-[60px] text-3xl bg-card/80 backdrop-blur-sm p-4 rounded-md border-0 focus:outline-none focus:ring-0 empty:before:content-[attr(placeholder)] empty:before:text-gray-400/50 overflow-auto scrollbar-hidden"
         :class="{
           'text-center': currentAlign === 'center',
@@ -168,7 +169,7 @@ function handleAlign(name: string) {
         v-html="decode(modelValue)"
       />
       <div
-        v-if="!specialType"
+        v-if="!specialType && !previewSlideStore.isPreviewing"
         class="absolute inset-x-0 bottom-0 h-0.5 bg-primary scale-x-0 group-focus-within:scale-x-100 transition-transform"
       />
     </div>

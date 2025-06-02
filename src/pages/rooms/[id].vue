@@ -11,8 +11,10 @@
 import type { BodyUpdateRoom, Phong, Slide, UpdateSlide } from '@/types'
 import SlideEditor from '@/components/common/SlideEditor.vue'
 import { toast } from '@/components/ui/toast'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
 import { useAsyncState } from '@vueuse/core'
+
 import { computed, ref } from 'vue'
 
 const router = useRouter()
@@ -21,8 +23,11 @@ const route = useRoute()
 const isPanelVisible = ref(true)
 const slides = ref<Slide[]>()
 const selectedSlideId = ref<string>()
-
-const { state: roomDetail, isLoading, error, execute: fetchDetail } = useAsyncState<Phong>(() => {
+const previewSlideStore = usePreviewSlideStore()
+const currentSelectedIndex = computed(() => {
+  return slides.value?.findIndex(slide => slide.maTrang === selectedSlideId.value) ?? 0
+})
+const { state: roomDetail, isLoading, error } = useAsyncState<Phong>(() => {
   return (async () => {
     const response = await roomStore.getRoomDetail(route.params.id as string)
     slides.value = response.trangs
@@ -60,15 +65,11 @@ async function handleSave() {
   }
 
   await roomStore.updateRoom(roomDetail.value.maPhong, formatData)
-  await fetchDetail()
+  // await fetchDetail()
   toast({
     title: 'Cập nhật thành công',
     description: 'Phòng đã được cập nhật thành công.',
   })
-  isPanelVisible.value = false
-  setTimeout(() => {
-    isPanelVisible.value = true
-  }, 100)
 }
 function handleBack() {
   if (roomDetail.value?.maKenh) {
@@ -100,6 +101,7 @@ function handleBack() {
         class="navbar"
         @save="handleSave"
         @back="handleBack"
+        @preview="previewSlideStore.setPreviewSlide(slides as Slide[], currentSelectedIndex)"
       />
       <div class="body">
         <div class="slide-navigator">
@@ -124,6 +126,9 @@ function handleBack() {
       </div>
     </template>
   </div>
+  <Preview
+    v-if="previewSlideStore.isPreviewing"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -150,5 +155,5 @@ function handleBack() {
   }
   .main-content {
     @apply bg-card shadow-lg h-full w-[calc(100%-200px)] relative;
-  }  /* content-area styles moved to SlideEditor.vue */
+  }
 </style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defaultSlideData } from '@/constants/slide'
 import { useConfirmStore } from '@/stores/confirm'
-import { CachTrinhBay, LoaiSlide, type Slide } from '@/types'
+import { CachTrinhBay, LoaiCauTraLoi, LoaiSlide, type Slide } from '@/types'
 import { decode } from 'html-entities'
 import Draggable from 'vuedraggable'
 
@@ -28,7 +28,11 @@ function addQuestion() {
     tieuDe: 'Câu hỏi mới',
     hinhNen: defaultSlideData.hinhNen,
     thuTu: indexSelectedSlide + 1,
-    cachTrinhBay: CachTrinhBay.CO_BAN,
+    loaiCauTraLoi: LoaiCauTraLoi.TRUE_FALSE,
+    luaChon: Array.from({ length: 2 }, () => ({
+      noiDung: '',
+      ketQua: false,
+    })),
   }
   slides.value.splice(indexSelectedSlide + 1, 0, newSlide)
   selectedSlideId.value = newSlide.maTrang
@@ -110,7 +114,7 @@ function duplicateSlide(slide: Slide) {
                 <Icon name="IconTrash" class="w-4 h-4" />
               </Button>
             </div>
-            <div class="text-sm font-semibold text-gray-600">
+            <div class="text-sm font-semibold">
               {{ element.thuTu }}.
               {{ element.loaiTrang === LoaiSlide.NOI_DUNG ? 'Nội dung' : 'Câu hỏi' }}
             </div>
@@ -126,27 +130,31 @@ function duplicateSlide(slide: Slide) {
                 backdropFilter: 'blur(20px)',
               }"
             >
-              <div class="box-border">
-                <div class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.tieuDe)" />
-              </div>
-              <!-- Img -->
-              <div class="w-12 h-10 bg-slate-100/80 rounded-lg backdrop:blur-md mx-auto my-1 flex items-center justify-center">
-                <img
-                  v-if="element.hinhAnh"
-                  :src="element.hinhAnh"
-                  alt="Slide background"
-                  class="w-full h-full object-cover rounded-md"
-                >
-                <Icon
-                  v-else
-                  name="IconImageSkeleton"
-                  alt="Default slide image"
-                  class="w-8 h-8 object-cover rounded-md text-slate-600"
-                />
-              </div>
-              <!-- content -->
-              <div v-if="element.loaiTrang === LoaiSlide.NOI_DUNG" class="box-border">
-                <div class="text-xs font-medium text-black truncate bg-white py-0.5 px-1 rounded max-h-6 overflow-hidden text-center min-h-6" v-html="decode(element.noiDung)" />
+              <div
+                class="slide-content"
+              >
+                <div class="box-border">
+                  <div class="text-[13px] font-medium text-black truncate bg-white py-0.5 px-2 rounded max-h-6 overflow-hidden text-center" v-html="decode(element.tieuDe)" />
+                </div>
+                <!-- Img -->
+                <div class="w-12 h-10 rounded-lg backdrop:blur-md mx-auto my-1 flex items-center justify-center">
+                  <img
+                    v-if="element.hinhAnh"
+                    :src="element.hinhAnh"
+                    alt="Slide background"
+                    class="w-full h-full object-cover rounded-md"
+                  >
+                  <Icon
+                    v-else
+                    name="IconImageSkeleton"
+                    alt="Default slide image"
+                    class="w-8 h-8 object-cover rounded-md text-slate-600"
+                  />
+                </div>
+                <!-- content -->
+                <div v-if="element.loaiTrang === LoaiSlide.NOI_DUNG" class="box-border">
+                  <div class="text-xs font-medium text-black truncate bg-white py-0.5 px-1 rounded max-h-6 overflow-hidden text-center min-h-6" v-html="decode(element.noiDung)" />
+                </div>
               </div>
             </div>
           </div>
@@ -175,12 +183,15 @@ function duplicateSlide(slide: Slide) {
 
 <style scoped lang="scss">
 .card {
-  @apply p-2 pl-8 cursor-pointer bg-card relative;
+  @apply p-2 pl-8 cursor-pointer bg-card relative text-gray-600;
 
   .card-content {
-    @apply rounded-md p-2 border-2 bg-gray-200 dark:bg-gray-200/20 h-28 relative;
-    @apply before:absolute before:inset-0 before:bg-gray-800/60 before:rounded-md;
-
+    @apply rounded-md p-2 border-2 h-28 relative;
+    @apply before:absolute before:inset-0 before:bg-gray-800/50 before:rounded-md;
+    .slide-content {
+      @apply rounded-sm p-2 h-28 absolute inset-0;
+      @apply before:absolute before:inset-0 before:bg-gray-800/60 before:rounded-md;
+    }
   }
   .action {
     @apply absolute flex-col top-1/2 -translate-y-3 left-1 space-y-1 hidden;
@@ -193,12 +204,11 @@ function duplicateSlide(slide: Slide) {
       @apply flex;
     }
   }
-}
-.card-active {
-  @apply bg-accent/10;
-  .card-content {
-  @apply before:bg-gray-800/0;
-
+  &.card-active {
+    @apply bg-accent/25 text-foreground;
+    .slide-content {
+        @apply before:bg-gray-800/0;
+      }
   }
 }
 </style>

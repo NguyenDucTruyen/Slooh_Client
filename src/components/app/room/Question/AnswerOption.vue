@@ -4,6 +4,7 @@ import type { LuaChon } from '@/types'
 const props = defineProps<{
   index: number
   deletable?: boolean
+  isPreviewing?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'updateResult', value: LuaChon): void
@@ -34,7 +35,7 @@ watch(() => option.value.ketQua, (newValue) => {
 
     }"
   >
-    <div class="flex items-center justify-center font-bold text-2xl w-12 min-w-12 text-foreground/80 h-full bg-slate-100 rounded-s-md lg:rounded-s-lg">
+    <div class="flex items-center justify-center font-bold text-2xl w-12 min-w-12 text-slate-900 h-full bg-white rounded-s-md lg:rounded-s-lg">
       {{ LIST_OPTIONS[props.index] }}
     </div>
     <div class="flex-1 max-w-[calc(100%-96px)] h-full">
@@ -42,10 +43,14 @@ watch(() => option.value.ketQua, (newValue) => {
         v-model="option.noiDung"
         special-type="question"
         placeholder="Nhập nội dung câu trả lời..."
-        class="w-full bg-transparent border-none max-h-[140px] h-full text-xl"
+        class="w-full bg-transparent border-none h-full"
+        :class="[props.isPreviewing ? 'text-2xl max-h-[160px]' : 'text-xl max-h-[140px]']"
       />
     </div>
-    <div class="flex flex-col gap-2 items-center justify-center font-bold text-2xl w-12 min-w-12 text-foreground/80 h-full rounded-e-md lg:rounded-e-lg">
+    <div
+      v-if="!props.isPreviewing"
+      class="flex flex-col gap-2 items-center justify-center font-bold text-2xl w-12 min-w-12 text-foreground/80 h-full rounded-e-md lg:rounded-e-lg"
+    >
       <input
         v-model="option.ketQua"
         type="checkbox"
