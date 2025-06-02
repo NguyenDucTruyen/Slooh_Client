@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defaultSlideData } from '@/constants/slide'
 import { useConfirmStore } from '@/stores/confirm'
-import { CachTrinhBay, LoaiCauTraLoi, LoaiSlide, type Slide } from '@/types'
+import { CachTrinhBay, Diem, LoaiCauTraLoi, LoaiSlide, type Slide } from '@/types'
 import { decode } from 'html-entities'
 import Draggable from 'vuedraggable'
 
@@ -25,7 +25,7 @@ function addQuestion() {
     maTrang: `new-slide-${Math.random()}`,
     maPhong: '',
     loaiTrang: LoaiSlide.CAU_HOI,
-    tieuDe: 'Câu hỏi mới',
+    tieuDe: '',
     hinhNen: defaultSlideData.hinhNen,
     thuTu: indexSelectedSlide + 1,
     loaiCauTraLoi: LoaiCauTraLoi.TRUE_FALSE,
@@ -33,6 +33,8 @@ function addQuestion() {
       noiDung: '',
       ketQua: false,
     })),
+    thoiGianGioiHan: 5,
+    diem: Diem.BINH_THUONG,
   }
   slides.value.splice(indexSelectedSlide + 1, 0, newSlide)
   selectedSlideId.value = newSlide.maTrang
@@ -43,7 +45,7 @@ function addSlide() {
     maTrang: `new-slide-${Math.random()}`,
     maPhong: '',
     loaiTrang: LoaiSlide.NOI_DUNG,
-    tieuDe: 'Slide mới',
+    tieuDe: '',
     hinhNen: defaultSlideData.hinhNen,
     thuTu: indexSelectedSlide + 1,
     cachTrinhBay: CachTrinhBay.CO_BAN,

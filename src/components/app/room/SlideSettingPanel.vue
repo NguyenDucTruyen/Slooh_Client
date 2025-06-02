@@ -22,15 +22,14 @@ const listTimeOption = [
 function handleUpdateLoaiTrang(newValue: LoaiSlide) {
   slideModel.value.loaiTrang = newValue
   if (newValue === LoaiSlide.NOI_DUNG) {
-    slideModel.value.cachTrinhBay = CachTrinhBay.CO_BAN
-    slideModel.value.luaChon = undefined
+    slideModel.value.cachTrinhBay = slideModel.value.cachTrinhBay || CachTrinhBay.CO_BAN
   }
   else {
-    slideModel.value.thoiGianGioiHan = 5
-    slideModel.value.diem = Diem.BINH_THUONG
-    slideModel.value.loaiCauTraLoi = LoaiCauTraLoi.SINGLE_SELECT
-    slideModel.value.noiDung = ''
-    handleUpdateLoaiCauTraLoi(LoaiCauTraLoi.SINGLE_SELECT)
+    slideModel.value.thoiGianGioiHan = slideModel.value.thoiGianGioiHan || 10
+    slideModel.value.diem = slideModel.value.diem || Diem.BINH_THUONG
+    slideModel.value.loaiCauTraLoi = slideModel.value.loaiCauTraLoi || LoaiCauTraLoi.SINGLE_SELECT
+    slideModel.value.noiDung = slideModel.value.noiDung || ''
+    handleUpdateLoaiCauTraLoi(slideModel.value.loaiCauTraLoi)
   }
 }
 function handleUpdateLoaiCauTraLoi(newValue: LoaiCauTraLoi) {

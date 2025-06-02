@@ -8,11 +8,11 @@
 </route>
 
 <script setup lang="ts">
-import type { BodyUpdateRoom, Phong, Slide, UpdateSlide } from '@/types'
 import SlideEditor from '@/components/common/SlideEditor.vue'
 import { toast } from '@/components/ui/toast'
 import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
+import { type BodyUpdateRoom, CachTrinhBay, Diem, LoaiCauTraLoi, LoaiSlide, type Phong, type Slide, type UpdateSlide } from '@/types'
 import { useAsyncState } from '@vueuse/core'
 
 import { computed, ref } from 'vue'
@@ -60,7 +60,7 @@ async function handleSave() {
       thoiGianGioiHan: slide.thoiGianGioiHan,
       diem: slide.diem,
       loaiCauTraLoi: slide.loaiCauTraLoi,
-      danhSachLuaChon: slide.luaChon,
+      danhSachLuaChon: slide.loaiTrang === LoaiSlide.CAU_HOI ? slide.luaChon : undefined,
     })),
   }
 
