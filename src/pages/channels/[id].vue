@@ -149,7 +149,24 @@ async function deleteSelectedRoom() {
   })
   if (!result)
     return
-  console.log('Deleting channels:', selectedRoom.value)
+
+  try {
+    await Promise.all(selectedRoom.value.map(id => roomStore.deleteRoom(id)))
+    toast({
+      title: 'Thành công',
+      description: 'Xóa phòng thành công',
+    })
+    // Refresh room list after deletion
+    const response = await channelStore.getRoomsInChannel(maKenh, queryConfig.value)
+    rooms.value = response.rooms
+  }
+  catch {
+    toast({
+      title: 'Lỗi',
+      description: 'Có lỗi xảy ra khi xóa phòng',
+      variant: 'destructive',
+    })
+  }
 }
 function openCreateRoomModal() {
   isCreateRoomModalOpen.value = true
