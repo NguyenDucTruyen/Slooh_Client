@@ -23,39 +23,10 @@ const searchValue = ref('')
 const searchUserValue = ref('')
 const breadCrumbItems = ref<any[]>([])
 
-const roomsResponse = ref<PhongData[]>([
-  {
-    maPhong: 'P004',
-    tenPhong: 'Phòng họp 4',
-    maKenh,
-    maChuPhong: 'a5bd98da-6007-4d8a-b6bd-e3e175a66e3d',
-    trangThai: TrangThai.HOAT_DONG,
-    hoatDong: HoatDongPhong.OFFLINE,
-    ngayTao: '2023-01-01',
-    ngayXoa: '',
-    isSelected: false,
-  },
-])
+const roomsResponse = ref<PhongData[]>([])
 const membersResponse = ref<Partial<NguoiDungData>[]>([])
 
 const requestJoinMembers = ref<Partial<NguoiDungData>[]>([])
-
-const members = computed(() => {
-  if (!searchUserValue.value)
-    return membersResponse.value
-  return membersResponse.value.filter((member) => {
-    return member.hoTen?.toLowerCase().includes(searchUserValue.value.toLowerCase())
-  })
-})
-
-const rooms = computed(() => {
-  if (!searchValue.value)
-    return roomsResponse.value
-  return roomsResponse.value.filter((room) => {
-    return room.tenPhong?.toLowerCase().includes(searchValue.value.toLowerCase())
-  })
-})
-
 useAsyncState<Kenh>(() => {
   return (async () => {
     const response = await channelStore.getChannelDetail(maKenh)
@@ -97,6 +68,33 @@ useAsyncState<Kenh>(() => {
   onError: (error) => {
     Promise.reject(error)
   },
+})
+useAsyncState<PhongData[]>(() => {
+  return (async () => {
+    const response = await channelStore.getRoomsInChannel(maKenh, { page: 1, limit: 100 })
+    roomsResponse.value = response.rooms
+    return response
+  })()
+}, [], {
+  immediate: true,
+  onError: (error) => {
+    Promise.reject(error)
+  },
+})
+const members = computed(() => {
+  if (!searchUserValue.value)
+    return membersResponse.value
+  return membersResponse.value.filter((member) => {
+    return member.hoTen?.toLowerCase().includes(searchUserValue.value.toLowerCase())
+  })
+})
+
+const rooms = computed(() => {
+  if (!searchValue.value)
+    return roomsResponse.value
+  return roomsResponse.value.filter((room) => {
+    return room.tenPhong?.toLowerCase().includes(searchValue.value.toLowerCase())
+  })
 })
 
 async function leaveChannel() {
@@ -179,32 +177,34 @@ async function leaveChannel() {
       </TabsContent>
       <!-- Danh sách thành viên -->
       <TabsContent value="members">
-        <h4
-          class="text-lg font-semibold mt-4"
-        >
-          Danh sách thành viên ({{ membersResponse.length }})
-        </h4>
-        <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
-          <div class="flex justify-between">
-            <InputSearch
-              v-model="searchUserValue"
-              placeholder="Tìm kiếm thành viên"
-            />
-          </div>
-          <template
-            v-for="member in members"
-            :key="member.maNguoiDung"
+        <div class="max-w-5xl mx-auto p-4">
+          <h4
+            class="text-lg font-semibold mt-4"
           >
-            <MemberCard
-              v-model="member.isSelected"
-              :user="member"
-              type="member"
-            />
-          </template>
-          <span
-            v-if="!members.length"
-            class="text-md font-semibold mb-4 text-center text-muted-foreground"
-          >Không có kết quả</span>
+            Danh sách thành viên ({{ membersResponse.length }})
+          </h4>
+          <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
+            <div class="flex justify-between">
+              <InputSearch
+                v-model="searchUserValue"
+                placeholder="Tìm kiếm thành viên"
+              />
+            </div>
+            <template
+              v-for="member in members"
+              :key="member.maNguoiDung"
+            >
+              <MemberCard
+                v-model="member.isSelected"
+                :user="member"
+                type="member"
+              />
+            </template>
+            <span
+              v-if="!members.length"
+              class="text-md font-semibold mb-4 text-center text-muted-foreground"
+            >Không có kết quả</span>
+          </div>
         </div>
       </TabsContent>
     </Tabs>

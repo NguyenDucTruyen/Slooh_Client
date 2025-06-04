@@ -63,6 +63,11 @@ export const useChannelStore = defineStore('channel', () => {
     const res = await apiChannel.getChannelsRequestJoin(config)
     return res.data
   }
+  // Room management
+  async function getRoomsInChannel(id: string, config: any) {
+    const res = await apiChannel.getRoomsInChannel(id, config)
+    return res.data
+  }
   return {
     createChannel,
     getChannelList,
@@ -77,6 +82,7 @@ export const useChannelStore = defineStore('channel', () => {
     leaveChannel,
     sendRequestJoinChannel,
     cancelRequestJoinChannel,
-    getChannelsRequestJoin
+    getChannelsRequestJoin,
+    getRoomsInChannel
   }
 })

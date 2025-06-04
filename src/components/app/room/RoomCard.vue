@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/user'
 import { HoatDongPhong, type Phong } from '@/types'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface Props {
   item: Phong
+  isAuthor: boolean
 }
 
-const { item } = defineProps<Props>()
-const userStore = useUserStore()
+const { item, isAuthor } = defineProps<Props>()
 const id_selected = defineModel({
   type: Boolean,
 })
@@ -43,7 +42,7 @@ function formatDate(dateStr: string) {
   >
     <!-- <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" :disabled="item.hoatDong !== HoatDongPhong.OFFLINE" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer"> -->
     <CheckboxRoot
-      v-if="item.maChuPhong === userStore.user?.maNguoiDung" id=""
+      v-if="isAuthor"
       v-model="id_selected"
       :disabled="item.hoatDong !== HoatDongPhong.OFFLINE"
       :class="[item.hoatDong !== HoatDongPhong.OFFLINE ? 'cursor-not-allowed' : 'cursor-pointer']"
@@ -62,7 +61,7 @@ function formatDate(dateStr: string) {
         {{ item.tenPhong }}
       </h2>
       <span
-        class="text-xs font-medium px-2 py-0.5 rounded-full absolute top-16 left-2"
+        class="text-xs font-medium px-2 py-0.5 rounded-full absolute top-14 left-6"
         :class="badgeClass"
       >
         {{ item.hoatDong === HoatDongPhong.PRESENTING ? 'Đang trình chiếu' : item.hoatDong === HoatDongPhong.OFFLINE ? 'Offline' : 'Đang Chờ' }}
@@ -70,13 +69,15 @@ function formatDate(dateStr: string) {
     </div>
 
     <!-- Body -->
-    <img v-lazy="`https://ui-avatars.com/api/?name=${item.tenPhong}&background=random&size=300&bold=true`" alt="" class="w-full h-40 mb-2 object-cover">
+    <div class="pt-2">
+      <Icon name="IconTable" class="w-full h-40 mb-2 object-cover text-primary/90" />
+    </div>
     <!-- Footer -->
     <div class="text-muted-foreground text-sm space-y-2 pb-6 px-6">
       <p>
         Ngày tạo: {{ formatDate(item.ngayTao) }}
       </p>
-      <div v-if="item.maChuPhong === userStore.user?.maNguoiDung" class="grid grid-cols-2 gap-4">
+      <div v-if="isAuthor" class="grid grid-cols-2 gap-4">
         <RouterLink
           :to="`/rooms/${item.maPhong}`"
         >

@@ -59,3 +59,10 @@ export function getChannelsRequestJoin(config: any) {
     params: config,
   })
 }
+
+// List rooms in channel
+export function getRoomsInChannel(id: string, config: any) {
+  return $get(`/phong/kenh/${id}`, {
+    params: config,
+  })
+}
