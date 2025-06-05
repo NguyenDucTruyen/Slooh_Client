@@ -236,24 +236,11 @@ async function handleAddUser(ids: string[]) {
 </script>
 
 <template>
-  <div class="flex flex-col items-center">
-    <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
-      <div class="flex items-center justify-center">
-        <RouterLink
-          :to="{ name: 'channels' }"
-          class="flex items-center gap-2"
-        >
-          <Button
-            variant="link"
-            class="gap-0"
-          >
-            <Icon name="IconChevronLeft" class="w-4 h-4" />
-            Quay lại
-          </Button>
-        </RouterLink>
-      </div>
-    </div>
-    <Tabs :default-value="route.query.tab || 'list'" class="mt-6 w-full">
+  <PageContainer
+    title="Chi tiết kênh" description="Danh sách các phòng và thành viên trong kênh"
+    back-to="/channels"
+  >
+    <Tabs :default-value="route.query.tab || 'list'">
       <TabsList>
         <TabsTrigger value="list" @click="router.replace({ query: { tab: TAB_LIST.LIST } })">
           <Icon name="IconList" class="w-6 h-6" />
@@ -271,7 +258,7 @@ async function handleAddUser(ids: string[]) {
         >
           <template v-if="isLoading">
             <div
-              class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+              class="w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 mt-20"
             >
               <Skeleton
                 v-for="n in 4"
@@ -302,7 +289,8 @@ async function handleAddUser(ids: string[]) {
         />
       </TabsContent>
     </Tabs>
-  </div>
+  </PageContainer>
+  <div class="flex flex-col items-center" />
   <CreateRoomModal
     v-model:open="isCreateRoomModalOpen"
     @create="handleCreateRoom"

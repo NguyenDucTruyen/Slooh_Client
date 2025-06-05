@@ -24,7 +24,7 @@ const props = defineProps({
 })
 const userStore = useUserStore()
 const route = useRoute()
-const isActive = computed(() => props.url === route.path || (props.url !== '/' && route.path.startsWith(props.url)))
+const isActive = computed(() => props.url.toLowerCase() === route.path.toLowerCase() || (props.url.toLowerCase() !== '/' && route.path.toLowerCase().startsWith(props.url.toLowerCase())))
 const component = computed(() => {
   if (userStore.isAuthenticated)
     return props.type

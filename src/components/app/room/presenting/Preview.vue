@@ -103,20 +103,12 @@ onUnmounted(() => {
       <Button
         variant="outline"
         class="rounded-sm"
-        :title="isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'"
-        @click="requestFullscreen"
+        title="Thoát xem trước"
+        @click="exitPreview"
       >
-        <Icon
-          v-if="isFullscreen"
-          name="IconZoomIn" class="w-6 h-6"
-        />
-
-        <Icon
-          v-else
-          name="IconZoomOut" class="w-6 h-6"
-        />
+        Thoát
       </Button>
-      <Separator orientation="vertical" class="bg-slate-400 h-8 w-[2px] rounded-md" />
+      <Separator orientation="vertical" class="bg-slate-400 h-8 rounded-md" />
       <div class="flex gap-1 items-center text-xl font-semibold text-slate-700">
         <Button
           variant="outline"
@@ -135,14 +127,22 @@ onUnmounted(() => {
           <Icon name="IconChevronRight" class="w-5 h-5" />
         </Button>
       </div>
-      <Separator orientation="vertical" class="bg-slate-400 h-8 w-[2px] rounded-md" />
+      <Separator orientation="vertical" class="bg-slate-400 h-8 rounded-md" />
       <Button
         variant="outline"
         class="rounded-sm"
-        title="Thoát xem trước"
-        @click="exitPreview"
+        :title="isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'"
+        @click="requestFullscreen"
       >
-        <Icon name="IconExit" class="w-6 h-6" />
+        <Icon
+          v-if="isFullscreen"
+          name="IconZoomIn" class="w-6 h-6"
+        />
+
+        <Icon
+          v-else
+          name="IconZoomOut" class="w-6 h-6"
+        />
       </Button>
     </div>
   </div>
