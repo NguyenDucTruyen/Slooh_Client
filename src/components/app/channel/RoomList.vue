@@ -72,7 +72,7 @@ async function deleteSelectedRoom() {
         </Button>
       </div>
     </div>
-    <div class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4">
+    <div class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
       <RoomCard
         v-for="room in props.rooms"
         :key="room.maPhong"

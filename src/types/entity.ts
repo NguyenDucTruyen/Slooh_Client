@@ -126,6 +126,7 @@ export interface Phong {
   hoatDong: HoatDongPhong
   ngayTao: string
   ngayXoa?: string
+  _count?: { trangs: number }
   trangs?: Slide[]
 }
 

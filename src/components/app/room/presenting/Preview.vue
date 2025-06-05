@@ -60,7 +60,13 @@ function resetNavigationTimeout() {
     showNavigation.value = false
   }, 3000)
 }
-
+function exitPreview() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen()
+    isFullscreen.value = false
+  }
+  previewSlideStore.clearPreviewSlide()
+}
 function handleMouseMove() {
   if (!showNavigation.value || isMouseOverNavigation.value)
     return
@@ -97,9 +103,18 @@ onUnmounted(() => {
       <Button
         variant="outline"
         class="rounded-sm"
+        :title="isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'"
         @click="requestFullscreen"
       >
-        {{ isFullscreen ? 'Exit' : 'View' }} Fullscreen
+        <Icon
+          v-if="isFullscreen"
+          name="IconZoomIn" class="w-6 h-6"
+        />
+
+        <Icon
+          v-else
+          name="IconZoomOut" class="w-6 h-6"
+        />
       </Button>
       <Separator orientation="vertical" class="bg-slate-400 h-8 w-[2px] rounded-md" />
       <div class="flex gap-1 items-center text-xl font-semibold text-slate-700">
@@ -124,9 +139,10 @@ onUnmounted(() => {
       <Button
         variant="outline"
         class="rounded-sm"
-        @click="previewSlideStore.clearPreviewSlide"
+        title="Thoát xem trước"
+        @click="exitPreview"
       >
-        Exit Preview
+        <Icon name="IconExit" class="w-6 h-6" />
       </Button>
     </div>
   </div>

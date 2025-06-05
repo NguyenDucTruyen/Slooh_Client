@@ -10,7 +10,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="w-full flex items-center justify-between mb-6">
+  <div class="w-full flex items-center justify-between mb-4">
     <InputSearch
       :model-value="modelValue"
       :placeholder="placeholder"

@@ -274,9 +274,9 @@ async function handleAddUser(ids: string[]) {
               class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
             >
               <Skeleton
-                v-for="n in 10"
+                v-for="n in 4"
                 :key="`skeleton-${n}`"
-                class="h-[140px]"
+                class="h-[330px]"
               />
             </div>
           </template>
