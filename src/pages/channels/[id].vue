@@ -236,8 +236,7 @@ async function handleAddUser(ids: string[]) {
 </script>
 
 <template>
-  <BreadCrumbs :items="breadCrumbItems" />
-  <div class="flex flex-col items-center h-screen">
+  <div class="flex flex-col items-center">
     <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
       <div class="flex items-center justify-center">
         <RouterLink
@@ -266,19 +265,29 @@ async function handleAddUser(ids: string[]) {
         </TabsTrigger>
       </TabsList>      <!-- Danh sách room -->
       <TabsContent value="list">
-        <div
-          v-if="isLoading"
-          class="flex items-center justify-center h-full w-full"
+        <TransitionGroup
+          name="list"
+          tag="div"
         >
-          <Loader2 class="w-6 h-6 animate-spin text-gray-500" />
-        </div>
-        <RoomList
-          v-else
-          :rooms="filterdRooms"
-          @create="openCreateRoomModal"
-          @delete="deleteSelectedRoom"
-          @search="handleSearch"
-        />
+          <template v-if="isLoading">
+            <div
+              class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+            >
+              <Skeleton
+                v-for="n in 10"
+                :key="`skeleton-${n}`"
+                class="h-[140px]"
+              />
+            </div>
+          </template>
+          <RoomList
+            v-else
+            :rooms="filterdRooms"
+            @create="openCreateRoomModal"
+            @delete="deleteSelectedRoom"
+            @search="handleSearch"
+          />
+        </TransitionGroup>
       </TabsContent>
       <!-- Danh sách thành viên -->
       <TabsContent value="members">

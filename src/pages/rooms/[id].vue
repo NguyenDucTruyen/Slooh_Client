@@ -148,7 +148,7 @@ function handleBack() {
   .body {
     @apply flex;
     grid-area: body;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 90px);
   }
   .slide-navigator {
     @apply bg-card shadow-lg h-full overflow-y-auto w-[200px] relative;

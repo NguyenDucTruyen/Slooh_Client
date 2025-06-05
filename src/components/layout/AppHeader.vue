@@ -23,7 +23,7 @@ const listHeaders = ref([
     id: 2,
     icon: 'IconPublic',
     iconActive: 'IconPublicActive',
-    title: 'Kênh công khai',
+    title: 'Phòng công khai',
     url: '/publicRoom',
   },
   {

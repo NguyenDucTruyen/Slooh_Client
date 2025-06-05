@@ -24,16 +24,6 @@ const badgeClass = computed(() => {
       return 'bg-border text-foreground'
   }
 })
-
-// Format ngày
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-}
 </script>
 
 <template>
@@ -46,22 +36,25 @@ function formatDate(dateStr: string) {
       v-model="id_selected"
       :disabled="item.hoatDong !== HoatDongPhong.OFFLINE"
       :class="[item.hoatDong !== HoatDongPhong.OFFLINE ? 'cursor-not-allowed' : 'cursor-pointer']"
-      class="absolute top-2 right-2 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
+      class="absolute top-0 left-0 hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
     >
       <CheckboxIndicator class="h-full w-full rounded flex items-center justify-center">
         <Icon
           name="IconCheck"
-          class="h-4 w-4 text-grass11"
+          class="h-4 w-4"
         />
       </CheckboxIndicator>
     </CheckboxRoot>
+    <button variant="link" class="absolute top-1 right-6 z-10 px-1 ">
+      <Icon name="IconEllipsis" class="w-4 h-4" />
+    </button>
     <!-- Header -->
     <div class="flex items-center justify-between mb-2 pt-6 px-6">
       <h2 class="title">
         {{ item.tenPhong }}
       </h2>
       <span
-        class="text-xs font-medium px-2 py-0.5 rounded-full absolute top-14 left-6"
+        class="text-xs font-medium px-2 py-0.5 rounded-full top-14 left-6"
         :class="badgeClass"
       >
         {{ item.hoatDong === HoatDongPhong.PRESENTING ? 'Đang trình chiếu' : item.hoatDong === HoatDongPhong.OFFLINE ? 'Offline' : 'Đang Chờ' }}
@@ -75,7 +68,9 @@ function formatDate(dateStr: string) {
     <!-- Footer -->
     <div class="text-muted-foreground text-sm space-y-2 pb-6 px-6">
       <p>
-        Ngày tạo: {{ formatDate(item.ngayTao) }}
+        <Button variant="link" class="text-primary font-semibold">
+          Nhân bản
+        </Button>
       </p>
       <div v-if="isAuthor" class="grid grid-cols-2 gap-4">
         <RouterLink

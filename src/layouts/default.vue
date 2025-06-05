@@ -28,7 +28,7 @@
     @apply bg-card rounded-lg shadow-lg;
     grid-area: main-content;
     overflow-y: auto;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 90px);
   }
 
   .default-layout {

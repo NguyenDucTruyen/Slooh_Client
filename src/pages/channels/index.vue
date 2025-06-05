@@ -28,12 +28,7 @@ const channelStore = useChannelStore()
 const isCreateChannelModalOpen = ref(false)
 const editingChannel = ref<Kenh | null>(null)
 const searchChannelValue = ref('')
-const breadCrumbItems = [
-  {
-    text: 'Kênh của tôi',
-    disabled: true,
-  },
-]
+
 const channelsResponse = ref<KenhData[]>([])
 const channelQuery = ref({
   page: 1,
@@ -130,10 +125,7 @@ watch(() => channelQuery.value.page, () => {
 </script>
 
 <template>
-  <BreadCrumbs
-    :items="breadCrumbItems"
-  />
-  <div class="flex flex-col items-center h-screen">
+  <div class="flex flex-col items-center flex-1">
     <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
       <div class="hidden sm:flex flex-col items-center justify-center">
         <h1 class="text-2xl text-center font-bold mb-1">
@@ -161,20 +153,44 @@ watch(() => channelQuery.value.page, () => {
         </Button>
       </div>
     </div>
-    <div class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4">
-      <ChannelCard
-        v-for="channel in channels"
-        v-model="channel.isSelected"
-        :key="channel.maKenh"
-        :item="channel"
-        :is-owner="true"
-        @edit="openUpdateChannelModal"
-      />
+    <div class="flex flex-col flex-1 w-full">
+      <TransitionGroup
+        name="list"
+        tag="div"
+        class="flex justify-center flex-col"
+      >
+        <template v-if="isFetchingChannels">
+          <div
+            class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+          >
+            <Skeleton
+              v-for="n in 5"
+              :key="`skeleton-${n}`"
+              class="h-[333px]"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <span
+            v-if="!channels.length"
+            class="text-md font-semibold mb-4 w-full text-center text-muted-foreground mt-4"
+          >Không có kết quả</span>
+          <div
+            v-else
+            class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+          >
+            <ChannelCard
+              v-for="channel in channels"
+              :key="channel.maKenh"
+              v-model="channel.isSelected"
+              :item="channel"
+              :is-owner="true"
+              @edit="openUpdateChannelModal"
+            />
+          </div>
+        </template>
+      </TransitionGroup>
     </div>
-    <span
-      v-if="!channels.length"
-      class="text-md font-semibold mb-4 w-full text-center text-muted-foreground"
-    >Không có kết quả</span>
 
     <template
       v-if="!isFetchingChannels && channels.length"
@@ -207,7 +223,6 @@ watch(() => channelQuery.value.page, () => {
         </PaginationList>
       </Pagination>
     </template>
-    
   </div>
 
   <CreateOrUpdateChannelModal

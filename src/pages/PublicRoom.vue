@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Phong } from '@/types'
+import SearchHeader from '@/components/common/SearchHeader.vue'
+import PageContainer from '@/components/layout/PageContainer.vue'
 import { toast } from '@/components/ui/toast'
 import { useConfirmStore } from '@/stores/confirm'
 import { useRoomStore } from '@/stores/room'
@@ -12,6 +14,7 @@ interface PhongData extends Phong {
 
 const router = useRouter()
 const roomStore = useRoomStore()
+const confirmStore = useConfirmStore()
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
 
@@ -68,8 +71,6 @@ async function handleCreateRoom(name: string) {
   }
 }
 
-const confirmStore = useConfirmStore()
-
 async function deleteSelectedRoom() {
   if (selectedRoom.value.length === 0)
     return
@@ -83,6 +84,7 @@ async function deleteSelectedRoom() {
 
   if (!result)
     return
+
   try {
     await Promise.all(selectedRoom.value.map(id => roomStore.deleteRoom(id)))
     toast({
@@ -103,51 +105,49 @@ async function deleteSelectedRoom() {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen">
-    <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
-      <div class="flex items-center">
-        <h1 class="text-2xl font-semibold">
-          Phòng công khai
-        </h1>
-      </div>
-    </div>
-
-    <div class="mt-6 p-6 bg-card rounded-lg shadow-lg mx-2">
-      <div class="w-full flex items-center justify-between mb-6">
-        <InputSearch
-          v-model="searchValue"
-          placeholder="Tìm kiếm phòng trình chiếu"
-          @update:model-value="handleSearch"
+  <PageContainer title="Phòng công khai" description="Danh sách các phòng trình chiếu công khai bạn đã tạo">
+    <SearchHeader
+      v-model="searchValue"
+      placeholder="Tìm kiếm phòng trình chiếu"
+      @search="handleSearch"
+    >
+      <Button
+        type="button"
+        variant="destructive"
+        :disabled="selectedRoom.length === 0"
+        @click="deleteSelectedRoom"
+      >
+        <Icon
+          name="IconTrash"
+          class="h-4 w-4 mr-2"
         />
-        <div class="flex gap-4">
-          <Button
-            type="button"
-            variant="destructive"
-            :disabled="selectedRoom.length === 0"
-            @click="deleteSelectedRoom"
-          >
-            Xóa
-          </Button>
-          <Button
-            type="button"
-            @click="openCreateRoomModal"
-          >
-            <Icon name="IconPlus" class="w-6 h-6" />
-            <span>Tạo phòng trình chiếu</span>
-          </Button>
-        </div>
-      </div>
+        Xóa {{ selectedRoom.length }} phòng
+      </Button>
+      <Button
+        type="button"
+        @click="openCreateRoomModal"
+      >
+        <Icon
+          name="IconPlus"
+          class="h-4 w-4 mr-2"
+        />
+        Tạo phòng trình chiếu
+      </Button>
+    </SearchHeader>
 
-      <div
-        v-if="isLoading"
-        class="flex items-center justify-center h-40"
-      >
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-      <div
-        v-else
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4"
-      >
+    <TransitionGroup
+      name="list"
+      tag="div"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4"
+    >
+      <template v-if="isLoading">
+        <Skeleton
+          v-for="n in 5"
+          :key="`skeleton-${n}`"
+          class="h-[325px]"
+        />
+      </template>
+      <template v-else>
         <RoomCard
           v-for="room in filteredRooms"
           :key="room.maPhong"
@@ -161,9 +161,9 @@ async function deleteSelectedRoom() {
         >
           Không có kết quả
         </div>
-      </div>
-    </div>
-  </div>
+      </template>
+    </TransitionGroup>
+  </PageContainer>
 
   <CreateRoomModal
     v-model:open="isCreateRoomModalOpen"

@@ -114,7 +114,7 @@ async function leaveChannel() {
 
 <template>
   <BreadCrumbs :items="breadCrumbItems" />
-  <div class="flex flex-col items-center h-screen">
+  <div class="flex flex-col items-center">
     <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
       <div class="flex items-center justify-between w-full gap-4">
         <RouterLink
