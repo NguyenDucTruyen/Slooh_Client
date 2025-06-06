@@ -1,4 +1,4 @@
- <route>
+<route>
   {
       meta: {
         title: "Kênh đã tham gia",
@@ -8,6 +8,7 @@
 </route>
 
 <script setup lang="ts">
+import PageContainer from '@/components/layout/PageContainer.vue'
 import {
   Pagination,
   PaginationEllipsis,
@@ -21,7 +22,6 @@ import {
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { HoatDongPhong, type Kenh, TrangThai, TrangThaiThanhVien, VaiTroKenh } from '@/types'
-
 import { useAsyncState, watchDebounced } from '@vueuse/core'
 
 interface KenhData extends Kenh {
@@ -100,40 +100,34 @@ watch(() => channelQuery.value.page, () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center h-full">
-    <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
-      <div class="hidden sm:flex flex-col items-center justify-center">
-        <h1 class="text-2xl text-center font-bold mb-1">
-          Kênh đã tham gia
-        </h1>
-        <p class="text-lg text-center text-foreground">
-          Bạn có thể tham gia các kênh khác bằng cách nhấn vào nút bên cạnh
-        </p>
-      </div>
-      <div class="flex gap-4">
-        <Button
-          type="button"
-          @click="openCreateChannelModal"
-        >
-          <Icon name="IconPlus" class="w-6 h-6" />
-          <span>Gửi yêu cầu tham gia</span>
-        </Button>
-      </div>
-    </div>
-    <Tabs default-value="list" class="mt-6 w-full flex-1">
-      <TabsList>
-        <TabsTrigger value="list">
-          <Icon name="IconList" class="w-6 h-6" />
-          Đã tham gia
-        </TabsTrigger>
-        <TabsTrigger value="list-request">
-          <Icon name="IconListUser" class="w-6 h-6" />
-          Đã gửi yêu cầu
-        </TabsTrigger>
-      </TabsList>
-      <!-- Danh sách room -->
-      <TabsContent value="list">
-        <div class="flex flex-col flex-1 w-full">
+  <PageContainer
+    title="Kênh đã tham gia"
+    description="Bạn có thể tham gia các kênh khác bằng cách gửi yêu cầu tham gia"
+  >
+    <template #header-actions>
+      <Button
+        type="button"
+        @click="openCreateChannelModal"
+      >
+        <Icon name="IconPlus" class="w-6 h-6" />
+        <span>Gửi yêu cầu tham gia</span>
+      </Button>
+    </template>
+
+    <div class="flex flex-col items-center flex-1 h-full">
+      <Tabs default-value="list" class="w-full flex-1">
+        <TabsList>
+          <TabsTrigger value="list">
+            <Icon name="IconList" class="w-6 h-6" />
+            Đã tham gia
+          </TabsTrigger>
+          <TabsTrigger value="list-request">
+            <Icon name="IconListUser" class="w-6 h-6" />
+            Đã gửi yêu cầu
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="list" class="flex flex-col flex-1">
           <TransitionGroup
             name="list"
             tag="div"
@@ -159,7 +153,7 @@ watch(() => channelQuery.value.page, () => {
               </span>
               <div
                 v-else
-               class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
               >
                 <ChannelCard
                   v-for="channel in channels"
@@ -170,89 +164,83 @@ watch(() => channelQuery.value.page, () => {
               </div>
             </template>
           </TransitionGroup>
-        </div>
-        <template
-          v-if="!isFetchingChannels && channels.length"
-        >
-          <Pagination
-            v-slot="{ page }"
-            v-model:page="channelQuery.page"
-            :items-per-page="channelQuery.limit"
-            :total="channelResponseData.total"
-            :sibling-count="1"
-            :default-page="channelQuery.page"
-            show-edges
-            class="mt-4 pb-10"
-          >
-            <PaginationList v-slot="{ items }" class="flex items-center gap-1 justify-center">
-              <PaginationFirst />
-              <PaginationPrev />
 
-              <template v-for="(item, index) in items">
-                <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                  <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
-                    {{ item.value }}
-                  </Button>
-                </PaginationListItem>
-                <PaginationEllipsis v-else :key="item.type" :index="index" />
-              </template>
+          <template v-if="!isFetchingChannels && channels.length">
+            <Pagination
+              v-slot="{ page }"
+              v-model:page="channelQuery.page"
+              :items-per-page="channelQuery.limit"
+              :total="channelResponseData.total"
+              :sibling-count="1"
+              :default-page="channelQuery.page"
+              show-edges
+              class="mt-6 pb-8"
+            >
+              <PaginationList v-slot="{ items }" class="flex items-center gap-1 justify-center">
+                <PaginationFirst />
+                <PaginationPrev />
 
-              <PaginationNext />
-              <PaginationLast />
-            </PaginationList>
-          </Pagination>
-        </template>
-      </TabsContent>
-      <TabsContent value="list-request">
-        <div class="max-w-2xl mx-auto flex flex-col items-center p-4 rounded-md bg-card shadow-lg mt-4">
-          <span
-            v-if="!isFetchingChannelRequestJoin && !channelsRequestJoin.channels.length"
-            class="text-md font-semibold mb-4 w-full text-center text-muted-foreground"
-          >
-            Không có kết quả
-          </span>
-          <template
-            v-else-if="!isFetchingChannelRequestJoin && channelsRequestJoin.channels"
-          >
-            <div class="w-full grid grid-cols-4 border-b border-border">
-              <span
-                class="text-lg font-semibold mb-4 w-full pl-4 text-muted-foreground col-span-3"
-              >
-                Tên kênh
-              </span>
-              <span
-                class="text-lg font-semibold mb-4 w-full text-center text-muted-foreground col-span-1"
-              >
-                Hành động
-              </span>
-            </div>
-            <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
-              <div
-                v-for="channel in channelsRequestJoin.channels"
-                :key="channel.maKenh"
-                class="w-full grid grid-cols-4 rounded-md hover:bg-secondary hover:text-secondary-foreground transition-colors duration-300"
-              >
-                <span
-                  class="col-span-3 flex items-center gap-4 p-4 text-lg font-semibold w-full text-center text-muted-foreground"
-                >
-                  {{ channel.tenKenh }}
+                <template v-for="(item, index) in items">
+                  <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                    <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                      {{ item.value }}
+                    </Button>
+                  </PaginationListItem>
+                  <PaginationEllipsis v-else :key="item.type" :index="index" />
+                </template>
+
+                <PaginationNext />
+                <PaginationLast />
+              </PaginationList>
+            </Pagination>
+          </template>
+        </TabsContent>
+
+        <TabsContent value="list-request" class="max-w-2xl mx-auto">
+          <div class="flex flex-col items-center p-4 rounded-md bg-card shadow-lg mt-4">
+            <span
+              v-if="!isFetchingChannelRequestJoin && !channelsRequestJoin.channels.length"
+              class="text-md font-semibold mb-4 w-full text-center text-muted-foreground"
+            >
+              Không có kết quả
+            </span>
+            <template
+              v-else-if="!isFetchingChannelRequestJoin && channelsRequestJoin.channels"
+            >
+              <div class="w-full grid grid-cols-4 border-b border-border">
+                <span class="text-lg font-semibold mb-4 w-full pl-4 text-muted-foreground col-span-3">
+                  Tên kênh
                 </span>
-                <div class="flex items-center justify-center">
-                  <Button
-                    variant="outline"
-                    class="col-span-1"
-                    @click="handleCancelRequest(channel.maKenh)"
-                  >
-                    Hủy yêu cầu
-                  </Button>
+                <span class="text-lg font-semibold mb-4 w-full text-center text-muted-foreground">
+                  Hành động
+                </span>
+              </div>
+              <div class="mt-2 w-full grid grid-cols-1 gap-4">
+                <div
+                  v-for="channel in channelsRequestJoin.channels"
+                  :key="channel.maKenh"
+                  class="w-full grid grid-cols-4 rounded-md hover:bg-secondary hover:text-secondary-foreground transition-colors duration-300"
+                >
+                  <span class="col-span-3 flex items-center gap-4 p-4 text-lg font-semibold">
+                    {{ channel.tenKenh }}
+                  </span>
+                  <div class="flex items-center justify-center">
+                    <Button
+                      variant="outline"
+                      @click="handleCancelRequest(channel.maKenh)"
+                    >
+                      Hủy yêu cầu
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </template>
-        </div>
-      </TabsContent>
-    </Tabs>
-  </div>
+            </template>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  </PageContainer>
+
   <JoinChannelModal
     v-model:open="isJoinChannelModalOpen"
     @create="handleRequestJoinChannel"

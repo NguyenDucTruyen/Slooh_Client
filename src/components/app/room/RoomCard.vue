@@ -128,7 +128,9 @@ async function handleNavigateToPreview() {
         {{ item.tenPhong }}
       </h2>
 
-      <Popover>
+      <Popover
+        v-if="isAuthor"
+      >
         <PopoverTrigger>
           <button class="px-1 hover:bg-gray-200 rounded-sm">
             <Icon name="IconList" class="w-6 h-6" />

@@ -113,100 +113,89 @@ async function leaveChannel() {
 </script>
 
 <template>
-  <BreadCrumbs :items="breadCrumbItems" />
-  <div class="flex flex-col items-center">
-    <div class="mx-2 flex items-center justify-between w-full bg-card rounded-lg shadow-lg p-6 gap-4">
-      <div class="flex items-center justify-between w-full gap-4">
-        <RouterLink
-          :to="{ name: 'JoinedChannels' }"
-          class="flex items-center gap-2"
+  <PageContainer
+    title="Chi tiết kênh" description="Danh sách các phòng và thành viên trong kênh"
+    back-to="/joinedChannels"
+  >
+    <template #header-actions>
+      <div class="flex gap-4">
+        <Button
+          type="button"
+          variant="destructive"
+          @click="leaveChannel"
         >
-          <Button
-            variant="link"
-            class="gap-0"
-          >
-            <Icon name="IconChevronLeft" class="w-4 h-4" />
-            Quay lại
-          </Button>
-        </RouterLink>
-
-        <div class="flex gap-4">
-          <Button
-            type="button"
-            variant="destructive"
-            @click="leaveChannel"
-          >
-            Rời khỏi kênh
-          </Button>
-        </div>
+          Rời khỏi kênh
+        </Button>
       </div>
-    </div>
-    <Tabs default-value="list" class="mt-6 w-full">
-      <TabsList>
-        <TabsTrigger value="list">
-          <Icon name="IconList" class="w-6 h-6" />
-          Danh sách phòng
-        </TabsTrigger>
-        <TabsTrigger value="members">
-          <Icon name="IconListUser" class="w-6 h-6" />
-          Thành viên
-        </TabsTrigger>
-      </TabsList>
-      <!-- Danh sách room -->
-      <TabsContent value="list">
-        <div class="w-full flex items-center justify-between">
-          <InputSearch
-            v-model="searchValue"
-            placeholder="Tìm kiếm phòng trình chiếu"
-          />
-        </div>
-        <div class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-          <RoomCard
-            v-for="room in rooms"
-            :key="room.maPhong"
-            v-model="room.isSelected"
-            :item="room"
-          />
-        </div>
-        <div
-          v-if="!rooms.length"
-          class="text-md font-semibold mb-4 w-full text-center text-muted-foreground mx-auto"
-        >
-          Không có kết quả
-        </div>
-      </TabsContent>
-      <!-- Danh sách thành viên -->
-      <TabsContent value="members">
-        <div class="max-w-5xl mx-auto p-4">
-          <h4
-            class="text-lg font-semibold mt-4"
-          >
-            Danh sách thành viên ({{ membersResponse.length }})
-          </h4>
-          <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
-            <div class="flex justify-between">
-              <InputSearch
-                v-model="searchUserValue"
-                placeholder="Tìm kiếm thành viên"
-              />
-            </div>
-            <template
-              v-for="member in members"
-              :key="member.maNguoiDung"
-            >
-              <MemberCard
-                v-model="member.isSelected"
-                :user="member"
-                type="member"
-              />
-            </template>
-            <span
-              v-if="!members.length"
-              class="text-md font-semibold mb-4 text-center text-muted-foreground"
-            >Không có kết quả</span>
+    </template>
+    <div class="flex flex-col items-center">
+      <Tabs default-value="list" class="mt-6 w-full">
+        <TabsList>
+          <TabsTrigger value="list">
+            <Icon name="IconList" class="w-6 h-6" />
+            Danh sách phòng
+          </TabsTrigger>
+          <TabsTrigger value="members">
+            <Icon name="IconListUser" class="w-6 h-6" />
+            Thành viên
+          </TabsTrigger>
+        </TabsList>
+        <!-- Danh sách room -->
+        <TabsContent value="list">
+          <div class="w-full flex items-center justify-between">
+            <InputSearch
+              v-model="searchValue"
+              placeholder="Tìm kiếm phòng trình chiếu"
+            />
           </div>
-        </div>
-      </TabsContent>
-    </Tabs>
-  </div>
+          <div class="mt-4 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <RoomCard
+              v-for="room in rooms"
+              :key="room.maPhong"
+              v-model="room.isSelected"
+              :item="room"
+            />
+          </div>
+          <div
+            v-if="!rooms.length"
+            class="text-md font-semibold mb-4 w-full text-center text-muted-foreground mx-auto"
+          >
+            Không có kết quả
+          </div>
+        </TabsContent>
+        <!-- Danh sách thành viên -->
+        <TabsContent value="members">
+          <div class="max-w-5xl mx-auto p-4">
+            <h4
+              class="text-lg font-semibold mt-4"
+            >
+              Danh sách thành viên ({{ membersResponse.length }})
+            </h4>
+            <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
+              <div class="flex justify-between">
+                <InputSearch
+                  v-model="searchUserValue"
+                  placeholder="Tìm kiếm thành viên"
+                />
+              </div>
+              <template
+                v-for="member in members"
+                :key="member.maNguoiDung"
+              >
+                <MemberCard
+                  v-model="member.isSelected"
+                  :user="member"
+                  type="member"
+                />
+              </template>
+              <span
+                v-if="!members.length"
+                class="text-md font-semibold mb-4 text-center text-muted-foreground"
+              >Không có kết quả</span>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  </PageContainer>
 </template>
