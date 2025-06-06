@@ -22,6 +22,7 @@ export async function middlewareLayout(to: RouteLocationNormalized, from: RouteL
   }
 
   if (!isAuthenticated && to.meta.authorized) {
+    console.warn('Unauthorized access attempt to:', to.fullPath)
     next('/')
   }
 

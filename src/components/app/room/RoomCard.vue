@@ -70,8 +70,6 @@ async function handleNavigateToPreview() {
   <div
     class="rounded-lg border border-border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow duration-300 relative"
   >
-    <!-- <input v-if="item.maChuPhong === userStore.user?.maNguoiDung" id="" v-model="id_selected" :disabled="item.hoatDong !== HoatDongPhong.OFFLINE" type="checkbox" name="" class="absolute top-2 right-2 w-4 h-4 cursor-pointer"> -->
-
     <div class="flex justify-between p-2 items-center">
       <div
         class="flex items-center gap-2 flex-1 text-base font-medium"

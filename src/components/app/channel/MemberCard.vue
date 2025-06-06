@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { useConfirmStore } from '@/stores/confirm'
 import { type Kenh, type NguoiDung, TrangThai } from '@/types'
+
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface NguoiDungData extends NguoiDung {
@@ -62,7 +68,7 @@ async function handleAccept(accept: boolean) {
       </CheckboxIndicator>
     </CheckboxRoot>
     <div class="col-span-4 flex items-center gap-4">
-      <img v-lazy="`https://ui-avatars.com/api/?name=${user.hoTen}&background=random&size=300&bold=true`" alt="" class="w-10 h-10 rounded-full object-cover">
+      <img :src="user.anhDaiDien || `https://ui-avatars.com/api/?name=${user.hoTen}&background=random&size=300&bold=true`" alt="" class="w-10 h-10 rounded-full object-cover">
       <div class="flex flex-col gap-1">
         <h2 class="text-lg font-semibold truncate-one-line">
           {{ user.hoTen }}
@@ -76,32 +82,47 @@ async function handleAccept(accept: boolean) {
       v-if="isOwner"
       class="flex items-center justify-end gap-2 col-span-2"
     >
-      <Button
-        v-if="type === 'member'"
-        type="button"
-        variant="destructive"
-        @click="handleRemove"
-      >
-        Xóa khỏi kênh
-      </Button>
-      <template
-        v-else
-      >
-        <Button
-          type="button"
-          variant="destructive"
-          @click="handleAccept(false)"
-        >
-          Từ chối
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          @click="handleAccept(true)"
-        >
-          Chấp nhận
-        </Button>
-      </template>
+      <Popover>
+        <PopoverTrigger>
+          <button
+            class="px-1 hover:bg-gray-200 rounded-sm"
+          >
+            <Icon name="IconEllipsis" class="w-6 h-6" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="start" class="w-40 bg-card p-0">
+          <Button
+            v-if="type === 'member'"
+            type="button"
+            variant="destructive"
+            class="w-full"
+            @click="handleRemove"
+          >
+            Xóa khỏi kênh
+          </Button>
+          <div
+            v-else
+            class="flex flex-col gap-1 p-1"
+          >
+            <Button
+              type="button"
+              variant="outline"
+              class="w-full"
+              @click="handleAccept(true)"
+            >
+              Chấp nhận
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              class="w-full"
+              @click="handleAccept(false)"
+            >
+              Từ chối
+            </Button>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   </div>
 </template>

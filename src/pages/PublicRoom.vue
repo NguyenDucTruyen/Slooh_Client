@@ -5,6 +5,7 @@ import PageContainer from '@/components/layout/PageContainer.vue'
 import { toast } from '@/components/ui/toast'
 import { useConfirmStore } from '@/stores/confirm'
 import { useRoomStore } from '@/stores/room'
+import { useUserStore } from '@/stores/user'
 import { useAsyncState } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
@@ -15,12 +16,16 @@ interface PhongData extends Phong {
 const router = useRouter()
 const roomStore = useRoomStore()
 const confirmStore = useConfirmStore()
+const userStore = useUserStore()
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
 
 const roomsResponse = ref<PhongData[]>([])
 const { isLoading } = useAsyncState(
   async () => {
+    if (!userStore.isAuthenticated) {
+      return { rooms: [] }
+    }
     const response = await roomStore.getPublicRoomList()
     roomsResponse.value = response.rooms.map((room: Phong) => ({ ...room, isSelected: false }))
     return response
@@ -105,7 +110,65 @@ async function deleteSelectedRoom() {
 </script>
 
 <template>
-  <PageContainer title="Phòng công khai" description="Danh sách các phòng trình chiếu công khai bạn đã tạo">
+  <template v-if="!userStore.isAuthenticated">
+    <div class="flex flex-col items-center justify-center py-12 px-4 text-center space-y-8">
+      <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+        <Icon name="IconPublic" class="w-8 h-8 text-primary" />
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-2xl font-semibold">
+          Chào mừng đến với Phòng công khai
+        </h3>
+        <p class="text-muted-foreground max-w-2xl mx-auto">
+          Đăng nhập để tạo và quản lý phòng trình chiếu của riêng bạn. Bạn có thể tạo phòng mới,
+          chia sẻ nội dung và tương tác với người khác trong cộng đồng.
+        </p>
+      </div>
+
+      <!-- New Join Session Section -->
+      <div class="w-full max-w-2xl mx-auto p-6 rounded-xl bg-card/50 backdrop-blur border border-border/50">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <Icon name="IconPlay" class="w-5 h-5 text-primary" />
+          </div>
+          <div class="flex-1 text-left">
+            <h4 class="font-semibold">
+              Tham gia ngay không cần tài khoản
+            </h4>
+            <p class="text-sm text-muted-foreground">
+              Tham gia các phiên trình chiếu công khai đang diễn ra
+            </p>
+          </div>
+          <Button class="shrink-0" variant="default">
+            <Icon name="IconArrowRight" class="w-4 h-4 mr-2" />
+            Tham gia phiên
+          </Button>
+        </div>
+      </div>
+
+      <div class="flex gap-4 pt-4">
+        <Button @click="router.push('/auth/login')">
+          Đăng nhập ngay
+        </Button>
+        <Button variant="outline" @click="router.push('/auth/signup')">
+          Tạo tài khoản
+        </Button>
+      </div>
+    </div>
+  </template>
+  <PageContainer
+    v-else
+    title="Phòng công khai"
+    description="Khám phá và tham gia các phòng trình chiếu công khai. Tạo phòng riêng và chia sẻ nội dung của bạn với cộng đồng."
+  >
+    <template #header-actions>
+      <Button
+        :variant="userStore.isAuthenticated ? 'outline' : 'default'"
+      >
+        Tham gia phiên
+      </Button>
+    </template>
+
     <SearchHeader
       v-model="searchValue"
       placeholder="Tìm kiếm phòng trình chiếu"
@@ -133,31 +196,39 @@ async function deleteSelectedRoom() {
         />
         Tạo phòng trình chiếu
       </Button>
-    </SearchHeader>
-
-    <TransitionGroup
+    </SearchHeader>    <TransitionGroup
       name="list"
       tag="div"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4"
     >
       <template v-if="isLoading">
-        <Skeleton
+        <div
           v-for="n in 5"
           :key="`skeleton-${n}`"
-          class="h-[325px]"
-        />
+          class="transform transition-all duration-500"
+          :style="{ transitionDelay: `${n * 100}ms` }"
+        >
+          <Skeleton class="h-[325px]" />
+        </div>
       </template>
       <template v-else>
-        <RoomCard
-          v-for="room in filteredRooms"
-          :key="room.maPhong"
-          v-model="room.isSelected"
-          :is-author="true"
-          :item="room"
-        />
+        <template v-if="filteredRooms.length">
+          <div
+            v-for="(room, index) in filteredRooms"
+            :key="room.maPhong"
+            class="transform transition-all duration-500"
+            :style="{ transitionDelay: `${index * 100}ms` }"
+          >
+            <RoomCard
+              v-model="room.isSelected"
+              :is-author="true"
+              :item="room"
+            />
+          </div>
+        </template>
         <div
-          v-if="!filteredRooms.length"
-          class="text-md font-semibold mb-4 w-full text-center text-muted-foreground col-span-full"
+          v-else
+          class="text-md font-semibold mb-4 w-full text-center text-muted-foreground col-span-full transition-all duration-500"
         >
           Không có kết quả
         </div>
@@ -170,3 +241,20 @@ async function deleteSelectedRoom() {
     @create="handleCreateRoom"
   />
 </template>
+
+<style scoped>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.list-move {
+  transition: transform 0.5s ease;
+}
+</style>
