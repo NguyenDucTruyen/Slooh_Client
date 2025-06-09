@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { Phong } from '@/types'
+import type { Kenh, Phong } from '@/types'
+import ModalCloneRoom from '@/components/app/room/ModalCloneRoom.vue'
 import SearchHeader from '@/components/common/SearchHeader.vue'
 import PageContainer from '@/components/layout/PageContainer.vue'
 import { toast } from '@/components/ui/toast'
+import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
 import { useRoomStore } from '@/stores/room'
 import { useUserStore } from '@/stores/user'
@@ -14,12 +16,14 @@ interface PhongData extends Phong {
 }
 
 const router = useRouter()
+const channelStore = useChannelStore()
 const roomStore = useRoomStore()
 const confirmStore = useConfirmStore()
 const userStore = useUserStore()
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
-
+const visibleModalCloneRoom = ref(false)
+const temprarySelectedRoom = ref<string | null>(null)
 const roomsResponse = ref<PhongData[]>([])
 const { isLoading } = useAsyncState(
   async () => {
@@ -33,6 +37,20 @@ const { isLoading } = useAsyncState(
   [],
   { immediate: true },
 )
+const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>(() => {
+  return (async () => {
+    const response = await channelStore.getChannelList({
+      page: 1,
+      limit: 100,
+    })
+    return response.channels
+  })()
+}, null as unknown as Kenh[], {
+  immediate: true,
+  onError: (error) => {
+    Promise.reject(error)
+  },
+})
 
 const filteredRooms = computed(() => {
   if (!searchValue.value)
@@ -106,6 +124,31 @@ async function deleteSelectedRoom() {
       variant: 'destructive',
     })
   }
+}
+function handleCloneRoom(maPhong: string) {
+  temprarySelectedRoom.value = maPhong
+  visibleModalCloneRoom.value = true
+}
+
+async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, channelId: string }) {
+  try {
+    await roomStore.cloneRoom({ roomId, channelId })
+    toast({
+      title: 'Thành công',
+      description: 'Nhân đôi phòng thành công',
+    })
+    const response = await roomStore.getPublicRoomList()
+    roomsResponse.value = response.rooms.map((room: Phong) => ({ ...room, isSelected: false }))
+  }
+  catch {
+    toast({
+      title: 'Lỗi',
+      description: 'Có lỗi xảy ra khi nhân đôi phòng',
+      variant: 'destructive',
+    })
+  }
+  visibleModalCloneRoom.value = false
+  temprarySelectedRoom.value = null
 }
 </script>
 
@@ -222,6 +265,7 @@ async function deleteSelectedRoom() {
             v-model="room.isSelected"
             :is-author="true"
             :item="room"
+            @clone="handleCloneRoom(room.maPhong)"
           />
         </div>
         <div
@@ -237,6 +281,13 @@ async function deleteSelectedRoom() {
   <CreateRoomModal
     v-model:open="isCreateRoomModalOpen"
     @create="handleCreateRoom"
+  />  
+<ModalCloneRoom
+    v-if="!isFetchingChannels && temprarySelectedRoom"
+    v-model:open="visibleModalCloneRoom"
+    :channels="channels"
+    :room-id="temprarySelectedRoom"
+    @add="handleCloneRoomSubmit"
   />
 </template>
 

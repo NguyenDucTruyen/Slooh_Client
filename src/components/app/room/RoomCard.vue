@@ -18,7 +18,9 @@ interface Props {
 }
 
 const { item, isAuthor } = defineProps<Props>()
-
+defineEmits<{
+  (e: 'clone', maPhong: string): void
+}>()
 const previewSlideStore = usePreviewSlideStore()
 const roomStore = useRoomStore()
 
@@ -148,7 +150,10 @@ async function handleNavigateToPreview() {
               </button>
             </RouterLink>
             <Separator />
-            <button class="text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2">
+            <button
+              class="text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2"
+              @click="$emit('clone', item.maPhong)"
+            >
               <Icon name="IconCopy" class="w-4 h-4" />
 
               Nhân đôi
