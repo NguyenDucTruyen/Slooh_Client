@@ -10,23 +10,24 @@
 <script setup lang="ts">
 import SlideEditor from '@/components/common/SlideEditor.vue'
 import { toast } from '@/components/ui/toast'
+import { useConfirmStore } from '@/stores/confirm'
 import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
 import { type BodyUpdateRoom, CachTrinhBay, Diem, LoaiCauTraLoi, LoaiSlide, type Phong, type Slide, type UpdateSlide } from '@/types'
 import { useAsyncState } from '@vueuse/core'
-
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const roomStore = useRoomStore()
+const confirmStore = useConfirmStore()
 const route = useRoute()
 const isPanelVisible = ref(true)
 const slides = ref<Slide[]>()
 const selectedSlideId = ref<string>()
+const hasChanges = ref(false)
 const previewSlideStore = usePreviewSlideStore()
-const currentSelectedIndex = computed(() => {
-  return slides.value?.findIndex(slide => slide.maTrang === selectedSlideId.value) ?? 0
-})
+
 const { state: roomDetail, isLoading, error } = useAsyncState<Phong>(() => {
   return (async () => {
     const response = await roomStore.getRoomDetail(route.params.id as string)
@@ -39,6 +40,26 @@ const { state: roomDetail, isLoading, error } = useAsyncState<Phong>(() => {
   onError: (error) => {
     Promise.reject(error)
   },
+})
+
+// Watch for changes in all editable fields
+watch(
+  [
+    slides,
+    () => roomDetail.value?.tenPhong,
+    () => roomDetail.value?.hoatDong,
+    () => roomDetail.value?.trangThai,
+  ],
+  () => {
+    if (roomDetail.value) {
+      hasChanges.value = true
+    }
+  },
+  { deep: true },
+)
+
+const currentSelectedIndex = computed(() => {
+  return slides.value?.findIndex(slide => slide.maTrang === selectedSlideId.value) ?? 0
 })
 
 const indexSelectedSlide = computed(() => {
@@ -65,13 +86,29 @@ async function handleSave() {
   }
 
   await roomStore.updateRoom(roomDetail.value.maPhong, formatData)
-  // await fetchDetail()
+  hasChanges.value = false
   toast({
     title: 'Cập nhật thành công',
     description: 'Phòng đã được cập nhật thành công.',
   })
 }
-function handleBack() {
+
+async function handleBack() {
+  if (hasChanges.value) {
+    const result = await confirmStore.showConfirmDialog({
+      title: 'Cảnh báo',
+      message: 'Bạn có thay đổi chưa được lưu. Bạn có muốn lưu trước khi thoát không?',
+      confirmText: 'Lưu',
+      cancelText: 'Không lưu',
+    })
+
+    if (result) {
+      await handleSave()
+    }
+  }
+  goBack()
+}
+function goBack() {
   if (roomDetail.value?.maKenh) {
     router.push({
       name: 'channels-id',
@@ -82,6 +119,22 @@ function handleBack() {
     router.push({ name: 'PublicRoom' })
   }
 }
+
+// Add beforeunload handler
+function handleBeforeUnload(e: BeforeUnloadEvent) {
+  if (hasChanges.value) {
+    e.preventDefault()
+    e.returnValue = ''
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('beforeunload', handleBeforeUnload)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
 </script>
 
 <template>
@@ -101,6 +154,7 @@ function handleBack() {
         class="navbar"
         @save="handleSave"
         @back="handleBack"
+        @cancel="goBack"
         @preview="previewSlideStore.setPreviewSlide(slides as Slide[], currentSelectedIndex)"
       />
       <div class="body">
@@ -144,16 +198,24 @@ function handleBack() {
 
   .navbar {
     grid-area: navbar;
-  }
-  .body {
-    @apply flex;
+  }  .body {
+    display: flex;
     grid-area: body;
     height: calc(100vh - 90px);
   }
   .slide-navigator {
-    @apply bg-card shadow-lg h-full overflow-y-auto w-[200px] relative;
+    background-color: var(--card);
+    box-shadow: var(--shadow-lg);
+    height: 100%;
+    overflow-y: auto;
+    width: 200px;
+    position: relative;
   }
   .main-content {
-    @apply bg-card shadow-lg h-full w-[calc(100%-200px)] relative;
+    background-color: var(--card);
+    box-shadow: var(--shadow-lg);
+    height: 100%;
+    width: calc(100% - 200px);
+    position: relative;
   }
 </style>

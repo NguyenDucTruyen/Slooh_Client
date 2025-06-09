@@ -10,6 +10,7 @@ interface Emits {
   (e: 'save'): void
   (e: 'back'): void
   (e: 'preview'): void
+  (e: 'cancel'): void
 }
 function handleSaveTitle(title: string) {
   roomTitle.value = title
@@ -56,6 +57,7 @@ function handleSaveTitle(title: string) {
       <Button
         variant="secondary"
         class="text-sm rounded-full"
+        @click="$emit('cancel')"
       >
         Hủy bỏ
       </Button>

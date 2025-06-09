@@ -75,7 +75,7 @@ async function deleteSlide(slide: Slide) {
 }
 function duplicateSlide(slide: Slide) {
   const newID = `new-slide-${Math.random()}`
-  const newSlide: Slide = { ...slide, maTrang: newID }
+  const newSlide: Slide = { ...slide, maTrang: newID, luaChon: slide?.luaChon?.map(choice => ({ ...choice })) || [] }
   slides.value.splice(slide.thuTu, 0, newSlide)
   selectedSlideId.value = newID
   updateThuTu()

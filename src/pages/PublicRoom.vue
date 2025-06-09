@@ -196,36 +196,34 @@ async function deleteSelectedRoom() {
         />
         Tạo phòng trình chiếu
       </Button>
-    </SearchHeader>    <TransitionGroup
+    </SearchHeader>
+    <TransitionGroup
       name="list"
       tag="div"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4"
     >
       <template v-if="isLoading">
         <div
           v-for="n in 5"
           :key="`skeleton-${n}`"
-          class="transform transition-all duration-500"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4 transform transition-all duration-500"
           :style="{ transitionDelay: `${n * 100}ms` }"
         >
           <Skeleton class="h-[325px]" />
         </div>
       </template>
       <template v-else>
-        <template v-if="filteredRooms.length">
-          <div
-            v-for="(room, index) in filteredRooms"
+        <div
+          v-if="filteredRooms.length"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4"
+        >
+          <RoomCard
+            v-for="room in filteredRooms"
             :key="room.maPhong"
-            class="transform transition-all duration-500"
-            :style="{ transitionDelay: `${index * 100}ms` }"
-          >
-            <RoomCard
-              v-model="room.isSelected"
-              :is-author="true"
-              :item="room"
-            />
-          </div>
-        </template>
+            v-model="room.isSelected"
+            :is-author="true"
+            :item="room"
+          />
+        </div>
         <div
           v-else
           class="text-md font-semibold mb-4 w-full text-center text-muted-foreground col-span-full transition-all duration-500"
