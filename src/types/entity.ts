@@ -140,6 +140,8 @@ export interface Slide {
   video?: string
   hinhNen?: string
   cachTrinhBay?: CachTrinhBay
+  canLeNoiDung?: string
+  canLeTieuDe?: string
   noiDung?: string
   thoiGianGioiHan?: number
   diem?: Diem

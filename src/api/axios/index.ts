@@ -10,7 +10,6 @@ const axiosInstance = axios.create({
 *   https://github.com/axios/axios?tab=readme-ov-file#interceptors
 */
 axiosInstance.interceptors.request.use((config) => {
-  config.headers['Content-Type'] = 'application/json'
   config.headers['Access-Control-Allow-Origin'] = '*'
   const accessToken = localStorage.getItem('Slooh_AccessToken')
   if (accessToken)

@@ -1,4 +1,4 @@
-import type { LoaiCauTraLoi, LoaiSlide, LuaChon } from "./entity"
+import type { LoaiCauTraLoi, LoaiSlide, LuaChon } from './entity'
 
 export interface BodyUpdateRoom {
   tenPhong: string
@@ -13,9 +13,11 @@ export interface UpdateSlide {
   hinhAnh?: string | null
   video?: string | null
   hinhNen?: string | null
-  cachTrinhBay?: 'CO_BAN' | 'TIEU_DE_LON' | 'HAI_COT' | 'DANH_SACH' | 'TRICH_DAN' | 'HINH_ANH' | 'CO_BAN_TEXT'
+  cachTrinhBay?: 'CO_BAN' | 'TIEU_DE_LON' | 'HAI_COT' | 'DANH_SACH' | 'TRICH_DAN' | 'HINH_ANH' | 'CO_BAN_TEXT' |  null
   noiDung?: string | null
   thoiGianGioiHan?: number | null
+  canLeNoiDung?: string
+  canLeTieuDe?: string
   diem?: 'BINH_THUONG' | 'GAP_DOI' | 'KHONG_DIEM'
   loaiCauTraLoi?: LoaiCauTraLoi
   danhSachLuaChon?: LuaChon[]

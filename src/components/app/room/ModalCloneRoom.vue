@@ -2,6 +2,10 @@
 import type { Kenh } from '@/types'
 
 const props = defineProps({
+  open: {
+    type: Boolean,
+    required: true,
+  },
   channels: {
     type: Array as () => Kenh[],
     required: true,
@@ -11,26 +15,31 @@ const props = defineProps({
     required: true,
   },
 })
-const emit = defineEmits(['add'])
-const open = defineModel('open', {
-  type: Boolean,
-  required: true,
-})
+
+const emit = defineEmits(['update:open', 'add'])
 const selectedType = ref('public')
 const selectedChannel = ref('')
+
+watch(() => props.open, (newValue) => {
+  if (!newValue) {
+    selectedType.value = 'public'
+    selectedChannel.value = ''
+  }
+})
 
 function handleSubmit() {
   emit('add', {
     roomId: props.roomId,
     channelId: selectedType.value === 'public' ? '' : selectedChannel.value,
   })
-  open.value = false
+  emit('update:open', false)
 }
 </script>
 
 <template>
   <Dialog
-    :open="open" @update:open="(value:boolean) => open = value"
+    :open="open"
+    @update:open="emit('update:open', $event)"
   >
     <DialogContent class="sm:max-w-[425px] p-4">
       <DialogHeader>

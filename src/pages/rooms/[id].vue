@@ -13,7 +13,7 @@ import { toast } from '@/components/ui/toast'
 import { useConfirmStore } from '@/stores/confirm'
 import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
-import { type BodyUpdateRoom, CachTrinhBay, Diem, LoaiCauTraLoi, LoaiSlide, type Phong, type Slide, type UpdateSlide } from '@/types'
+import { type BodyUpdateRoom, LoaiSlide, type Phong, type Slide, type UpdateSlide } from '@/types'
 import { useAsyncState } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -67,6 +67,7 @@ const indexSelectedSlide = computed(() => {
 })
 
 async function handleSave() {
+  console.log('cachTrinhBay', slides.value?.map(slide => slide.cachTrinhBay))
   const formatData: BodyUpdateRoom = {
     tenPhong: roomDetail.value.tenPhong,
     hoatDong: roomDetail.value.hoatDong,
@@ -76,7 +77,9 @@ async function handleSave() {
       tieuDe: slide.tieuDe,
       hinhAnh: slide.hinhAnh,
       hinhNen: slide.hinhNen,
-      cachTrinhBay: slide.cachTrinhBay,
+      canLeNoiDung: slide.canLeNoiDung,
+      canLeTieuDe: slide.canLeTieuDe,
+      cachTrinhBay: slide.cachTrinhBay?.trim() ? slide.cachTrinhBay : null,
       noiDung: slide.noiDung,
       thoiGianGioiHan: slide.thoiGianGioiHan,
       diem: slide.diem,

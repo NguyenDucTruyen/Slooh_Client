@@ -25,7 +25,7 @@ const isCreateRoomModalOpen = ref(false)
 const visibleModalCloneRoom = ref(false)
 const temprarySelectedRoom = ref<string | null>(null)
 const roomsResponse = ref<PhongData[]>([])
-const { isLoading } = useAsyncState(
+const { isLoading, execute } = useAsyncState(
   async () => {
     if (!userStore.isAuthenticated) {
       return { rooms: [] }
@@ -85,12 +85,8 @@ async function handleCreateRoom(name: string) {
       description: 'Tạo phòng công khai thành công',
     })
   }
-  catch {
-    toast({
-      title: 'Lỗi',
-      description: 'Có lỗi xảy ra khi tạo phòng',
-      variant: 'destructive',
-    })
+  catch (error) {
+    Promise.reject(error)
   }
 }
 
@@ -117,18 +113,20 @@ async function deleteSelectedRoom() {
     const response = await roomStore.getPublicRoomList()
     roomsResponse.value = response.rooms.map((room: Phong) => ({ ...room, isSelected: false }))
   }
-  catch {
-    toast({
-      title: 'Lỗi',
-      description: 'Có lỗi xảy ra khi xóa phòng',
-      variant: 'destructive',
-    })
+  catch (error) {
+    Promise.reject(error)
   }
 }
 function handleCloneRoom(maPhong: string) {
   temprarySelectedRoom.value = maPhong
   visibleModalCloneRoom.value = true
 }
+
+watch(visibleModalCloneRoom, (newValue) => {
+  if (!newValue) {
+    temprarySelectedRoom.value = null
+  }
+})
 
 async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, channelId: string }) {
   try {
@@ -137,8 +135,7 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
       title: 'Thành công',
       description: 'Nhân đôi phòng thành công',
     })
-    const response = await roomStore.getPublicRoomList()
-    roomsResponse.value = response.rooms.map((room: Phong) => ({ ...room, isSelected: false }))
+    await execute()
   }
   catch {
     toast({
@@ -148,7 +145,6 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
     })
   }
   visibleModalCloneRoom.value = false
-  temprarySelectedRoom.value = null
 }
 </script>
 
@@ -281,8 +277,8 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
   <CreateRoomModal
     v-model:open="isCreateRoomModalOpen"
     @create="handleCreateRoom"
-  />  
-<ModalCloneRoom
+  />
+  <ModalCloneRoom
     v-if="!isFetchingChannels && temprarySelectedRoom"
     v-model:open="visibleModalCloneRoom"
     :channels="channels"
