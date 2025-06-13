@@ -76,6 +76,7 @@ async function deleteSelectedRoom() {
       <RoomCard
         v-for="room in props.rooms"
         :key="room.maPhong"
+        v-bind="$attrs"
         v-model="room.isSelected"
         :is-author="true"
         :item="room"

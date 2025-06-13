@@ -233,6 +233,52 @@ async function handleAddUser(ids: string[]) {
     description: 'Thêm thành viên thành công',
   })
 }
+
+const visibleModalCloneRoom = ref(false)
+const temprarySelectedRoom = ref<string | null>(null)
+
+// Clone room functionality
+function handleCloneRoom(maPhong: string) {
+  temprarySelectedRoom.value = maPhong
+  visibleModalCloneRoom.value = true
+}
+
+async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, channelId: string }) {
+  try {
+    await roomStore.cloneRoom({ roomId, channelId })
+    toast({
+      title: 'Thành công',
+      description: 'Nhân đôi phòng thành công',
+    })
+    // Refresh room list after cloning
+    const response = await channelStore.getRoomsInChannel(maKenh, queryConfig.value)
+    rooms.value = response.rooms
+  }
+  catch {
+    toast({
+      title: 'Lỗi',
+      description: 'Có lỗi xảy ra khi nhân đôi phòng',
+      variant: 'destructive',
+    })
+  }
+  visibleModalCloneRoom.value = false
+}
+
+// Define the list of channels to show in clone modal
+const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>(() => {
+  return (async () => {
+    const response = await channelStore.getChannelList({
+      page: 1,
+      limit: 100,
+    })
+    return response.channels
+  })()
+}, null as unknown as Kenh[], {
+  immediate: true,
+  onError: (error) => {
+    Promise.reject(error)
+  },
+})
 </script>
 
 <template>
@@ -273,6 +319,7 @@ async function handleAddUser(ids: string[]) {
             @create="openCreateRoomModal"
             @delete="deleteSelectedRoom"
             @search="handleSearch"
+            @clone="handleCloneRoom"
           />
         </TransitionGroup>
       </TabsContent>
@@ -298,5 +345,12 @@ async function handleAddUser(ids: string[]) {
   <AddUserModal
     v-model:open="isAddUserModalOpen"
     @add="handleAddUser"
+  />
+  <ModalCloneRoom
+    v-if="!isFetchingChannels && temprarySelectedRoom"
+    v-model:open="visibleModalCloneRoom"
+    :channels="channels"
+    :room-id="temprarySelectedRoom"
+    @add="handleCloneRoomSubmit"
   />
 </template>

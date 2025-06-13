@@ -61,12 +61,6 @@ const { state: channelResponseData, execute: fetchChannels, isLoading: isFetchin
     Promise.reject(error)
   },
 })
-const { execute: createChannel } = useAsyncState(channelStore.createChannel, null, {
-  immediate: false,
-  onError: (error) => {
-    Promise.reject(error)
-  },
-})
 
 const channels = computed(() => {
   if (!searchChannelValue.value)
@@ -85,12 +79,12 @@ const selectedChannels = computed(() => {
   }, [] as string[])
 })
 async function handleCreateChannel(name: string) {
-  await createChannel(0, name)
-  fetchChannels(0)
+  await channelStore.createChannel(name)
   toast({
     title: 'Thành công',
     description: 'Tạo kênh thành công',
   })
+  fetchChannels(0)
 }
 async function handleUpdateChannel(data: { kenh: Kenh, tenKenh: string }) {
   await channelStore.updateChannel(data.kenh.maKenh, data.tenKenh)
