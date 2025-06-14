@@ -110,7 +110,6 @@ const listHeaders = ref([
               class="rounded-full px-6 h-10 transition-transform hover:scale-[1.02] active:scale-[0.98]"
               variant="outline"
             >
-              <Icon name="IconPlus" class="w-4 h-4 mr-2" />
               Đăng ký
             </Button>
           </router-link>
@@ -118,7 +117,6 @@ const listHeaders = ref([
             <Button
               class="rounded-full px-6 h-10 transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Icon name="IconArrowRight" class="w-4 h-4 mr-2" />
               Đăng nhập
             </Button>
           </router-link>

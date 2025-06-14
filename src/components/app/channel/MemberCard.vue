@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { useConfirmStore } from '@/stores/confirm'
-import { type Kenh, type NguoiDung, TrangThai } from '@/types'
+import { type Kenh, type NguoiDung, TrangThai, VaiTroKenh } from '@/types'
 
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
@@ -13,7 +13,9 @@ interface NguoiDungData extends NguoiDung {
   isSelected: boolean
 }
 interface Props {
-  user: NguoiDungData
+  user: NguoiDungData & {
+    vaiTro: VaiTroKenh
+  }
   type: string
   isOwner: boolean
 }
@@ -24,6 +26,10 @@ const emit = defineEmits<{
   (e: 'remove', value: NguoiDungData): void
   (e: 'handleRequest', value: NguoiDungData, accept: boolean): void
 }>()
+const MEMBER_TYPE = {
+  [VaiTroKenh.THANH_VIEN]: 'Thành viên',
+  [VaiTroKenh.CHU_KENH]: 'Chủ kênh',
+}
 const confirmStore = useConfirmStore()
 const id_selected = defineModel({
   type: Boolean,
@@ -58,9 +64,12 @@ async function handleAccept(accept: boolean) {
     <CheckboxRoot
       v-if="isOwner"
       v-model="id_selected"
+      :disabled="user.vaiTro === VaiTroKenh.CHU_KENH"
       class="hover:bg-green3 flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-[4px] bg-background border border-border shadow-blackA7 shadow-[0_1px_4px_-2px] outline-none"
     >
-      <CheckboxIndicator class="h-full w-full rounded flex items-center justify-center">
+      <CheckboxIndicator
+        class="h-full w-full rounded flex items-center justify-center"
+      >
         <Icon
           name="IconCheck"
           class="h-4 w-4 text-grass11"
@@ -75,6 +84,9 @@ async function handleAccept(accept: boolean) {
         </h2>
         <div class="text-sm text-muted-foreground truncate-one-line">
           {{ user.email }}
+          <span class="text-foreground">
+            - [{{ MEMBER_TYPE[user.vaiTro] }}]
+          </span>
         </div>
       </div>
     </div>
@@ -86,6 +98,7 @@ async function handleAccept(accept: boolean) {
         <PopoverTrigger>
           <button
             class="px-1 hover:bg-gray-200 rounded-sm"
+            :disabled="user.vaiTro === VaiTroKenh.CHU_KENH"
           >
             <Icon name="IconEllipsis" class="w-6 h-6" />
           </button>

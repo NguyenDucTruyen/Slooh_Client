@@ -34,9 +34,10 @@ useAsyncState<Kenh>(() => {
       const members = []
       const requests = []
       for (const member of response.thanhVien) {
-        if (member.vaiTro !== VaiTroKenh.CHU_KENH && member.trangThai === TrangThaiThanhVien.THAM_GIA) {
+        if (member.trangThai === TrangThaiThanhVien.THAM_GIA) {
           members.push({
             ...member.nguoiDung,
+            vaiTro: member.vaiTro,
             isSelected: false,
           })
         }
