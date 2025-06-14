@@ -6,6 +6,7 @@ import PageContainer from '@/components/layout/PageContainer.vue'
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
 import { useUserStore } from '@/stores/user'
 import { useAsyncState } from '@vueuse/core'
@@ -20,6 +21,8 @@ const channelStore = useChannelStore()
 const roomStore = useRoomStore()
 const confirmStore = useConfirmStore()
 const userStore = useUserStore()
+const previewSlideStore = usePreviewSlideStore()
+
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
 const visibleModalCloneRoom = ref(false)
@@ -284,6 +287,10 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
     :channels="channels"
     :room-id="temprarySelectedRoom"
     @add="handleCloneRoomSubmit"
+  />
+
+  <Preview
+    v-if="previewSlideStore.isPreviewing"
   />
 </template>
 

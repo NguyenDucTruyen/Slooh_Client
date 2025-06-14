@@ -199,9 +199,6 @@ async function handleNavigateToPreview() {
       </Button>
     </div>
   </div>
-  <Preview
-    v-if="previewSlideStore.isPreviewing"
-  />
 </template>
 
 <style scoped lang="scss">
