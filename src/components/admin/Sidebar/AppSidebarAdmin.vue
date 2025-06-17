@@ -13,6 +13,12 @@ const data = ref({
     },
     {
       id: 2,
+      icon: 'IconChannel',
+      title: 'Quản lý kênh',
+      url: '/admin/channel',
+    },
+    {
+      id: 3,
       icon: BarChart3,
       title: 'Thống kê hệ thống',
       url: '/admin/statistics',

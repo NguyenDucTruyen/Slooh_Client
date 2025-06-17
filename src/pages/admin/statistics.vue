@@ -11,7 +11,7 @@
 import type { NguoiDung } from '@/types'
 import { useAdminStore } from '@/stores/admin'
 import { useAsyncState } from '@vueuse/core'
-import { BarChart3, Calendar, TrendingUp, Users } from 'lucide-vue-next'
+import { BarChart3, Calendar, TrendingDown, TrendingUp, Users } from 'lucide-vue-next'
 
 interface PaginatedUsersResponse {
   users: NguoiDung[]
@@ -29,7 +29,6 @@ interface StatCard {
   icon: any
 }
 
-const router = useRouter()
 const adminStore = useAdminStore()
 const isDarkMode = ref(localStorage.getItem('theme') === 'dark')
 const selectedYear = ref(new Date().getFullYear())
@@ -121,7 +120,7 @@ const statCards = computed((): StatCard[] => {
       value: statistics.value.thisMonthUsers,
       change: `${statistics.value.monthlyGrowth > 0 ? '+' : ''}${statistics.value.monthlyGrowth}%`,
       trend: statistics.value.monthlyGrowth > 0 ? 'up' : statistics.value.monthlyGrowth < 0 ? 'down' : 'neutral',
-      icon: TrendingUp,
+      icon: statistics.value.monthlyGrowth > 0 ? TrendingUp : TrendingDown,
     },
     {
       title: 'Đăng ký tháng trước',
@@ -269,10 +268,6 @@ watch(isDarkMode, (newValue) => {
     },
   }
 })
-
-function navigateToDetailedStats(type: string) {
-  router.push(`/admin/statistics/${type}`)
-}
 </script>
 
 <template>
@@ -307,9 +302,9 @@ function navigateToDetailedStats(type: string) {
             </Select>
 
             <!-- Additional Statistics Button -->
-            <Button variant="outline" @click="navigateToDetailedStats('detailed')">
-              <BarChart3 class="w-4 h-4 mr-2" />
-              Thống kê chi tiết
+            <Button variant="outline" @click="$router.push('/admin')">
+              <Icon name="IconListUser" class="w-4 h-4 mr-2" />
+              Xem tất cả người dùng
             </Button>
           </div>
         </div>
@@ -325,7 +320,7 @@ function navigateToDetailedStats(type: string) {
           :key="index"
           class="hover:shadow-lg transition-shadow duration-200"
         >
-          <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader class="flex flex-row items-center justify-between space-y-0 py-2">
             <CardTitle class="text-sm font-medium text-muted-foreground">
               {{ stat.title }}
             </CardTitle>
@@ -339,11 +334,11 @@ function navigateToDetailedStats(type: string) {
               }"
             />
           </CardHeader>
-          <CardContent>
+          <CardContent class="py-0">
             <div class="text-2xl font-bold">
               {{ stat.value }}
             </div>
-            <p
+            <span
               class="text-xs mt-1"
               :class="{
                 'text-green-600': stat.trend === 'up',
@@ -352,7 +347,7 @@ function navigateToDetailedStats(type: string) {
               }"
             >
               {{ stat.change }}
-            </p>
+            </span>
           </CardContent>
         </Card>
       </div>
@@ -469,35 +464,6 @@ function navigateToDetailedStats(type: string) {
 
             <!-- Quick Actions -->
             <Separator class="my-4" />
-            <div class="space-y-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                class="w-full justify-start"
-                @click="navigateToDetailedStats('age')"
-              >
-                <Users class="w-4 h-4 mr-2" />
-                Thống kê theo tuổi
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                class="w-full justify-start"
-                @click="navigateToDetailedStats('gender')"
-              >
-                <BarChart3 class="w-4 h-4 mr-2" />
-                Thống kê giới tính
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                class="w-full justify-start"
-                @click="navigateToDetailedStats('activity')"
-              >
-                <TrendingUp class="w-4 h-4 mr-2" />
-                Hoạt động người dùng
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>

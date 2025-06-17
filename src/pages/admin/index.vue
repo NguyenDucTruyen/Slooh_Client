@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch'
 import { useAdminStore } from '@/stores/admin'
 import { type NguoiDung, Quyen, TrangThai } from '@/types'
 import { useAsyncState, useDebounceFn } from '@vueuse/core'
-import { Loader2 } from 'lucide-vue-next'
+import { Calendar, Loader2 } from 'lucide-vue-next'
 
 interface PaginatedUsersResponse {
   users: NguoiDung[]
@@ -99,6 +99,12 @@ async function updateUserStatus(maNguoiDung: string, trangThai: boolean) {
 
 // Watch for search input changes
 watch(() => queryConfig.value.hoTen, debouncedSearch)
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString('vi-VN')
+}
+function getStatusText(status: TrangThai) {
+  return status === 'HOAT_DONG' ? 'Hoạt động' : 'Đã khóa'
+}
 </script>
 
 <template>
@@ -137,6 +143,9 @@ watch(() => queryConfig.value.hoTen, debouncedSearch)
                   Người dùng
                 </th>
                 <th scope="col" class="px-6 py-3">
+                  Ngày đăng ký
+                </th>
+                <th scope="col" class="px-6 py-3">
                   Quyền
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -158,11 +167,18 @@ watch(() => queryConfig.value.hoTen, debouncedSearch)
                   </div>
                 </th>
                 <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <Calendar class="w-4 h-4 mr-1 text-gray-400" />
+                    <span>{{ formatDate(user.ngayTao) }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
                   {{ user.quyen === Quyen.ADMIN ? 'Quản trị viên' : 'Người dùng' }}
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center">
                     <Switch :model-value="user.trangThai === TrangThai.HOAT_DONG" @update:model-value="(value) => updateUserStatus(user.maNguoiDung, value)" />
+                    <span class="ml-2 text-xs">{{ getStatusText(user.trangThai) }}</span>
                   </div>
                 </td>
               </tr>
