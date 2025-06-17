@@ -11,8 +11,8 @@
 import type { Phong, TrangThai } from '@/types'
 import { Switch } from '@/components/ui/switch'
 import { useAdminStore } from '@/stores/admin'
-import { useAsyncState, useDebounceFn } from '@vueuse/core'
-import { Calendar, Eye, Loader2,  Users, Video } from 'lucide-vue-next'
+import { useAsyncState } from '@vueuse/core'
+import { Calendar, Eye, Loader2, Users, Video } from 'lucide-vue-next'
 
 type PhongMap = Phong & {
   kenh: {
@@ -200,7 +200,6 @@ const roomStats = computed(() => {
               </div>
             </Card>
           </div>
-          
         </div>
       </div>
     </div>
@@ -244,6 +243,9 @@ const roomStats = computed(() => {
                 </th>
                 <th scope="col" class="px-6 py-3">
                   Trạng thái
+                </th>
+                <th scope="col" class="px-6 py-3">
+                  Hành động
                 </th>
               </tr>
             </thead>
@@ -313,6 +315,15 @@ const roomStats = computed(() => {
                       @update:model-value="(value) => updateRoomStatus(room.maPhong, value)"
                     />
                   </div>
+                </td>
+                <td class="px-6 py-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <Icon name="IconArrowRight" class="w-4 h-4 mr-1" />
+                    Xem nội dung
+                  </Button>
                 </td>
               </tr>
             </tbody>
