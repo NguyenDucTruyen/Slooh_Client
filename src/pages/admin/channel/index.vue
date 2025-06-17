@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { Switch } from '@/components/ui/switch'
 import { useAdminStore } from '@/stores/admin'
-import { type Kenh, type NguoiDung, type TrangThai, VaiTroKenh } from '@/types'
+import { type Kenh, type NguoiDung, TrangThai, VaiTroKenh } from '@/types'
 import { useAsyncState, useDebounceFn } from '@vueuse/core'
 import { Calendar, Eye, Loader2, Users } from 'lucide-vue-next'
 
@@ -76,7 +76,7 @@ watch(() => route.query, () => {
 }, { immediate: true })
 
 async function updateChannelStatus(maKenh: string, trangThai: boolean) {
-  const status = trangThai ? 'HOAT_DONG' : 'KHOA' as TrangThai
+  const status = trangThai ? TrangThai.HOAT_DONG : TrangThai.KHOA
   await adminStore.updateChannelStatus(maKenh, status)
   state.value = state.value.map((channel) => {
     if (channel.maKenh === maKenh) {
@@ -118,13 +118,10 @@ function getStatusText(status: TrangThai) {
           <div class="flex gap-4">
             <Card class="p-4 min-w-32">
               <div class="flex items-center space-x-2">
-                <Users class="w-5 h-5 text-blue-600" />
+                <Icon name="IconChannel" class="w-4 h-4 text-blue-600" />
                 <div>
                   <p class="text-sm font-medium">
-                    Tổng kênh
-                  </p>
-                  <p class="text-xl font-bold">
-                    {{ metaData.total }}
+                    Tổng kênh: <span class="font-bold ">{{ metaData.total }}</span>
                   </p>
                 </div>
               </div>
@@ -197,7 +194,7 @@ function getStatusText(status: TrangThai) {
                         {{ channel.tenKenh }}
                       </div>
                       <div class="font-normal text-gray-500 text-xs">
-                        {{ channel.trangThai || 'Không có mô tả' }}
+                        <span class="text-xs">{{ getStatusText(channel.trangThai) }}</span>
                       </div>
                     </div>
                   </div>
@@ -245,7 +242,6 @@ function getStatusText(status: TrangThai) {
                       :model-value="channel.trangThai === 'HOAT_DONG'"
                       @update:model-value="(value) => updateChannelStatus(channel.maKenh, value)"
                     />
-                    <span class="ml-2 text-xs">{{ getStatusText(channel.trangThai) }}</span>
                   </div>
                 </td>
 
@@ -256,7 +252,7 @@ function getStatusText(status: TrangThai) {
                     size="sm"
                     @click="viewChannelRooms(channel.maKenh)"
                   >
-                    <Eye class="w-4 h-4 mr-1" />
+                    <Icon name="IconArrowRight" class="w-4 h-4 mr-1" />
                     Xem phòng
                   </Button>
                 </td>

@@ -42,7 +42,7 @@ export const useAdminStore = defineStore('admin', () => {
     config: { page?: number, limit?: number } = {},
   ) {
     const response = await api.apiGetAllRoomsInChannel(maKenh, config)
-    return response
+    return response.data
   }
 
   async function getAllPublicRooms(config: { page?: number, limit?: number } = {}) {

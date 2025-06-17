@@ -119,9 +119,10 @@ function formatDate(dateStr: string) {
     <!-- Status Indicator -->
     <div
       v-if="item.trangThai === TrangThai.KHOA"
-      class="absolute top-3 left-3 px-2 py-1 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium"
+      class="absolute top-1 left-1 px-2 py-1 rounded-md bg-destructive/10 backdrop-blur-sm border border-destructive/20 text-destructive text-xs font-medium"
     >
-      Locked
+      <!-- <Icon name="IconLock" class="w-4 h-4 inline-block mr-1" /> -->
+      Bị khóa
     </div>
   </div>
 </template>
