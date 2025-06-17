@@ -11,6 +11,10 @@ const themeStore = useThemeStore()
 function redirectProfile() {
   router.push({ name: 'Profile' })
 }
+
+function redirectChangePassword() {
+  router.push({ name: 'Profile', hash: '#password' })
+}
 function handleLogout() {
   authStore.logout()
   router.push('/')
@@ -43,11 +47,10 @@ function handleLogout() {
           <span>Giao diện tối</span><Switch :model-value="themeStore.theme === 'dark'" @update:model-value="themeStore.toggleTheme()" />
         </div>
       </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem @click="redirectProfile">
+      <DropdownMenuSeparator />      <DropdownMenuItem @click="redirectProfile">
         Thông tin cá nhân
       </DropdownMenuItem>
-      <DropdownMenuItem @click="() => router.push('/changePassword')">
+      <DropdownMenuItem @click="redirectChangePassword">
         Đổi mật khẩu
       </DropdownMenuItem>
       <DropdownMenuSeparator />
