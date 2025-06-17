@@ -13,7 +13,7 @@ import AdminHeader from '@/components/layout/AdminHeader.vue'
         <header class="flex h-16 items-center">
           <AdminHeader />
         </header>
-        <div class="flex flex-1 flex-col gap-4 bg-muted h-[calc(100%-64px)] pb-6">
+        <div class="flex flex-1 flex-col gap-4 bg-muted h-[calc(100%-64px)] pb-4 overflow-y-auto">
           <router-view />
         </div>
       </div>

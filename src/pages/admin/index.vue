@@ -129,7 +129,7 @@ watch(() => queryConfig.value.hoTen, debouncedSearch)
         </p>
       </div>
       <div v-else class="relative">
-        <div class="overflow-auto h-[calc(100vh-220px)] scrollbar bg-background">
+        <div class="overflow-auto h-[calc(100vh-230px)] scrollbar bg-background">
           <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0 z-10">
               <tr>

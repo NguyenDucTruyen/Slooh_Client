@@ -1,6 +1,7 @@
 <script setup>
 import AppSideBarGroup from '@/components/layout/SideBar/AppSideBarGroup.vue'
 import AppSideBarItem from '@/components/layout/SideBar/AppSideBarItem.vue'
+import { BarChart3 } from 'lucide-vue-next'
 
 const data = ref({
   groupA: [
@@ -12,11 +13,9 @@ const data = ref({
     },
     {
       id: 2,
-      icon: 'IconCopy',
-      title: 'Thống kê',
-      url: '/admin/statistic',
-      content: 'Login to view your playlist',
-      requiredAuthen: true,
+      icon: BarChart3,
+      title: 'Thống kê hệ thống',
+      url: '/admin/statistics',
     },
   ],
 
@@ -24,7 +23,7 @@ const data = ref({
 </script>
 
 <template>
-  <div class="flex flex-col duration-200 w-[15rem] bg-transparent ease-linear">
+  <div class="flex flex-col duration-200 w-[15rem] bg-transparent ease-linear border-r border-gray-200">
     <div class="flex items-center gap-4 h-16">
       <div
         class="logo-container gap-2 pl-6 cursor-pointer hidden lg:flex items-center"

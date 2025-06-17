@@ -109,6 +109,7 @@ function handleRedirect() {
         <AppSideBarItem
           v-bind="item"
           class="p-4 transition-colors duration-300 hover:text-slate-100"
+          type-active="include"
         />
       </template>
     </div>

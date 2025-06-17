@@ -3,6 +3,7 @@ import ImgLoading from '@/assets/icons/ImgLoading.svg'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import VueLazyload from 'vue-lazyload'
+import VueApexCharts from 'vue3-apexcharts'
 import App from './App.vue'
 import router from './router'
 import './assets/index.css'
@@ -21,6 +22,7 @@ app
     attempt: 1,
     lazyComponent: true,
   })
+  .use(VueApexCharts)
 
 router.isReady().then(() => {
   app.mount('#app')

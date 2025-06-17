@@ -1,9 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 
+type TypeActive = 'default' | 'include'
 const props = defineProps({
   icon: String,
   iconActive: String,
+  typeActive: {
+    type: String as PropType<TypeActive>,
+  },
   title: String,
   type: {
     type: String,
@@ -24,7 +28,16 @@ const props = defineProps({
 })
 const userStore = useUserStore()
 const route = useRoute()
-const isActive = computed(() => props.url.toLowerCase() === route.path.toLowerCase() || (props.url.toLowerCase() !== '/' && route.path.toLowerCase().startsWith(props.url.toLowerCase())))
+const isActive = computed(() => {
+  const normalizedUrl = props.url.toLowerCase();
+  const normalizedPath = route.path.toLowerCase();
+
+  if (props.typeActive === 'include') {
+    return normalizedUrl !== '/' && normalizedPath.startsWith(normalizedUrl);
+  }
+
+  return normalizedUrl === normalizedPath;
+});
 const component = computed(() => {
   if (userStore.isAuthenticated)
     return props.type
@@ -38,7 +51,6 @@ const component = computed(() => {
 <template>
   <UnauthenPopover
     :title="props.title"
-    :content="props.content"
     :is-required="props.authorized && !userStore.isAuthenticated"
   >
     <component
@@ -48,8 +60,17 @@ const component = computed(() => {
       class="flex py-2 pl-4 gap-2 items-center cursor-pointer text-foreground hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
       v-bind="$attrs"
     >
-      <Icon v-show="!isActive" :name=" props.icon" class="w-6 h-6" />
-      <Icon v-show="isActive" :name="props.iconActive ?? props.icon" class="w-6 h-6" />
+      <template
+        v-if="typeof props.icon === 'string'"
+      >
+        <Icon v-show="!isActive" :name=" props.icon" class="w-6 h-6" />
+        <Icon v-show="isActive" :name="props.iconActive ?? props.icon" class="w-6 h-6" />
+      </template>
+      <component
+        :is="props.icon"
+        v-else
+        class="w-6 h-6"
+      />
       <span class="font-bold" :class="props.textStyle">{{ props.title }}</span>
     </component>
   </UnauthenPopover>

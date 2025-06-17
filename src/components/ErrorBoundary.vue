@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { toast } from '@/components/ui/toast'
 
 onMounted(() => {
   window.addEventListener('unhandledrejection', (event) => {
-    event.promise.catch((error) => {
+    event.promise.catch((error: any) => {
       const errorMessage = error?.response?.data?.message || error?.message || 'Something went wrong.'
       if (errorMessage) {
         toast({

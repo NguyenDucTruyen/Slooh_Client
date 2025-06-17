@@ -74,7 +74,7 @@ const data = ref({
             <Separator class="w-full bg-border" />
           </template>
           <template v-for="item in data.groupB" :key="item.id">
-            <AppSideBarItem v-bind="item" />
+            <AppSideBarItem v-bind="item" type-active="include" />
           </template>
         </AppSideBarGroup>
       </div>
