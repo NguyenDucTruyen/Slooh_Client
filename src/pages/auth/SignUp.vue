@@ -43,12 +43,12 @@ const onSubmit = form.handleSubmit(async (values) => {
     </CardHeader>
     <CardContent>
       <div class="grid gap-4">
-        <InputValidator id="name" label="Họ và tên" placeholder="Athony Huynh" type="text" name="name" />
+        <InputValidator id="name" label="Họ và tên" placeholder="Nguyen Van A" type="text" name="name" />
         <InputValidator
           id="email"
           type="email"
           label="Email"
-          placeholder="m@example.com"
+          placeholder="emailm@example.com"
           required
           name="email"
         />

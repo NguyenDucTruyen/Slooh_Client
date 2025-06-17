@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { uploadImage } from '@/api/upload'
+import { toast } from '@/components/ui/toast'
 import { useUserStore } from '@/stores/user'
 import { emailSchema, nameSchema, passwordSchema } from '@/utils/validation'
 import { toTypedSchema } from '@vee-validate/zod'
+import { Loader2 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
 
@@ -57,13 +59,16 @@ const handleSubmit = form.handleSubmit(async (values) => {
       ...values,
       avatar: avatarLink || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png',
     }
-
-    // await userStore.updateUser(updatedValues)
+    await userStore.updateUser(userStore.user!.maNguoiDung, updatedValues)
+    toast({
+      title: 'Cập nhật thành công',
+      description: 'Thông tin cá nhân đã được cập nhật.',
+    })
     isEditing.value = false
     form.resetForm()
     form.setValues({
-      username: userStore.user?.hoTen || '',
-      email: userStore.user?.email || '',
+      username: updatedValues.username || '',
+      email: updatedValues.email || '',
     })
   }
   finally {
@@ -93,11 +98,6 @@ function cancelEdit() {
   isAvatarRemoved.value = false
   fileImage.value = null
 }
-const firstLetter = userStore.user?.hoTen
-  ?.split(' ')
-  .map(name => name.charAt(0))
-  .join('')
-  .slice(-2)
 </script>
 
 <template>
@@ -113,7 +113,7 @@ const firstLetter = userStore.user?.hoTen
             <img
               v-lazy="avatarPreview || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
               alt="Avatar"
-              class="w-full h-full rounded-lg border-2 object-cover"
+              class="w-full h-full rounded-lg object-cover"
             >
             <div
               v-if="isEditing"
@@ -145,20 +145,21 @@ const firstLetter = userStore.user?.hoTen
             label="Tên người dùng"
             name="username"
             :disabled="!isEditing"
-            custom="h-[3rem] mb-5 mt-1"
+            custom-class="mb-5 mt-1"
           />
           <InputValidator
             v-model="form.values.email"
             type="text"
-            label="Địa chỉ email"
+            label="Email"
             name="email"
             disabled
-            custom="h-[3rem] mb-5 mt-1"
+            custom-class="mb-5 mt-4"
           />
-          <div class="flex justify-end">
+          <div class="flex justify-end mt-6">
             <div v-if="isEditing">
               <Button
-                class="bg-foreground hover:bg-muted-foreground mr-2"
+                class="mr-2"
+                variant="outline"
                 @click="cancelEdit"
               >
                 Hủy
@@ -166,7 +167,7 @@ const firstLetter = userStore.user?.hoTen
               <Button type="submit">
                 <template v-if="isLoading">
                   <div class="flex w-full p-8 justify-center gap-2 items-center">
-                    <Icon name="IconLoading" />
+                    <Loader2 />
                     Vui lòng chờ...
                   </div>
                 </template>

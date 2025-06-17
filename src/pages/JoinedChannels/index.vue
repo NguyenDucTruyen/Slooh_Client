@@ -115,7 +115,7 @@ watch(() => channelQuery.value.page, () => {
     </template>
 
     <div class="flex flex-col items-center flex-1 h-full">
-      <Tabs default-value="list" class="w-full flex-1">
+      <Tabs default-value="list" class="w-full flex-1 h-full">
         <TabsList>
           <TabsTrigger value="list">
             <Icon name="IconList" class="w-6 h-6" />

@@ -7,6 +7,8 @@ interface InputProps {
   placeholder?: string
   label?: string
   name?: string
+  disabled?: boolean
+  customClass?: string
 }
 const props = withDefaults(defineProps<InputProps>(), {
   id: 'text',
@@ -25,7 +27,10 @@ const typeInputComputed = computed(() => {
 
 <template>
   <FormField v-slot="{ componentField }" :name="props.name" :validate-on-blur="false">
-    <div class="space-y-2">
+    <div
+      class="space-y-2"
+      :class="props.customClass"
+    >
       <Label :for="props.id">{{ props.label }}</Label>
       <FormItem class="relative">
         <FormControl>
@@ -33,6 +38,7 @@ const typeInputComputed = computed(() => {
             :id="props.id"
             :type="typeInputComputed"
             :placeholder="props.placeholder"
+            :disabled="props.disabled"
             v-bind="componentField"
             class="pr-9"
             autocomplete="off"

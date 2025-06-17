@@ -1,5 +1,5 @@
 import type { NguoiDung } from '@/types'
-import { fetchUserData } from '@/api/user'
+import * as api from '@/api/user'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
@@ -12,8 +12,21 @@ export const useUserStore = defineStore('user', () => {
     user.value = null
   }
   async function getUserData() {
-    const data = await fetchUserData()
+    const data = await api.fetchUserData()
     setUser(data)
+  }
+  async function updateUser(id: string, data: any) {
+    const updatedUser = await api.updateUser(id, {
+      hoTen: data.username,
+      anhDaiDien: data.avatar,
+    })
+    setUser(updatedUser)
+    return updatedUser
+  }
+  async function updatePassword(data: any) {
+    const { confirmNewPassword, ...filterData } = data
+    const updatedUser = await api.updatePassword(filterData)
+    return updatedUser
   }
   const isAuthenticated = computed(() => !!user.value)
   return {
@@ -22,5 +35,7 @@ export const useUserStore = defineStore('user', () => {
     isAuthenticated,
     removeUser,
     getUserData,
+    updateUser,
+    updatePassword,
   }
 })

@@ -44,6 +44,16 @@ export const resetPasswordValidator = z
     message: 'Mật khẩu xác nhận không khớp',
     path: ['confirmPassword'],
   })
+export const changePasswordValidator = z
+  .object({
+    currentPassword: passwordSchema,
+    newPassword: passwordSchema,
+    confirmNewPassword: passwordSchema,
+  })
+  .refine(data => data.newPassword === data.confirmNewPassword, {
+    message: 'Mật khẩu xác nhận mới không khớp',
+    path: ['confirmNewPassword'],
+  })
 
 export const nameSchema = z
   .string()

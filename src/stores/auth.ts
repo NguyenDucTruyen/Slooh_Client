@@ -18,8 +18,8 @@ export const useAuthStore = defineStore('auth', () => {
     router.push(returnUrl.value || '/')
   }
 
-  function logout() {
-    apiLogout(localStorage.getItem('Slooh_RefreshToken') || '')
+  async function logout() {
+    await apiLogout(localStorage.getItem('Slooh_RefreshToken') || '')
     clearUserData()
   }
 

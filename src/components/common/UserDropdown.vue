@@ -47,6 +47,9 @@ function handleLogout() {
       <DropdownMenuItem @click="redirectProfile">
         Thông tin cá nhân
       </DropdownMenuItem>
+      <DropdownMenuItem @click="() => router.push('/changePassword')">
+        Đổi mật khẩu
+      </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleLogout">
         Đăng xuất
