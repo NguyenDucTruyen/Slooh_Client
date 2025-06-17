@@ -14,6 +14,7 @@ export const useUserStore = defineStore('user', () => {
   async function getUserData() {
     const data = await api.fetchUserData()
     setUser(data)
+    return data
   }
   async function updateUser(id: string, data: any) {
     const updatedUser = await api.updateUser(id, {

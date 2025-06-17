@@ -1,6 +1,7 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
+import { Quyen } from '@/types'
 
 export async function middlewareLayout(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const userStore = useUserStore()
@@ -15,6 +16,10 @@ export async function middlewareLayout(to: RouteLocationNormalized, from: RouteL
       return next(returnUrl)
     }
     return next('/')
+  }
+
+  if (isAuthenticated && !layout && userStore.user?.quyen === Quyen.ADMIN) {
+    return next('/admin')
   }
 
   if (!isAuthenticated && !['error', 'auth'].includes(layout)) {

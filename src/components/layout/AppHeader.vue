@@ -1,10 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import UserDropdown from '@/components/common/UserDropdown.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { useUserStore } from '@/stores/user'
+import { Quyen } from '@/types'
 
 const sidebarStore = useSidebarStore()
+const router = useRouter()
 function toggleSidebar() {
   sidebarStore.toggle()
 }
@@ -45,6 +47,14 @@ const listHeaders = ref([
     authorized: true,
   },
 ])
+function handleRedirect() {
+  if (userStore.user!.quyen === Quyen.ADMIN) {
+    router.push('/admin')
+  }
+  else {
+    router.push('/')
+  }
+}
 </script>
 
 <template>
@@ -53,7 +63,7 @@ const listHeaders = ref([
     <div class="flex items-center gap-4">
       <div
         class="logo-container gap-2 pl-6 cursor-pointer hidden lg:flex items-center"
-        @click="$router.push('/')"
+        @click="handleRedirect"
       >
         <img
           src="@/assets/images/Logo_Slooh_Horizontal.png"
@@ -63,7 +73,7 @@ const listHeaders = ref([
       </div>
       <div
         class="logo-container gap-2 pl-1 cursor-pointer hidden max-lg:flex items-center"
-        @click="$router.push('/')"
+        @click="handleRedirect"
       >
         <img
           src="@/assets/images/Logo_Slooh.png"
@@ -91,7 +101,10 @@ const listHeaders = ref([
     </div>
 
     <!-- Navigation Links -->
-    <div class="hidden lg:flex items-center gap-2">
+    <div
+      v-if="userStore.user?.quyen !== Quyen.ADMIN"
+      class="hidden lg:flex items-center gap-2"
+    >
       <template v-for="item in listHeaders" :key="item.id">
         <AppSideBarItem
           v-bind="item"

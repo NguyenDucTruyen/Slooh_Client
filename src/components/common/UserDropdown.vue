@@ -50,6 +50,7 @@ function handleLogout() {
       <DropdownMenuSeparator />      <DropdownMenuItem @click="redirectProfile">
         Thông tin cá nhân
       </DropdownMenuItem>
+      <DropdownMenuSeparator />
       <DropdownMenuItem @click="redirectChangePassword">
         Đổi mật khẩu
       </DropdownMenuItem>

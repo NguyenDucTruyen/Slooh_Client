@@ -8,6 +8,7 @@
 </route>
 
 <script setup lang="ts">
+import { toast } from '@/components/ui/toast'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -19,10 +20,24 @@ if (!accessToken || !refreshToken) {
   router.push('/auth/login')
 }
 else {
-  localStorage.setItem('Slooh_AccessToken', accessToken)
-  localStorage.setItem('Slooh_RefreshToken', refreshToken)
-  await userStore.getUserData()
-  router.push('/')
+  try {
+    localStorage.setItem('Slooh_AccessToken', accessToken)
+    localStorage.setItem('Slooh_RefreshToken', refreshToken)
+    await userStore.getUserData()
+    router.push('/')
+  }
+  catch (error: any) {
+    const errorMessage = error?.response?.data?.message || error?.message || 'Something went wrong.'
+    router.push('/')
+    if (errorMessage) {
+      toast({
+        title: 'Lỗi',
+        description: errorMessage,
+        variant: 'destructive',
+        duration: 5000,
+      })
+    }
+  }
 }
 </script>
 

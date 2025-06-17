@@ -1,5 +1,5 @@
-import type { EmailData, LoginData, RegisterData, ResetPasswordData } from '@/types'
 import { apiLogin, apiLogout, apiRegister, forgotPassword, requestResetPassword } from '@/api/auth'
+import { type EmailData, type LoginData, type NguoiDung, Quyen, type RegisterData, type ResetPasswordData } from '@/types'
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 
@@ -14,8 +14,8 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('Slooh_AccessToken', data.tokens.access.token)
     localStorage.setItem('Slooh_RefreshToken', data.tokens.refresh.token)
 
-    await userStore.getUserData()
-    router.push(returnUrl.value || '/')
+    const user = await userStore.getUserData() as NguoiDung
+    router.push(returnUrl.value || user.quyen === Quyen.ADMIN ? '/admin' : '/')
   }
 
   async function logout() {
