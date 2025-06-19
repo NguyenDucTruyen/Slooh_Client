@@ -10,6 +10,7 @@ const data = ref({
       iconActive: 'IconHomeActive',
       title: 'Trang chủ',
       url: '/',
+      name: ['index'],
     },
     {
       id: 2,
@@ -17,6 +18,7 @@ const data = ref({
       iconActive: 'IconPublicActive',
       title: 'Phòng công khai',
       url: '/publicRoom',
+      name: ['PublicRoom'],
     },
   ],
   groupB: [
@@ -28,6 +30,7 @@ const data = ref({
       url: '/channels',
       content: 'Đăng nhập để xem kênh của bạn',
       authorized: true,
+      name: ['channels', 'channels-id'],
     },
     {
       id: 5,
@@ -37,6 +40,7 @@ const data = ref({
       url: '/joinedchannels',
       content: 'Đăng nhập để xem kênh đã tham gia',
       authorized: true,
+      name: ['JoinedChannels', 'JoinedChannels-id'],
     },
   ],
 })

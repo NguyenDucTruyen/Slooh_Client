@@ -47,7 +47,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   async function getAllPublicRooms(config: { page?: number, limit?: number } = {}) {
     const response = await api.apiGetAllPublicRooms(config)
-    return response
+    return response.data
   }
 
   async function updateRoomStatus(

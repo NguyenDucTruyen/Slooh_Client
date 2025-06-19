@@ -248,12 +248,12 @@ function getStatusText(status: TrangThai) {
                 <!-- Actions -->
                 <td class="px-6 py-4">
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     @click="viewChannelRooms(channel.maKenh)"
                   >
                     <Icon name="IconArrowRight" class="w-4 h-4 mr-1" />
-                    Xem phòng
+                    Xem kênh
                   </Button>
                 </td>
               </tr>

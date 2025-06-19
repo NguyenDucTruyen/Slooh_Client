@@ -10,6 +10,7 @@ export async function middlewareLayout(to: RouteLocationNormalized, from: RouteL
   const layout = to.meta.layout as string
 
   if (isAuthenticated && layout === 'auth') {
+    console.warn('Redirecting authenticated user from auth/admin layout:', to.fullPath, isAuthenticated)
     if (authStore.returnUrl) {
       const returnUrl = authStore.returnUrl
       authStore.clearReturnUrl()
@@ -18,6 +19,9 @@ export async function middlewareLayout(to: RouteLocationNormalized, from: RouteL
     return next('/')
   }
 
+  if (isAuthenticated && layout === 'admin' && userStore.user?.quyen !== Quyen.ADMIN) {
+    return next('/')
+  }
   if (isAuthenticated && !layout && userStore.user?.quyen === Quyen.ADMIN) {
     return next('/admin')
   }
@@ -25,11 +29,12 @@ export async function middlewareLayout(to: RouteLocationNormalized, from: RouteL
   if (!isAuthenticated && !['error', 'auth'].includes(layout)) {
     authStore.clearUserData()
   }
-
-  if (!isAuthenticated && to.meta.authorized) {
-    console.warn('Unauthorized access attempt to:', to.fullPath)
-    next('/')
+  if (!isAuthenticated && ['admin'].includes(layout)) {
+    next('/admin/login')
   }
 
+  if (!isAuthenticated && to.meta.authorized) {
+    next('/')
+  }
   return next()
 }

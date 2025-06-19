@@ -27,7 +27,8 @@ const roomsResponse = ref<PhongData[]>([])
 const membersResponse = ref<Partial<NguoiDungData>[]>([])
 
 const requestJoinMembers = ref<Partial<NguoiDungData>[]>([])
-useAsyncState<Kenh>(() => {
+
+const { state: detailChannel } = useAsyncState<Kenh>(() => {
   return (async () => {
     const response = await channelStore.getChannelDetail(maKenh)
     if (response) {
@@ -94,7 +95,7 @@ const rooms = computed(() => {
   if (!searchValue.value)
     return roomsResponse.value
   return roomsResponse.value.filter((room) => {
-    return room.tenPhong?.toLowerCase().includes(searchValue.value.toLowerCase())
+    return room.tenPhong?.toLowerCase().includes(searchValue.value.toLowerCase().trim())
   })
 })
 
@@ -115,7 +116,7 @@ async function leaveChannel() {
 
 <template>
   <PageContainer
-    title="Chi tiết kênh" description="Danh sách các phòng và thành viên trong kênh"
+    :title="`Kênh: ${detailChannel.tenKenh}`" description="Danh sách các phòng và thành viên trong kênh"
     back-to="/joinedChannels"
   >
     <template #header-actions>

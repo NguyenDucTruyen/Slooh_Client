@@ -7,9 +7,9 @@ import {
 import { toast } from '@/components/ui/toast'
 import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
-import { HoatDongPhong, type Phong, type Slide } from '@/types'
+import { HoatDongPhong, type Phong, type Slide, TrangThai } from '@/types'
 import { useAsyncState } from '@vueuse/core'
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2, Video } from 'lucide-vue-next'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 
 interface Props {
@@ -76,8 +76,7 @@ async function handleNavigateToPreview() {
       <div
         class="flex items-center gap-2 flex-1 text-base font-medium"
       >
-        <Icon
-          name="IconTable"
+        <Video
           class="w-6 h-6 text-slate-600"
         />
         Phòng trình chiếu
@@ -103,7 +102,7 @@ async function handleNavigateToPreview() {
         src="https://res.cloudinary.com/dzdfgj03g/image/upload/w_400/v1744825325/Theme-bg/theme-light-purple_gogrs5.webp" alt=""
         class="w-full object-contain"
       >
-      <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50" />
+      <div class="absolute inset-0 bg-gradient-to-t from-black to-slate-600/80 opacity-50" />
       <div class="absolute inset-0 flex items-center justify-center">
         <img
           src="https://res.cloudinary.com/dzdfgj03g/image/upload/v1744825325/Theme-bg/theme-light-purple_gogrs5.webp"
@@ -116,10 +115,18 @@ async function handleNavigateToPreview() {
         <span
           class="bg-black/50 text-white text-xs px-2 py-1 rounded"
         >{{ item._count?.trangs }} trang</span>
+        <div
+          v-if="item.trangThai === TrangThai.KHOA"
+          class="absolute top-1 right-1 px-2 py-1 rounded-md bg-destructive backdrop-blur-sm border border-destructive/20 text-background text-xs font-medium"
+        >
+          Bị khóa
+        </div>
         <span
+          v-else
           class="text-xs font-medium px-2 py-0.5 rounded-full"
           :class="badgeClass"
         >
+
           {{ item.hoatDong === HoatDongPhong.PRESENTING ? 'Đang trình chiếu' : item.hoatDong === HoatDongPhong.OFFLINE ? 'Offline' : 'Đang Chờ' }}
         </span>
       </div>
@@ -151,6 +158,7 @@ async function handleNavigateToPreview() {
             </RouterLink>
             <Separator />
             <button
+              v-if="item.trangThai === TrangThai.HOAT_DONG"
               class="text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2"
               @click="$emit('clone', item.maPhong)"
             >
@@ -183,6 +191,7 @@ async function handleNavigateToPreview() {
         <Button
           type="button"
           class="w-full"
+          :disabled="item.trangThai === TrangThai.KHOA"
         >
           <Icon name="IconPlay" class="w-4 h-4" />
           Trình chiếu

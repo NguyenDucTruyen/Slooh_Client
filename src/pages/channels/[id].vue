@@ -41,7 +41,7 @@ const queryConfig = ref({
   page: 1,
   limit: 100,
 })
-const { execute: fetchChannels } = useAsyncState<Kenh>(() => {
+const { execute: fetchChannels, state: detailChannel } = useAsyncState<Kenh>(() => {
   return (async () => {
     const response = await channelStore.getChannelDetail(maKenh)
     if (response) {
@@ -284,7 +284,7 @@ const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>
 
 <template>
   <PageContainer
-    title="Chi tiết kênh" description="Danh sách các phòng và thành viên trong kênh"
+    :title="`Kênh: ${detailChannel.tenKenh}`" description="Danh sách các phòng và thành viên trong kênh"
     back-to="/channels"
   >
     <Tabs :default-value="route.query.tab || 'list'">

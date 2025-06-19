@@ -83,7 +83,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="fixed inset-0 bg-slate-200 group"
+    class="fixed inset-0 bg-slate-200 group z-20"
     @click="toggleNavigationVisibility"
     @mousemove="handleMouseMove"
   >

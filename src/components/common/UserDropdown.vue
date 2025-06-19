@@ -15,8 +15,8 @@ function redirectProfile() {
 function redirectChangePassword() {
   router.push({ name: 'Profile', hash: '#password' })
 }
-function handleLogout() {
-  authStore.logout()
+async function handleLogout() {
+  await authStore.logout()
   router.push('/')
 }
 </script>
@@ -47,7 +47,8 @@ function handleLogout() {
           <span>Giao diện tối</span><Switch :model-value="themeStore.theme === 'dark'" @update:model-value="themeStore.toggleTheme()" />
         </div>
       </DropdownMenuItem>
-      <DropdownMenuSeparator />      <DropdownMenuItem @click="redirectProfile">
+      <DropdownMenuSeparator />
+      <DropdownMenuItem @click="redirectProfile">
         Thông tin cá nhân
       </DropdownMenuItem>
       <DropdownMenuSeparator />

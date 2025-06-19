@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 
-type TypeActive = 'default' | 'include'
 const props = defineProps({
   icon: String,
   iconActive: String,
-  typeActive: {
-    type: String as PropType<TypeActive>,
-  },
   title: String,
   type: {
     type: String,
@@ -25,19 +21,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  name: {
+    type: Array,
+    default: () => [],
+  },
 })
 const userStore = useUserStore()
 const route = useRoute()
 const isActive = computed(() => {
-  const normalizedUrl = props.url.toLowerCase();
-  const normalizedPath = route.path.toLowerCase();
-
-  if (props.typeActive === 'include') {
-    return normalizedUrl !== '/' && normalizedPath.startsWith(normalizedUrl);
-  }
-
-  return normalizedUrl === normalizedPath;
-});
+  return (props.name.length > 0 && props.name.includes(route.name?.toString().trim()))
+    || (props.type === 'router-link' && route.path === props.url)
+    || (props.type !== 'router-link' && route.path === props.url)
+})
 const component = computed(() => {
   if (userStore.isAuthenticated)
     return props.type
@@ -56,8 +51,8 @@ const component = computed(() => {
     <component
       :is="component"
       :to="props.type === 'router-link' ? props.url : {}"
-      :class="isActive || props.type !== 'router-link' ? 'bg-primary text-primary-foreground bg-opacity-50' : ''"
-      class="flex py-2 pl-4 gap-2 items-center cursor-pointer text-foreground hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
+      :class="isActive || props.type !== 'router-link' ? 'bg-primary text-primary-foreground bg-opacity-50' : 'text-foreground/80'"
+      class="flex py-2 pl-4 gap-2 items-center cursor-pointer hover:bg-accent hover:bg-opacity-10 hover:text-primary-foreground transition-colors duration-200 ease-in-out rounded-md"
       v-bind="$attrs"
     >
       <template

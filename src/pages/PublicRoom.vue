@@ -42,6 +42,9 @@ const { isLoading, execute } = useAsyncState(
 )
 const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>(() => {
   return (async () => {
+    if (!userStore.isAuthenticated) {
+      return []
+    }
     const response = await channelStore.getChannelList({
       page: 1,
       limit: 100,

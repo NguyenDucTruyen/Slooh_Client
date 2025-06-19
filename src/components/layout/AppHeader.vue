@@ -20,6 +20,7 @@ const listHeaders = ref([
     iconActive: 'IconHomeActive',
     title: 'Trang chủ',
     url: '/',
+    name: ['index'],
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const listHeaders = ref([
     iconActive: 'IconPublicActive',
     title: 'Phòng công khai',
     url: '/publicRoom',
+    name: ['PublicRoom'],
   },
   {
     id: 4,
@@ -36,6 +38,7 @@ const listHeaders = ref([
     url: '/channels',
     content: 'Đăng nhập để xem kênh của bạn',
     authorized: true,
+    name: ['channels', 'channels-id'],
   },
   {
     id: 5,
@@ -45,6 +48,7 @@ const listHeaders = ref([
     url: '/joinedchannels',
     content: 'Đăng nhập để xem kênh đã tham gia',
     authorized: true,
+    name: ['JoinedChannels', 'JoinedChannels-id'],
   },
 ])
 function handleRedirect() {
@@ -113,7 +117,6 @@ function handleRedirect() {
         />
       </template>
     </div>
-
     <!-- Auth Buttons -->
     <div class="flex items-center">
       <UserDropdown v-if="userStore?.user" />

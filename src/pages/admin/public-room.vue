@@ -8,21 +8,17 @@
 </route>
 
 <script setup lang="ts">
-import type { Phong, TrangThai } from '@/types'
+import type { NguoiDung, Phong, TrangThai } from '@/types'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/toast'
 import { useAdminStore } from '@/stores/admin'
-import { useChannelStore } from '@/stores/channel'
 import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
 import { useAsyncState } from '@vueuse/core'
 import { Calendar, Eye, Layers, Loader2, Users, Video } from 'lucide-vue-next'
 
 type PhongMap = Phong & {
-  kenh: {
-    tenKenh: string
-    maKenh: string
-  }
+  nguoiTao: NguoiDung
 }
 interface PaginatedRoomsResponse {
   rooms: PhongMap[]
@@ -34,12 +30,8 @@ interface PaginatedRoomsResponse {
 
 const adminStore = useAdminStore()
 const roomStore = useRoomStore()
-const channelStore = useChannelStore()
-
 const previewSlideStore = usePreviewSlideStore()
 const route = useRoute()
-
-const channelId = route.params.id as string
 
 const queryConfig = ref({
   page: 1,
@@ -64,18 +56,9 @@ function initializeFromRoute() {
   }
 }
 
-const { state: detailChannel } = useAsyncState(() => {
-  return (async () => {
-    const response = await channelStore.getChannelDetail(route.params.id as string)
-    return response
-  })()
-}, null, { immediate: true, onError: (error) => {
-  Promise.reject(error)
-} })
-
 const { isLoading, state, execute } = useAsyncState<PhongMap[]>(
   async () => {
-    const response = await adminStore.getAllRoomsInChannel(channelId, queryConfig.value) as PaginatedRoomsResponse
+    const response = await adminStore.getAllPublicRooms(queryConfig.value) as PaginatedRoomsResponse
     metaData.value = {
       total: response.total,
       page: response.page,
@@ -85,7 +68,7 @@ const { isLoading, state, execute } = useAsyncState<PhongMap[]>(
     return response.rooms
   },
   [],
-  { immediate: true },
+  { immediate: false },
 )
 
 const { execute: fetchDetail } = useAsyncState(
@@ -189,12 +172,8 @@ const roomStats = computed(() => {
 </script>
 
 <template>
-  <PageContainer
-    :title="`Kênh: ${detailChannel?.tenKenh}`" description="Quản lý và giám sát tất cả các phòng trong kênh này"
-    back-to="/admin/channel"
-  >
-    <!-- Header Section -->
-    <div class="border-b bg-card mb-6">
+  <div class="mt-2 py-2 px-6 bg-card shadow-lg flex-1">
+    <div class="border-b mb-6">
       <div class="px-6 py-4">
         <div class="flex items-center justify-between">
           <!-- Summary Cards -->
@@ -271,7 +250,7 @@ const roomStats = computed(() => {
                   Thông tin phòng
                 </th>
                 <th scope="col" class="px-6 py-3">
-                  Kênh
+                  Chủ sở hữu
                 </th>
                 <th scope="col" class="px-6 py-3">
                   Hoạt động
@@ -314,15 +293,24 @@ const roomStats = computed(() => {
                 </th>
 
                 <!-- Room Owner -->
+                <!-- Creator -->
                 <td class="px-6 py-4">
                   <div class="flex items-center">
+                    <img
+                      v-lazy="room.nguoiTao?.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
+                      class="w-8 h-8 rounded-full mr-2"
+                      alt="Creator avatar"
+                    >
                     <div>
-                      <p class="text-md text-gray-900 font-semibold">
-                        {{ room!.kenh.tenKenh }}
+                      <p class="font-medium">
+                        {{ room.nguoiTao?.hoTen || 'N/A' }}
+                      </p>
+                      <p class="text-xs text-gray-500">
+                        {{ room.nguoiTao?.email || 'N/A' }}
                       </p>
                     </div>
                   </div>
-                </td>                <!-- Activity Status -->
+                </td>              <!-- Activity Status -->
                 <td class="px-6 py-4">
                   <div class="flex items-center">
                     <div :class="`w-2 h-2 rounded-full mr-2 ${getActivityColor(room.hoatDong)}`" />
@@ -381,5 +369,5 @@ const roomStats = computed(() => {
         />
       </div>
     </div>
-  </PageContainer>
+  </div>
 </template>

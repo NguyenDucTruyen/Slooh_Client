@@ -13,7 +13,7 @@ defineEmits<{
 <template>
   <div class="flex flex-col min-h-0 max-w-full h-full">
     <div
-      class="flex items-center justify-between bg-card shadow-lg px-6 gap-4"
+      class="flex items-center justify-between bg-card shadow-sm px-6 py-1 gap-4"
       :class="{ 'pl-0': backTo }"
     >
       <div class="flex gap-2">
@@ -41,7 +41,7 @@ defineEmits<{
       <slot name="header-actions" />
     </div>
 
-    <div class="mt-2 py-2 px-6 bg-card rounded-lg shadow-lg flex-1">
+    <div class="p-4 bg-card mt-1 shadow-lg flex-1">
       <slot />
     </div>
   </div>
