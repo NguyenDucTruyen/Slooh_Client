@@ -30,75 +30,9 @@ watch(() => route.hash, (newHash) => {
     activeTab.value = 'profile'
   }
 }, { immediate: true })
-
-// Profile form schema
-const profileSchema = toTypedSchema(
-  z
-    .object({
-      username: nameSchema,
-      email: emailSchema,
-      password: passwordSchema.optional(),
-      confirmPassword: z.string().optional(),
-      role: z.string().optional(),
-      gender: z.string().optional(),
-      dateOfBirth: z.string().optional(),
-    })
-    .refine(
-      (data) => {
-        if (data.password) {
-          return data.password === data.confirmPassword
-        }
-        return true
-      },
-      {
-        message: 'Passwords do not match',
-        path: ['confirmPassword'],
-      },
-    ),
-)
-
-// Profile form
-const profileForm = useForm({
-  validationSchema: profileSchema,
-  initialValues: {
-    username: userStore.user?.hoTen || '',
-    email: userStore.user?.email || '',
-  },
-})
-
 // Change password form
 const passwordForm = useForm({
   validationSchema: toTypedSchema(changePasswordValidator),
-})
-
-// Profile form submit handler
-const handleProfileSubmit = profileForm.handleSubmit(async (values) => {
-  try {
-    isLoading.value = true
-    let avatarLink = isAvatarRemoved.value ? '' : userStore.user?.anhDaiDien || ''
-    if (fileImage.value) {
-      const res = await uploadImage(fileImage.value)
-      avatarLink = res.url
-    }
-    const updatedValues = {
-      ...values,
-      avatar: avatarLink || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png',
-    }
-    await userStore.updateUser(userStore.user!.maNguoiDung, updatedValues)
-    toast({
-      title: 'Cập nhật thành công',
-      description: 'Thông tin cá nhân đã được cập nhật.',
-    })
-    isEditing.value = false
-    profileForm.resetForm()
-    profileForm.setValues({
-      username: updatedValues.username || '',
-      email: updatedValues.email || '',
-    })
-  }
-  finally {
-    isLoading.value = false
-  }
 })
 
 // Change password submit handler
@@ -128,7 +62,50 @@ const handlePasswordSubmit = passwordForm.handleSubmit(async (values) => {
     isPasswordLoading.value = false
   }
 })
+const profileSchema = toTypedSchema(
+  z
+    .object({
+      username: nameSchema,
+      email: emailSchema,
+    }),
+)
 
+const form = useForm({
+  validationSchema: profileSchema,
+  initialValues: {
+    username: userStore.user?.hoTen || '',
+    email: userStore.user?.email || '',
+  },
+})
+
+const handleSubmit = form.handleSubmit(async (values) => {
+  try {
+    isLoading.value = true
+    let avatarLink = isAvatarRemoved.value ? '' : userStore.user?.anhDaiDien || ''
+    if (fileImage.value) {
+      const res = await uploadImage(fileImage.value)
+      avatarLink = res.url
+    }
+    const updatedValues = {
+      ...values,
+      avatar: avatarLink || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png',
+    }
+    await userStore.updateUser(userStore.user!.maNguoiDung, updatedValues)
+    toast({
+      title: 'Cập nhật thành công',
+      description: 'Thông tin cá nhân đã được cập nhật.',
+    })
+    isEditing.value = false
+    form.resetForm()
+    form.setValues({
+      username: updatedValues.username || '',
+      email: updatedValues.email || '',
+    })
+  }
+  finally {
+    isLoading.value = false
+  }
+})
 function handleAvatarChange(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files && target.files[0]) {
@@ -147,7 +124,7 @@ function startEdit() {
 }
 function cancelEdit() {
   isEditing.value = false
-  profileForm.resetForm()
+  form.resetForm()
   avatarPreview.value = userStore.user?.anhDaiDien || ''
   isAvatarRemoved.value = false
   fileImage.value = null
@@ -157,10 +134,11 @@ function cancelEdit() {
 <template>
   <div class="flex flex-col items-center h-full">
     <div class="w-full flex justify-center">
-      <div class="flex flex-col items-center w-11/12 md:w-3/4 lg:w-1/2">
+      <div class="flex flex-col items-center w-11/12 md:w-3/4 lg:w-1/2 p-6 bg-white rounded-lg shadow-md mt-6">
         <h1 class="self-start text-2xl font-bold mt-4 mb-6">
           Tài khoản
-        </h1>        <Tabs v-model="activeTab" class="w-full">
+        </h1>
+        <Tabs v-model="activeTab" class="w-full">
           <TabsList class="grid w-full grid-cols-2">
             <TabsTrigger value="profile">
               Thông tin cá nhân
@@ -169,83 +147,84 @@ function cancelEdit() {
               Đổi mật khẩu
             </TabsTrigger>
           </TabsList>
-
           <!-- Profile Tab -->
           <TabsContent value="profile" class="mt-6">
-            <form class="w-full" @submit="handleProfileSubmit">
-              <div class="relative w-24 h-24 mb-4">
-                <img
-                  v-lazy="avatarPreview || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
-                  alt="Avatar"
-                  class="w-full h-full rounded-lg object-cover"
-                >
-                <div
-                  v-if="isEditing"
-                  class="absolute rounded-lg inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer "
-                >
-                  <label class="text-white text-sm font-medium cursor-pointer">
-                    Tải lên
-                    <input
-                      type="file"
-                      class="hidden"
-                      accept="image/*"
-                      @change="handleAvatarChange"
-                    >
-                  </label>
-                </div>
-              </div>
-
-              <button
-                v-if="isEditing && avatarPreview"
-                type="button"
-                class="text-red-500 text-sm mb-4"
-                @click="removeAvatar"
-              >
-                Xóa ảnh đại diện
-              </button>
-
-              <InputValidator
-                v-model="profileForm.values.username"
-                type="text"
-                label="Tên người dùng"
-                name="username"
-                :disabled="!isEditing"
-                custom-class="mb-5 mt-1"
-              />
-              <InputValidator
-                v-model="profileForm.values.email"
-                type="text"
-                label="Email"
-                name="email"
-                disabled
-                custom-class="mb-5 mt-4"
-              />
-
-              <div class="flex justify-end mt-6">
-                <div v-if="isEditing">
-                  <Button
-                    class="mr-2"
-                    variant="outline"
-                    @click="cancelEdit"
+            <form class="w-full grid grid-cols-4 gap-4" @submit="handleSubmit">
+              <div class="flex flex-col">
+                <div class="relative w-full mb-4">
+                  <img
+                    v-lazy="avatarPreview || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
+                    alt="Avatar"
+                    class="w-full aspect-square rounded-lg object-cover"
                   >
-                    Hủy
-                  </Button>
-                  <Button type="submit" :disabled="isLoading">
-                    <template v-if="isLoading">
-                      <div class="flex w-full p-8 justify-center gap-2 items-center">
-                        <Loader2 />
-                        Vui lòng chờ...
-                      </div>
-                    </template>
-                    <template v-else>
-                      Lưu
-                    </template>
-                  </Button>
+                  <div
+                    v-if="isEditing"
+                    class="absolute rounded-lg inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer "
+                  >
+                    <label class="text-white text-sm font-medium cursor-pointer">
+                      Tải lên
+                      <input
+                        type="file"
+                        class="hidden"
+                        accept="image/*"
+                        @change="handleAvatarChange"
+                      >
+                    </label>
+                  </div>
                 </div>
-                <div v-else>
-                  <Button @click="startEdit">
-                    Chỉnh sửa
-                  </Button>
+
+                <button
+                  v-if="isEditing && avatarPreview"
+                  type="button"
+                  class="text-red-500 text-sm mb-4"
+                  @click="removeAvatar"
+                >
+                  Xóa ảnh đại diện
+                </button>
+              </div>
+              <div class="flex flex-col col-span-3">
+                <InputValidator
+                  v-model="form.values.username"
+                  type="text"
+                  label="Họ tên"
+                  name="username"
+                  :disabled="!isEditing"
+                  custom-class="mb-5 mt-1"
+                />
+                <InputValidator
+                  v-model="form.values.email"
+                  type="text"
+                  label="Email"
+                  name="email"
+                  disabled
+                  custom-class="mb-5 mt-4"
+                />
+                <div class="flex justify-end mt-6">
+                  <template
+                    v-if="isEditing"
+                  >
+                    <Button
+                      class="mr-2"
+                      variant="outline"
+                      @click="cancelEdit"
+                    >
+                      Hủy
+                    </Button>
+                    <Button type="submit">
+                      <template v-if="isLoading">
+                        <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+                        Vui lòng chờ...
+                      </template>
+                      <template v-else>
+                        Lưu
+                      </template>
+                    </Button>
+                  </template>
+                  <div v-else>
+                    <Button @click="startEdit">
+                      Chỉnh sửa
+                    </Button>
+                  </div>
                 </div>
               </div>
             </form>

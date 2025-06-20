@@ -284,7 +284,7 @@ const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>
 
 <template>
   <PageContainer
-    :title="`Kênh: ${detailChannel.tenKenh}`" description="Danh sách các phòng và thành viên trong kênh"
+    :title="`Kênh: ${detailChannel?.tenKenh ?? ''}`" description="Danh sách các phòng và thành viên trong kênh"
     back-to="/channels"
   >
     <Tabs :default-value="route.query.tab || 'list'">

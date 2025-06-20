@@ -116,7 +116,7 @@ async function leaveChannel() {
 
 <template>
   <PageContainer
-    :title="`Kênh: ${detailChannel.tenKenh}`" description="Danh sách các phòng và thành viên trong kênh"
+    :title="`Kênh: ${detailChannel?.tenKenh ?? ''}`" description="Danh sách các phòng và thành viên trong kênh"
     back-to="/joinedChannels"
   >
     <template #header-actions>

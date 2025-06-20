@@ -190,7 +190,7 @@ const roomStats = computed(() => {
 
 <template>
   <PageContainer
-    :title="`Kênh: ${detailChannel?.tenKenh}`" description="Quản lý và giám sát tất cả các phòng trong kênh này"
+    :title="`Kênh: ${detailChannel?.tenKenh ?? ''}`" description="Quản lý và giám sát tất cả các phòng trong kênh này"
     back-to="/admin/channel"
   >
     <!-- Header Section -->

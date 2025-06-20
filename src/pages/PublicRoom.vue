@@ -26,6 +26,7 @@ const previewSlideStore = usePreviewSlideStore()
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
 const visibleModalCloneRoom = ref(false)
+const isPinModalOpen = ref(false)
 const temprarySelectedRoom = ref<string | null>(null)
 const roomsResponse = ref<PhongData[]>([])
 const { isLoading, execute } = useAsyncState(
@@ -152,6 +153,9 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
   }
   visibleModalCloneRoom.value = false
 }
+function handleOpenPinModal() {
+  isPinModalOpen.value = true
+}
 </script>
 
 <template>
@@ -184,7 +188,10 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
               Tham gia các phiên trình chiếu công khai đang diễn ra
             </p>
           </div>
-          <Button class="shrink-0" variant="default">
+          <Button
+            class="shrink-0" variant="default"
+            @click="handleOpenPinModal"
+          >
             <Icon name="IconArrowRight" class="w-4 h-4 mr-2" />
             Tham gia phiên
           </Button>
@@ -209,6 +216,7 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
     <template #header-actions>
       <Button
         :variant="userStore.isAuthenticated ? 'outline' : 'default'"
+        @click="handleOpenPinModal"
       >
         Tham gia phiên
       </Button>
@@ -294,6 +302,12 @@ async function handleCloneRoomSubmit({ roomId, channelId }: { roomId: string, ch
 
   <Preview
     v-if="previewSlideStore.isPreviewing"
+  />
+  <ModalEnterPin
+    v-model:open="isPinModalOpen"
+    @confirm="(pin: string) => {
+      router.push({ name: 'session', query: { pin } })
+    }"
   />
 </template>
 

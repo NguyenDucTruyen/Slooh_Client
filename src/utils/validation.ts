@@ -13,6 +13,11 @@ export const passwordSchema = z
 
 export const requiredStringSchema = z.string()
 
+export const nameSchema = z
+  .string()
+  .min(2, { message: 'Tên phải có ít nhất 2 ký tự' })
+  .max(50, { message: 'Tên không được vượt quá 50 ký tự' })
+
 export const signupValidator = z
   .object({
     email: emailSchema,
@@ -54,8 +59,6 @@ export const changePasswordValidator = z
     message: 'Mật khẩu xác nhận mới không khớp',
     path: ['confirmNewPassword'],
   })
-
-export const nameSchema = z
-  .string()
-  .min(2, { message: 'Tên phải có ít nhất 2 ký tự' })
-  .max(50, { message: 'Tên không được vượt quá 50 ký tự' })
+export const formJoinSessionValidator = z.object({
+  name: nameSchema,
+})
