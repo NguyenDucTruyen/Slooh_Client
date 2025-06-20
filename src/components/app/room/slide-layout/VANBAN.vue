@@ -12,11 +12,13 @@ const slide = defineModel('slide', {
     <div class="flex flex-col justify-center gap-6  col-span-1">
       <RichTextEditor
         v-model="slide.tieuDe"
+        v-model:align="slide.canLeTieuDe"
         placeholder="Click để nhập tiêu đề..."
         class="shrink-0 max-h-[150px]"
       />
       <RichTextEditor
         v-model="slide.noiDung"
+        v-model:align="slide.canLeNoiDung"
         placeholder="Click để nhập tiêu đề..."
         class="max-h-[470px] text-xl"
       />

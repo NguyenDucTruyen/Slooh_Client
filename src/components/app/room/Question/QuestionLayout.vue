@@ -108,6 +108,7 @@ const deletableOption = computed(() => {
 <template>
   <RichTextEditor
     v-model="slide.tieuDe"
+    v-model:align="slide.canLeTieuDe"
     placeholder="Click để nhập tiêu đề..."
     class="shrink-0 max-h-[110px]"
   />

@@ -166,11 +166,10 @@ function handleDrop(e: DragEvent) {
           Xóa
         </Button>
       </div>
-    </div>
-
-    <!-- Editor (chiều cao cố định) -->
+    </div>    <!-- Editor (chiều cao cố định) -->
     <RichTextEditor
       v-model="slide.tieuDe"
+      v-model:align="slide.canLeTieuDe"
       placeholder="Click để nhập tiêu đề..."
       class="shrink-0 max-h-[110px] text-xl"
     />

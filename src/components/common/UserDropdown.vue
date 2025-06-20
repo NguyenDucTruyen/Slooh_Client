@@ -28,7 +28,7 @@ async function handleLogout() {
         <img
           :src="userStore.user.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
           :alt="userStore.user.hoTen"
-          class="h-8 w-8 rounded-full"
+          class="h-8 w-8 rounded-full object-cover"
         >
         <div class="sm:grid hidden flex-1 text-left text-sm leading-tight">
           <span class="truncate font-semibold">{{ userStore.user.hoTen || userStore.user.email }}</span>

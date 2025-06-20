@@ -7,6 +7,10 @@ defineProps<{
   placeholder?: string
   specialType?: 'question' | 'answer'
 }>()
+const currentAlign = defineModel('align', {
+  type: String,
+  default: '',
+})
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -32,7 +36,6 @@ const LIST_ALIGN = [{
   icon: 'IconAlignJustify',
   shortcut: 'Align justify (Ctrl + J)',
 }]
-const currentAlign = ref<string>('')
 function format(command: FormatCommand) {
   document.execCommand(command, false)
 }

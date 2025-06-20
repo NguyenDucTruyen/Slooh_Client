@@ -88,6 +88,7 @@ function handleDrop(e: DragEvent) {
 <template>
   <RichTextEditor
     v-model="slide.tieuDe"
+    v-model:align="slide.canLeTieuDe"
     placeholder="Click để nhập tiêu đề..."
     class="shrink-0 max-h-[110px]"
   />
@@ -185,6 +186,7 @@ function handleDrop(e: DragEvent) {
   >
     <RichTextEditor
       v-model="slide.noiDung"
+      v-model:align="slide.canLeNoiDung"
       placeholder="Click để nhập tiêu đề..."
       class="max-h-[330px] text-xl col-span-2"
     />

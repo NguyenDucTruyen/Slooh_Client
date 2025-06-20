@@ -298,7 +298,7 @@ const roomStats = computed(() => {
                   <div class="flex items-center">
                     <img
                       v-lazy="room.nguoiTao?.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
-                      class="w-8 h-8 rounded-full mr-2"
+                      class="w-8 h-8 rounded-full mr-2 object-cover"
                       alt="Creator avatar"
                     >
                     <div>

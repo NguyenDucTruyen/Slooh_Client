@@ -67,7 +67,6 @@ const indexSelectedSlide = computed(() => {
 })
 
 async function handleSave() {
-  console.log('cachTrinhBay', slides.value?.map(slide => slide.cachTrinhBay))
   const formatData: BodyUpdateRoom = {
     tenPhong: roomDetail.value.tenPhong,
     hoatDong: roomDetail.value.hoatDong,
