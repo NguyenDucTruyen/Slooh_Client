@@ -8,6 +8,7 @@
   </route>
 
 <script setup lang="ts">
+import BaseImg from '@/components/common/BaseImg.vue'
 import { Switch } from '@/components/ui/switch'
 import { useAdminStore } from '@/stores/admin'
 import { type NguoiDung, Quyen, TrangThai } from '@/types'
@@ -156,7 +157,12 @@ function getStatusText(status: TrangThai) {
             <tbody>
               <tr v-for="user in state" :key="user.maNguoiDung" class="border-b hover:bg-slate-200 dark:hover:bg-slate-800">
                 <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                  <img v-lazy="user.anhDaiDien ?? 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'" class="w-10 h-10 rounded-full" alt="Jese image">
+                  <BaseImg
+                    :src="user.anhDaiDien"
+                    :alt="user.hoTen"
+                    class="w-10 h-10 rounded-full"
+                    aspect-ratio="square"
+                  />
                   <div class="ps-3">
                     <div class="text-base font-semibold">
                       {{ user.hoTen }}

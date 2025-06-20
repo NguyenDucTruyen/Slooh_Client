@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseImg from '@/components/common/BaseImg.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { useUserStore } from '@/stores/user'
@@ -25,11 +26,12 @@ async function handleLogout() {
   <DropdownMenu v-if="userStore?.user">
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" class="relative lg:px-6 py-6 lg:w-60">
-        <img
-          :src="userStore.user.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
+        <BaseImg
+          :src="userStore.user.anhDaiDien"
           :alt="userStore.user.hoTen"
-          class="h-8 w-8 rounded-full object-cover"
-        >
+          class="h-8 w-8 rounded-full"
+          aspect-ratio="square"
+        />
         <div class="sm:grid hidden flex-1 text-left text-sm leading-tight">
           <span class="truncate font-semibold">{{ userStore.user.hoTen || userStore.user.email }}</span>
         </div>

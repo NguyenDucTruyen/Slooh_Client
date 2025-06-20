@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { uploadImage } from '@/api/upload'
+import BaseImg from '@/components/common/BaseImg.vue'
 import { toast } from '@/components/ui/toast'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
@@ -152,11 +153,12 @@ function cancelEdit() {
             <form class="w-full grid grid-cols-4 gap-4" @submit="handleSubmit">
               <div class="flex flex-col">
                 <div class="relative w-full mb-4">
-                  <img
-                    v-lazy="avatarPreview || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
+                  <BaseImg
+                    :src="avatarPreview"
                     alt="Avatar"
-                    class="w-full aspect-square rounded-lg object-cover"
-                  >
+                    class="w-full rounded-lg"
+                    aspect-ratio="square"
+                  />
                   <div
                     v-if="isEditing"
                     class="absolute rounded-lg inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer "

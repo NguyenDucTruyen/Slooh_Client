@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import type { NguoiDung, Phong, TrangThai } from '@/types'
+import BaseImg from '@/components/common/BaseImg.vue'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/toast'
 import { useAdminStore } from '@/stores/admin'
@@ -166,7 +167,6 @@ const roomStats = computed(() => {
   const active = state.value.filter(room => room.trangThai === 'HOAT_DONG').length
   const locked = state.value.filter(room => room.trangThai === 'KHOA').length
   const presenting = state.value.filter(room => room.hoatDong === 'PRESENTING').length
-
   return { total, active, locked, presenting }
 })
 </script>
@@ -296,11 +296,12 @@ const roomStats = computed(() => {
                 <!-- Creator -->
                 <td class="px-6 py-4">
                   <div class="flex items-center">
-                    <img
-                      v-lazy="room.nguoiTao?.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
-                      class="w-8 h-8 rounded-full mr-2 object-cover"
-                      alt="Creator avatar"
-                    >
+                    <BaseImg
+                      :src="room.nguoiTao?.anhDaiDien"
+                      :alt="room.nguoiTao?.hoTen"
+                      class="w-8 h-8 rounded-full mr-2"
+                      aspect-ratio="square"
+                    />
                     <div>
                       <p class="font-medium">
                         {{ room.nguoiTao?.hoTen || 'N/A' }}

@@ -8,6 +8,7 @@
 </route>
 
 <script setup lang="ts">
+import BaseImg from '@/components/common/BaseImg.vue'
 import { Switch } from '@/components/ui/switch'
 import { useAdminStore } from '@/stores/admin'
 import { type Kenh, type NguoiDung, TrangThai, VaiTroKenh } from '@/types'
@@ -198,16 +199,15 @@ function getStatusText(status: TrangThai) {
                       </div>
                     </div>
                   </div>
-                </th>
-
-                <!-- Creator -->
+                </th>                <!-- Creator -->
                 <td class="px-6 py-4">
                   <div class="flex items-center">
-                    <img
-                      v-lazy="channel.chuKenh?.anhDaiDien || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'"
-                      class="w-8 h-8 rounded-full mr-2 object-cover"
-                      alt="Creator avatar"
-                    >
+                    <BaseImg
+                      :src="channel.chuKenh?.anhDaiDien"
+                      :alt="channel.chuKenh?.hoTen"
+                      class="w-8 h-8 rounded-full mr-2"
+                      aspect-ratio="square"
+                    />
                     <div>
                       <p class="font-medium">
                         {{ channel.chuKenh?.hoTen || 'N/A' }}

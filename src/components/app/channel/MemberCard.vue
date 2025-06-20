@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseImg from '@/components/common/BaseImg.vue'
 import {
   Popover,
   PopoverContent,
@@ -34,19 +35,7 @@ const confirmStore = useConfirmStore()
 const id_selected = defineModel({
   type: Boolean,
 })
-const defaultAvatar = 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png'
 
-// tạo biến src riêng để dễ thay đổi khi lỗi
-const avatarSrc = ref(props.user.anhDaiDien || defaultAvatar)
-
-// nếu prop thay đổi thì cập nhật lại ảnh
-watch(() => props.user.anhDaiDien, (newVal) => {
-  avatarSrc.value = newVal || defaultAvatar
-})
-
-function handleImgError() {
-  avatarSrc.value = defaultAvatar
-}
 async function handleRemove() {
   const confirm = await confirmStore.showConfirmDialog({
     title: 'Xóa thành viên',
@@ -88,14 +77,13 @@ async function handleAccept(accept: boolean) {
           class="h-4 w-4 text-grass11"
         />
       </CheckboxIndicator>
-    </CheckboxRoot>
-    <div class="col-span-4 flex items-center gap-4">
-      <img
-        :src="avatarSrc"
-        alt=""
-        class="w-10 h-10 rounded-full object-cover"
-        @error="handleImgError"
-      >
+    </CheckboxRoot>    <div class="col-span-4 flex items-center gap-4">
+      <BaseImg
+        :src="user.anhDaiDien"
+        :alt="user.hoTen"
+        class="w-10 h-10 rounded-full"
+        aspect-ratio="square"
+      />
       <div class="flex flex-col gap-1">
         <h2 class="text-lg font-semibold truncate-one-line">
           {{ user.hoTen }}
