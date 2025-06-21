@@ -9,6 +9,7 @@
 </route>
 
 <script setup lang="ts">
+import Presenting from '@/components/app/room/presenting/Presenting.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -274,66 +275,15 @@ async function copyPin() {
                 </span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div v-if="currentSlide" class="space-y-4">
-                <!-- Slide Content -->
-                <div class="bg-gray-50 rounded-lg p-6 min-h-[400px]">
-                  <h2 class="text-2xl font-bold mb-4">
-                    {{ currentSlide.tieuDe }}
-                  </h2>
-
-                  <!-- Content based on slide type -->
-                  <div v-if="currentSlide.loaiTrang === 'NOI_DUNG'">
-                    <div v-if="currentSlide.hinhAnh" class="mb-4">
-                      <img
-                        :src="currentSlide.hinhAnh"
-                        :alt="currentSlide.tieuDe"
-                        class="max-w-full h-auto rounded-lg"
-                      >
-                    </div>
-                    <div v-if="currentSlide.noiDung" class="prose max-w-none">
-                      <p>{{ currentSlide.noiDung }}</p>
-                    </div>
-                  </div>
-
-                  <!-- Question Slide -->
-                  <div v-else-if="currentSlide.loaiTrang === 'CAU_HOI'" class="space-y-4">
-                    <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm mb-4">
-                      Câu hỏi - {{ currentSlide.loaiCauTraLoi }}
-                    </span>
-
-                    <div v-if="currentSlide.luaChon" class="space-y-2">
-                      <h3 class="font-semibold mb-3">
-                        Lựa chọn:
-                      </h3>
-                      <div
-                        v-for="(choice, index) in currentSlide.luaChon"
-                        :key="index"
-                        class="flex items-center gap-2 p-3 bg-white rounded-lg border"
-                        :class="choice.ketQua ? 'border-green-500 bg-green-50' : 'border-gray-200'"
-                      >
-                        <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                          {{ String.fromCharCode(65 + index) }}
-                        </span>
-                        <span>{{ choice.noiDung }}</span>
-                        <span v-if="choice.ketQua" class="ml-auto bg-green-500 text-white px-2 py-1 rounded text-xs">
-                          Đúng
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Question Controls -->
-                <div v-if="isCurrentPageQuestion" class="flex gap-2">
-                  <Button variant="default" @click="startQuestion">
-                    Bắt đầu câu hỏi
-                  </Button>
-                  <Button variant="outline" @click="showLeaderboard">
-                    Hiển thị bảng xếp hạng
-                  </Button>
-                </div>
-              </div>
+            <CardContent class="h-full">
+              <Presenting
+                v-if="currentSlide"
+                :slide="currentSlide"
+                :current="session.sessionData.currentPage"
+                :length="totalSlides"
+                @next="navigateToPage(session.sessionData.currentPage + 1)"
+                @previous="navigateToPage(session.sessionData.currentPage - 1)"
+              />
 
               <div v-else class="text-center py-12 text-gray-500">
                 Không có slide nào được chọn
@@ -367,6 +317,11 @@ async function copyPin() {
                   @click="navigateToPage(session.sessionData.currentPage + 1)"
                 >
                   Sau →
+                </Button>
+              </div>
+              <div v-if="isCurrentPageQuestion" class="w-full">
+                <Button variant="default" class="w-full" @click="startQuestion">
+                  Bắt đầu câu hỏi
                 </Button>
               </div>
 

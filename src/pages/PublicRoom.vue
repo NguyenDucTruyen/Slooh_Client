@@ -21,7 +21,6 @@ const channelStore = useChannelStore()
 const roomStore = useRoomStore()
 const confirmStore = useConfirmStore()
 const userStore = useUserStore()
-const previewSlideStore = usePreviewSlideStore()
 
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
@@ -300,9 +299,6 @@ function handleOpenPinModal() {
     @add="handleCloneRoomSubmit"
   />
 
-  <Preview
-    v-if="previewSlideStore.isPreviewing"
-  />
   <ModalEnterPin
     v-model:open="isPinModalOpen"
     @confirm="(pin: string) => {

@@ -6,6 +6,9 @@ import { usePreviewSlideStore } from '@/stores/preview'
 import { LoaiCauTraLoi, type LuaChon, type Slide } from '@/types'
 import { Loader2 } from 'lucide-vue-next'
 
+defineProps<{
+  editable?: boolean
+}>()
 const slide = defineModel('slide', {
   type: Object as () => Slide,
   required: true,
@@ -111,6 +114,7 @@ const deletableOption = computed(() => {
     v-model:align="slide.canLeTieuDe"
     placeholder="Click để nhập tiêu đề..."
     class="shrink-0 max-h-[110px]"
+    :editable="editable"
   />
 
   <!-- Image Area with preview -->
@@ -125,7 +129,7 @@ const deletableOption = computed(() => {
       :class="{ 'blur-md': uploading }"
     >
     <div
-      v-if="!previewSlideStore.isPreviewing"
+      v-if="editable && !previewSlideStore.isPreviewing"
       class="rounded-md w-full h-full flex-1 relative group"
       tabindex="0"
       :class="{ 'ring-2 ring-primary ring-offset-2': isDragging }"
@@ -180,7 +184,7 @@ const deletableOption = computed(() => {
         </template>
       </div>
       <div
-        v-else
+        v-if="editable && !previewSlideStore.isPreviewing"
         class="flex absolute gap-2 p-4 bottom-0 right-0 p-x rounded-md bg-white/70 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
         <Button

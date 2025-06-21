@@ -172,6 +172,7 @@ onBeforeUnmount(() => {
             v-if="slides?.length && indexSelectedSlide !== -1"
             v-model:slide="slides[indexSelectedSlide]"
             :visible="isPanelVisible"
+            :editable="true"
           />
           <PanelArea
             v-if="slides?.length && indexSelectedSlide !== -1"
@@ -182,9 +183,6 @@ onBeforeUnmount(() => {
       </div>
     </template>
   </div>
-  <Preview
-    v-if="previewSlideStore.isPreviewing"
-  />
 </template>
 
 <style scoped lang="scss">

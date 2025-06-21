@@ -6,6 +6,7 @@ defineProps<{
   modelValue: string
   placeholder?: string
   specialType?: 'question' | 'answer'
+  editable?: boolean
 }>()
 const currentAlign = defineModel('align', {
   type: String,
@@ -117,7 +118,7 @@ function handleAlign(name: string) {
   <div class="w-full group relative flex items-center">
     <!-- Formatting toolbar (ẩn mặc định, chỉ hiện khi hover/focus vào editor) -->
     <div
-      v-if="specialType !== 'answer' && !previewSlideStore.isPreviewing"
+      v-if="editable && !previewSlideStore.isPreviewing"
       class="flex gap-2 justify-center items-center bg-card/80 backdrop-blur-sm p-2 rounded-md absolute -top-[46px] left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition !text-foreground"
     >
       <Button variant="outline" size="sm" class="w-8 h-8 p-0" title="Bold (Ctrl + B)" @click="format('bold')">

@@ -94,12 +94,14 @@ function handleDrop(e: DragEvent) {
         v-model:align="slide.canLeTieuDe"
         placeholder="Click để nhập tiêu đề..."
         class="shrink-0 max-h-[150px]"
+        v-bind="$attrs"
       />
       <RichTextEditor
         v-model="slide.noiDung"
         v-model:align="slide.canLeNoiDung"
         placeholder="Click để nhập tiêu đề..."
         class="max-h-[370px] text-xl col-span-2"
+        v-bind="$attrs"
       />
     </div>
     <div
@@ -168,7 +170,7 @@ function handleDrop(e: DragEvent) {
           </template>
         </div>
         <div
-          v-else
+          v-if="$attrs.editable && !previewSlideStore.isPreviewing"
           class="flex absolute gap-2 p-4 bottom-0 right-0 p-x rounded-md bg-white/70 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
           <Button

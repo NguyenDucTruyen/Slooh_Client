@@ -365,9 +365,6 @@ const roomStats = computed(() => {
           :current-page="queryConfig.page"
           :items-per-page="queryConfig.limit"
         />
-        <Preview
-          v-if="previewSlideStore.isPreviewing"
-        />
       </div>
     </div>
   </div>

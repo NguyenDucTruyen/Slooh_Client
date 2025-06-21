@@ -1,8 +1,19 @@
 <script setup lang="ts">
+import type { Slide } from '@/types'
 import { cn } from '@/lib/utils'
-import { usePreviewSlideStore } from '@/stores/preview'
 
-const previewSlideStore = usePreviewSlideStore()
+interface EmitEvents {
+  (event: 'next'): void
+  (event: 'previous'): void
+  (event: 'exit'): void
+}
+defineProps<{
+  slide: Slide
+  current: number
+  length: number
+}>()
+const emit = defineEmits<EmitEvents>()
+
 const showNavigation = ref(true)
 const isFullscreen = ref(false)
 const isMouseOverNavigation = ref(false)
@@ -23,15 +34,12 @@ function requestFullscreen() {
 }
 function handleKeydown(event: KeyboardEvent) {
   switch (event.key) {
-    case 'Escape':
-      previewSlideStore.clearPreviewSlide()
-      break
     case 'ArrowLeft':
-      previewSlideStore.previousSlide()
+      emit('previous')
       resetNavigationTimeout()
       break
     case 'ArrowRight':
-      previewSlideStore.nextSlide()
+      emit('next')
       resetNavigationTimeout()
       break
     case ' ':
@@ -60,13 +68,6 @@ function resetNavigationTimeout() {
     showNavigation.value = false
   }, 3000)
 }
-function exitPreview() {
-  if (document.fullscreenElement) {
-    document.exitFullscreen()
-    isFullscreen.value = false
-  }
-  previewSlideStore.clearPreviewSlide()
-}
 function handleMouseMove() {
   if (!showNavigation.value || isMouseOverNavigation.value)
     return
@@ -83,46 +84,36 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="bg-slate-200 group z-20"
+    class="bg-slate-200 group z-20 h-full"
     @click="toggleNavigationVisibility"
     @mousemove="handleMouseMove"
   >
     <SlideEditor
-      v-if="previewSlideStore.previewSlide"
-      v-model:slide="previewSlideStore.previewSlide[previewSlideStore.currentSlideIndex]"
+      :slide="slide"
     />
     <div
-      :class="cn('absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2  p-2 rounded-md bg-white/70 backdrop-blur-md items-center',
-                 'transition-opacity duration-300 opacity-0',
-                 { 'opacity-100': showNavigation },
-      )"
+      :class="
+        cn('absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2  p-2 rounded-md bg-white/70 backdrop-blur-md items-center',
+          'transition-opacity duration-300 opacity-0',
+          { 'opacity-100': showNavigation }
+        )"
       @click.stop
       @mouseenter="handleMouseOverNavigation"
       @mouseleave="() => { isMouseOverNavigation = false }"
     >
-      <Button
-        variant="outline"
-        class="rounded-sm"
-        title="Thoát xem trước"
-        @click="exitPreview"
-      >
-        Thoát
-      </Button>
-      <Separator orientation="vertical" class="bg-slate-400 h-8 rounded-md" />
       <div class="flex gap-1 items-center text-xl font-semibold text-slate-700">
         <Button
           variant="outline"
           class="rounded-sm"
-          :disabled="previewSlideStore.currentSlideIndex === 0"
-          @click="previewSlideStore.previousSlide"
+          @click="emit('previous')"
         >
           <Icon name="IconChevronLeft" class="w-5 h-5" />
         </Button>
-        {{ previewSlideStore.currentSlideIndex + 1 }} / {{ previewSlideStore.previewSlide!.length }}
+        {{ current + 1 }} / {{ length }}
         <Button
           variant="outline"
           class="rounded-sm"
-          @click="previewSlideStore.nextSlide"
+          @click="emit('next')"
         >
           <Icon name="IconChevronRight" class="w-5 h-5" />
         </Button>

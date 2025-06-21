@@ -45,6 +45,7 @@ watch(() => option.value.ketQua, (newValue) => {
         placeholder="Nhập nội dung câu trả lời..."
         class="w-full bg-transparent border-none h-full"
         :class="[props.isPreviewing ? 'text-2xl max-h-[160px]' : 'text-xl max-h-[140px]']"
+        :editable="true"
       />
     </div>
     <div

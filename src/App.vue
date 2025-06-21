@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useConfirmStore } from '@/stores/confirm'
+import { usePreviewSlideStore } from '@/stores/preview'
 import { useThemeStore } from '@/stores/theme'
 
 const confirmStore = useConfirmStore()
+const previewSlideStore = usePreviewSlideStore()
+
 useThemeStore()
 </script>
 
@@ -17,5 +20,9 @@ useThemeStore()
   <Toaster />
   <ConfirmationModal
     v-if="confirmStore.visible"
+  />
+
+  <Preview
+    v-if="previewSlideStore.isPreviewing"
   />
 </template>

@@ -4,6 +4,7 @@ import { CachTrinhBay, LoaiSlide, type Slide } from '@/types'
 defineProps<{
   visible?: boolean
   specailType?: 'preview'
+  editable?: boolean
 }>()
 
 const slide = defineModel('slide', {
@@ -48,10 +49,12 @@ const LayoutSlide = computed(() => {
         :is="LayoutSlide"
         v-if="slide.loaiTrang === LoaiSlide.NOI_DUNG"
         v-model:slide="slide"
+        :editable="editable"
       />
       <QuestionLayout
         v-else-if="slide.loaiTrang === LoaiSlide.CAU_HOI"
         v-model:slide="slide"
+        :editable="editable"
       />
     </div>
   </div>
