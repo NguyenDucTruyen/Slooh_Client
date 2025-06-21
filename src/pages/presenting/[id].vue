@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator'
 import { toast } from '@/components/ui/toast'
 import { useRoomStore } from '@/stores/room'
 import { useSessionStore } from '@/stores/session'
+import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 const router = useRouter()
 const route = useRoute()
@@ -29,8 +30,10 @@ const roomId = route.params.id as string
 // State
 const isConnecting = ref(false)
 const isSessionActive = ref(false)
-const showEventsDialog = ref(false)
+const isSessionError = ref(false)
+const showQRDialog = ref(false)
 const roomData = ref<any>(null)
+const qrcode = ref()
 
 // Check if user is channel owner (placeholder - implement actual check)
 const isChannelOwner = computed(() => {
@@ -52,9 +55,6 @@ const isConnected = computed(() => session.isConnected)
 const isCurrentPageQuestion = computed(() => {
   return currentSlide.value?.loaiTrang === 'CAU_HOI'
 })
-
-// Mock events for now - you can implement actual event tracking
-const events = ref<Array<{ type: string, message: string, time: string }>>([])
 
 // Redirect if not authorized
 if (!isChannelOwner.value) {
@@ -90,18 +90,16 @@ onMounted(async () => {
 
     // Create session for this room
     await session.createSession(roomId)
-    isSessionActive.value = true
-    toast({
-      title: 'Kết nối thành công',
-      description: `Phiên trình chiếu đã được tạo. PIN: ${session.sessionData.maPin}`,
+    const url = `${import.meta.env.VITE_API_URL}/session/${session.sessionData.maPhien}`
+    qrcode.value = useQRCode(url, {
+      size: 256,
+      margin: 1,
+      errorCorrectionLevel: 'H',
     })
+    // isSessionActive.value = true
   }
   catch (error: any) {
-    toast({
-      title: 'Lỗi kết nối',
-      description: error?.message || 'Không thể tạo phiên trình chiếu',
-      variant: 'destructive',
-    })
+    isSessionError.value = true
     console.error('Failed to create session:', error)
   }
   finally {
@@ -200,6 +198,7 @@ async function copyPin() {
       await navigator.clipboard.writeText(session.sessionData.maPin)
       toast({
         title: 'Đã sao chép',
+        variant: 'info',
         description: 'PIN đã được sao chép vào clipboard',
       })
     }
@@ -215,241 +214,224 @@ async function copyPin() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-    <div class="container mx-auto max-w-7xl">
-      <!-- Header -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between bg-white rounded-lg shadow-sm p-6">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">
-              Trình chiếu - Chủ kênh
-            </h1>
-            <p class="text-gray-600 mt-1">
-              Quản lý phiên trình chiếu của bạn
-            </p>
-          </div>
-
-          <!-- Connection Status -->
-          <div class="flex items-center gap-4">
-            <span
-              :class="isConnected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'"
-              class="text-sm px-3 py-1 rounded"
-            >
-              {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
-            </span>
-
-            <!-- Session PIN -->
-            <div v-if="sessionPin" class="flex items-center gap-2">
-              <span class="text-sm text-gray-600">PIN:</span>
-              <Button
-                variant="outline"
-                size="sm"
-                class="font-mono text-lg"
-                @click="copyPin"
-              >
-                {{ sessionPin }}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+  <div class="min-h-screen p-4">
+    <div class="w-full h-full rounded-lg overflow-hidden p-0">
       <!-- Loading State -->
-      <div v-if="isConnecting" class="text-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-        <p class="text-gray-600">
+      <div v-if="isConnecting" class="text-center p-12 bg-card">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+        <p class="text-foreground text-xl">
           Đang kết nối và tạo phiên trình chiếu...
         </p>
       </div>
+      <template
+        v-else
+      >
+        <div v-if="!isSessionActive" class="text-center">
+          <div class="flex flex-col gap-4 p-4 rounded bg-card mb-4">
+            <div class="text-primary font-semibold text-3xl">
+              {{ roomData?.tenPhong }}
+            </div>
+            <Button @click="isSessionActive = true">
+              Bắt đầu trình chiếu
+            </Button>
+          </div>
+          <!-- Header -->
+          <div class="mb-4">
+            <div class="flex justify-center gap-4">
+              <!-- <span
+                :class="isConnected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'"
+                class="text-sm px-3 py-1 rounded"
+              >
+                {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
+              </span> -->
 
-      <!-- Main Content -->
-      <div v-else-if="isSessionActive" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Slide Preview -->
-        <div class="lg:col-span-2">
-          <Card class="h-full">
-            <CardHeader>
-              <CardTitle class="flex items-center justify-between">
-                <span>Slide hiện tại</span>
-                <span class="text-sm bg-gray-100 px-2 py-1 rounded">
-                  {{ session.sessionData.currentPage + 1 }} / {{ totalSlides }}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent class="h-full">
-              <Presenting
-                v-if="currentSlide"
-                :slide="currentSlide"
-                :current="session.sessionData.currentPage"
-                :length="totalSlides"
-                @next="navigateToPage(session.sessionData.currentPage + 1)"
-                @previous="navigateToPage(session.sessionData.currentPage - 1)"
-              />
-
-              <div v-else class="text-center py-12 text-gray-500">
-                Không có slide nào được chọn
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <!-- Controls Panel -->
-        <div class="space-y-6">
-          <!-- Navigation Controls -->
-          <Card>
-            <CardHeader>
-              <CardTitle>Điều khiển</CardTitle>
-            </CardHeader>
-            <CardContent class="space-y-4">
-              <!-- Previous/Next buttons -->
-              <div class="flex gap-2">
-                <Button
-                  :disabled="session.sessionData.currentPage <= 0"
-                  variant="outline"
-                  class="flex-1"
-                  @click="navigateToPage(session.sessionData.currentPage - 1)"
-                >
-                  ← Trước
-                </Button>
-                <Button
-                  :disabled="session.sessionData.currentPage >= totalSlides - 1"
-                  variant="outline"
-                  class="flex-1"
-                  @click="navigateToPage(session.sessionData.currentPage + 1)"
-                >
-                  Sau →
-                </Button>
-              </div>
-              <div v-if="isCurrentPageQuestion" class="w-full">
-                <Button variant="default" class="w-full" @click="startQuestion">
-                  Bắt đầu câu hỏi
-                </Button>
-              </div>
-
-              <Separator />
-
-              <!-- Page selector -->
-              <div class="space-y-2">
-                <label class="text-sm font-medium">Chuyển đến trang:</label>
-                <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto">
-                  <Button
-                    v-for="(slide, index) in roomData?.trangs"
-                    :key="index"
-                    :variant="index === session.sessionData.currentPage ? 'default' : 'outline'"
+              <!-- Session PIN -->
+              <template
+                v-if="sessionPin"
+              >
+                <div class="flex flex-col items-center gap-2 bg-card p-4 rounded">
+                  <span class="text-foreground text-4xl">Mã PIN:</span>
+                  <button
+                    variant="outline"
                     size="sm"
-                    class="text-xs"
-                    @click="navigateToPage(index)"
+                    class="font-mono text-7xl font-bold"
+                    @click="copyPin"
                   >
-                    {{ index + 1 }}
-                  </Button>
+                    {{ sessionPin }}
+                  </button>
                 </div>
-              </div>
 
-              <Separator />
-
-              <!-- Session controls -->
-              <div class="space-y-2">
-                <Button variant="outline" class="w-full" @click="showLeaderboard">
-                  Bảng xếp hạng
-                </Button>
-
-                <!-- Events Dialog -->
-                <Dialog v-model:open="showEventsDialog">
+                <Dialog v-model:open="showQRDialog">
                   <DialogTrigger as-child>
-                    <Button variant="outline" class="w-full">
-                      Xem sự kiện
-                      <span v-if="events.length" class="ml-2 bg-gray-200 px-2 py-1 rounded text-xs">
-                        {{ events.length }}
-                      </span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent class="max-w-2xl max-h-96">
-                    <DialogHeader>
-                      <DialogTitle>Nhật ký sự kiện</DialogTitle>
-                    </DialogHeader>
-                    <div class="space-y-2 overflow-y-auto">
-                      <div
-                        v-for="(event, index) in events.slice().reverse()"
-                        :key="index"
-                        class="text-sm p-2 rounded border-l-4"
-                        :class="{
-                          'border-l-green-500 bg-green-50': event.type === 'received',
-                          'border-l-blue-500 bg-blue-50': event.type === 'sent',
-                          'border-l-red-500 bg-red-50': event.type === 'error',
-                        }"
-                      >
-                        <div class="flex justify-between items-start">
-                          <span>{{ event.message }}</span>
-                          <span class="text-xs text-gray-500 ml-2">{{ event.time }}</span>
-                        </div>
+                    <div class="flex flex-col items-center gap-2 bg-card rounded overflow-hidden relative" @click="showQRDialog = true">
+                      <div class="flex absolute inset-0 w-full h-full items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                        <Icon
+                          name="IconZoomOut" class="w-12 h-12 text-background"
+                        />
                       </div>
+                      <img
+                        :src="qrcode?.value"
+                        aspect-ratio="square"
+                      >
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent class="max-w-2xl max-h-fit">
+                    <DialogHeader>
+                      <DialogTitle class="text-center text-3xl">
+                        Mã QR
+                      </DialogTitle>
+                      <Separator class="my-2 h-[2px] bg-slate-600" />
+                    </DialogHeader>
+                    <div class="flex flex-col items-center gap-2 bg-card rounded relative">
+                      <img
+                        :src="qrcode?.value"
+                        class="h-[400px]"
+                        aspect-ratio="square"
+                      >
                     </div>
                   </DialogContent>
                 </Dialog>
-
-                <Button variant="destructive" class="w-full" @click="endSession">
-                  Kết thúc phiên
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <!-- Session Info -->
-          <Card>
-            <CardHeader>
-              <CardTitle>Thông tin phiên</CardTitle>
-            </CardHeader>
-            <CardContent class="space-y-2 text-sm">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Phòng:</span>
-                <span class="font-medium">{{ roomData?.tenPhong }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">PIN:</span>
-                <span class="font-mono">{{ sessionPin }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Tổng slides:</span>
-                <span>{{ totalSlides }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Slide hiện tại:</span>
-                <span>{{ session.sessionData.currentPage + 1 }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Thành viên:</span>
-                <span>{{ session.memberCount }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Trạng thái:</span>
-                <span
-                  :class="isConnected ? 'text-green-600' : 'text-red-600'"
-                  class="text-xs"
-                >
-                  {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+              </template>
+            </div>
+          </div>
         </div>
-      </div>
+        <!-- Main Content -->
+        <div v-if="isSessionActive" class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+          <!-- Slide Preview -->
+          <Presenting
+            v-if="currentSlide"
+            :slide="currentSlide"
+            :current="session.sessionData.currentPage"
+            :length="totalSlides"
+            class="col-span-3 h-full"
+            @next="navigateToPage(session.sessionData.currentPage + 1)"
+            @previous="navigateToPage(session.sessionData.currentPage - 1)"
+            @exit="endSession"
+          />
 
+          <!-- Controls Panel -->
+          <div class="space-y-6">
+            <!-- Navigation Controls -->
+            <Card>
+              <CardHeader>
+                <CardTitle>Điều khiển</CardTitle>
+              </CardHeader>
+              <CardContent class="space-y-4">
+                <!-- Previous/Next buttons -->
+                <div class="flex gap-2">
+                  <Button
+                    :disabled="session.sessionData.currentPage <= 0"
+                    variant="outline"
+                    class="flex-1"
+                    @click="navigateToPage(session.sessionData.currentPage - 1)"
+                  >
+                    ← Trước
+                  </Button>
+                  <Button
+                    :disabled="session.sessionData.currentPage >= totalSlides - 1"
+                    variant="outline"
+                    class="flex-1"
+                    @click="navigateToPage(session.sessionData.currentPage + 1)"
+                  >
+                    Sau →
+                  </Button>
+                </div>
+                <div v-if="isCurrentPageQuestion" class="w-full">
+                  <Button variant="default" class="w-full" @click="startQuestion">
+                    Bắt đầu câu hỏi
+                  </Button>
+                </div>
+
+                <Separator />
+
+                <!-- Page selector -->
+                <div class="space-y-2">
+                  <label class="text-sm font-medium">Chuyển đến trang:</label>
+                  <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto">
+                    <Button
+                      v-for="(slide, index) in roomData?.trangs"
+                      :key="index"
+                      :variant="index === session.sessionData.currentPage ? 'default' : 'outline'"
+                      size="sm"
+                      class="text-xs"
+                      @click="navigateToPage(index)"
+                    >
+                      {{ index + 1 }}
+                    </Button>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <!-- Session controls -->
+                <div class="space-y-2">
+                  <Button variant="outline" class="w-full" @click="showLeaderboard">
+                    Bảng xếp hạng
+                  </Button>
+                  <Button variant="destructive" class="w-full" @click="endSession">
+                    Kết thúc phiên
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Session Info -->
+            <Card>
+              <CardHeader>
+                <CardTitle>Thông tin phiên</CardTitle>
+              </CardHeader>
+              <CardContent class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Phòng:</span>
+                  <span class="font-medium">{{ roomData?.tenPhong }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">PIN:</span>
+                  <span class="font-mono">{{ sessionPin }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Tổng slides:</span>
+                  <span>{{ totalSlides }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Slide hiện tại:</span>
+                  <span>{{ session.sessionData.currentPage + 1 }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Thành viên:</span>
+                  <span>{{ session.memberCount }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Trạng thái:</span>
+                  <span
+                    :class="isConnected ? 'text-green-600' : 'text-red-600'"
+                    class="text-xs"
+                  >
+                    {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <div v-else-if="isSessionError" class="text-center py-12">
+          <div class="text-red-500 mb-4">
+            <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold mb-2">
+            Không thể tạo phiên trình chiếu
+          </h2>
+          <p class="text-gray-600 mb-4">
+            Đã xảy ra lỗi khi kết nối hoặc tạo phiên trình chiếu. Vui lòng thử lại sau.
+          </p>
+          <Button variant="outline" @click="router.go(0)">
+            Thử lại
+          </Button>
+        </div>
+      </template>
       <!-- Error State -->
-      <div v-else class="text-center py-12">
-        <div class="text-red-500 mb-4">
-          <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-        </div>
-        <h2 class="text-xl font-semibold mb-2">
-          Không thể tạo phiên trình chiếu
-        </h2>
-        <p class="text-gray-600 mb-4">
-          Đã xảy ra lỗi khi kết nối hoặc tạo phiên trình chiếu. Vui lòng thử lại sau.
-        </p>
-        <Button variant="outline" @click="router.go(0)">
-          Thử lại
-        </Button>
-      </div>
     </div>
   </div>
 </template>

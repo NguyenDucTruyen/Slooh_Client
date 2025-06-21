@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Slide } from '@/types'
 import { cn } from '@/lib/utils'
+import { useConfirmStore } from '@/stores/confirm'
 
 interface EmitEvents {
   (event: 'next'): void
@@ -13,6 +14,7 @@ defineProps<{
   length: number
 }>()
 const emit = defineEmits<EmitEvents>()
+const confirmStore = useConfirmStore()
 
 const showNavigation = ref(true)
 const isFullscreen = ref(false)
@@ -74,6 +76,18 @@ function handleMouseMove() {
   resetNavigationTimeout()
 }
 
+async function handleExit() {
+  const result = await confirmStore.showConfirmDialog({
+    title: 'Kết thúc trình chiếu',
+    message: 'Bạn có chắc chắn muốn kết thúc trình chiếu không?',
+    confirmText: 'Kết thúc',
+    cancelText: 'Hủy',
+  })
+  if (result) {
+    emit('exit')
+  }
+}
+
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
 })
@@ -94,13 +108,20 @@ onUnmounted(() => {
     <div
       :class="
         cn('absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2  p-2 rounded-md bg-white/70 backdrop-blur-md items-center',
-          'transition-opacity duration-300 opacity-0',
-          { 'opacity-100': showNavigation }
+           'transition-opacity duration-300 opacity-0',
+           { 'opacity-100': showNavigation },
         )"
       @click.stop
       @mouseenter="handleMouseOverNavigation"
       @mouseleave="() => { isMouseOverNavigation = false }"
     >
+      <Button
+        variant="destructive"
+        @click="handleExit"
+      >
+        Kết thúc
+      </Button>
+      <Separator orientation="vertical" class="bg-slate-400 h-8 rounded-md" />
       <div class="flex gap-1 items-center text-xl font-semibold text-slate-700">
         <Button
           variant="outline"

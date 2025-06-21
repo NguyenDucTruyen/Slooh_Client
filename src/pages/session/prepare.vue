@@ -57,12 +57,12 @@ const onSubmit = form.handleSubmit(async (_values) => {
       </CardHeader>
       <CardContent>
         <div class="grid gap-4">
-          <div class="grid gap-2">
-            <Label class="text-sm font-medium">Mã PIN phiên trình chiếu</Label>
+          <div class="grid gap-2 grid-cols-5 items-center">
+            <Label class="text-sm font-medium">Mã PIN</Label>
             <PinInput
               :model-value="pinArray"
               placeholder="○"
-              class="flex gap-2 items-center"
+              class="flex gap-2 items-center col-span-4"
               otp
               type="number"
               disabled
@@ -76,18 +76,25 @@ const onSubmit = form.handleSubmit(async (_values) => {
                 />
               </PinInputGroup>
             </PinInput>
-            <p class="text-sm text-muted-foreground">
-              Bạn sẽ tham gia phiên trình chiếu với mã PIN trên
-            </p>
           </div>
-          <div class="grid gap-2">
-            <InputValidator id="name" type="name" label="Họ tên" name="name" placeholder="Họ tên của bạn" />
+          <div class="grid gap-2 grid-cols-5 items-center">
+            <Label for="name" class="text-sm font-medium">Họ tên</Label>
+            <InputValidator id="name" type="name" label="" name="name" placeholder="Họ tên của bạn" custom-class="col-span-4 space-y-0" />
           </div>
-          <Button
-            type="submit"
-          >
-            Tham gia phiên
-          </Button>
+          <div class="grid grid-cols-2 gap-4">
+            <Button
+              type="button"
+              variant="secondary"
+              @click="router.go(-1)"
+            >
+              Quay lại
+            </Button>
+            <Button
+              type="submit"
+            >
+              Tham gia phiên
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
