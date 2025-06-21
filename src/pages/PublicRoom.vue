@@ -306,7 +306,7 @@ function handleOpenPinModal() {
   <ModalEnterPin
     v-model:open="isPinModalOpen"
     @confirm="(pin: string) => {
-      router.push({ name: 'session', query: { pin } })
+      router.push({ name: 'session-prepare', query: { pin } })
     }"
   />
 </template>

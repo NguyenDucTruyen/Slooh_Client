@@ -192,6 +192,7 @@ async function handleNavigateToPreview() {
           type="button"
           class="w-full"
           :disabled="item.trangThai === TrangThai.KHOA"
+          @click="$router.push(`/presenting/${item.maPhong}`)"
         >
           <Icon name="IconPlay" class="w-4 h-4" />
           Trình chiếu

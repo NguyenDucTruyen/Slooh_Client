@@ -127,6 +127,7 @@ export interface Phong {
   ngayTao: string
   ngayXoa?: string
   _count?: { trangs: number }
+  maNguoiTao?: string
   trangs?: Slide[]
 }
 
@@ -174,20 +175,22 @@ export interface BaoCao {
 }
 
 export interface ThanhVienPhienTrinhChieu {
-  id: string
-  idPhongTrinhChieu: string
-  idNguoiDung: string
-  tenHienThi?: string
-  thoiGianThamGia: string
-  diemSo: number
+  maThanhVienPhien: string
+  maNguoiDung?: string
+  maPhien: string
+  tenThanhVien: string
+  anhDaiDien?: string
+  vaiTro: VaiTroPhien
+  tongDiem: number
+  nguoiDung?: NguoiDung
+  CAUTRALOI?: CauTraLoi[]
 }
 
 export interface CauTraLoi {
-  id: string
-  idCauHoi: string
-  idNguoiDung: string
-  idPhongTrinhChieu: string
-  dapAnDuocChon: string
-  thoiGianTraLoi: string
-  dungHaySai: boolean
+  maCauTraLoi: string
+  maThanhVienPhien: string
+  maLuaChon: string
+  thoiGian: number
+  thanhVien?: ThanhVienPhienTrinhChieu
+  luaChon?: LuaChon
 }

@@ -54,7 +54,8 @@ const onSubmit = form.handleSubmit(async (_values) => {
         <CardDescription class="text-center">
           Nhập họ tên của bạn để tham gia phiên trình chiếu
         </CardDescription>
-      </CardHeader>      <CardContent>
+      </CardHeader>
+      <CardContent>
         <div class="grid gap-4">
           <div class="grid gap-2">
             <Label class="text-sm font-medium">Mã PIN phiên trình chiếu</Label>
