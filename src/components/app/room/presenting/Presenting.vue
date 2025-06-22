@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import type { Slide } from '@/types'
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
 import { cn } from '@/lib/utils'
+
 import { useConfirmStore } from '@/stores/confirm'
 
 interface EmitEvents {
@@ -8,10 +17,15 @@ interface EmitEvents {
   (event: 'previous'): void
   (event: 'exit'): void
 }
-defineProps<{
+const props = defineProps<{
   slide: Slide
   current: number
   length: number
+  tenPhong: string
+  pin: string
+  memberCount: number
+  isConnected: boolean
+  qrCode: string
 }>()
 const emit = defineEmits<EmitEvents>()
 const confirmStore = useConfirmStore()
@@ -37,10 +51,14 @@ function requestFullscreen() {
 function handleKeydown(event: KeyboardEvent) {
   switch (event.key) {
     case 'ArrowLeft':
+      if (props.current === 0)
+        return
       emit('previous')
       resetNavigationTimeout()
       break
     case 'ArrowRight':
+      if (props.current >= props.length - 1)
+        return
       emit('next')
       resetNavigationTimeout()
       break
@@ -89,6 +107,7 @@ async function handleExit() {
 }
 
 onMounted(() => {
+  requestFullscreen()
   document.addEventListener('keydown', handleKeydown)
 })
 onUnmounted(() => {
@@ -98,12 +117,13 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="bg-slate-200 group z-20 h-full"
+    class="fixed inset-0 bg-slate-200 group z-20 h-full"
     @click="toggleNavigationVisibility"
     @mousemove="handleMouseMove"
   >
     <SlideEditor
       :slide="slide"
+      :editable="false"
     />
     <div
       :class="
@@ -126,6 +146,7 @@ onUnmounted(() => {
         <Button
           variant="outline"
           class="rounded-sm"
+          :disabled="current === 0"
           @click="emit('previous')"
         >
           <Icon name="IconChevronLeft" class="w-5 h-5" />
@@ -135,6 +156,7 @@ onUnmounted(() => {
           variant="outline"
           class="rounded-sm"
           @click="emit('next')"
+          :disabled="current >= length - 1"
         >
           <Icon name="IconChevronRight" class="w-5 h-5" />
         </Button>
@@ -156,6 +178,90 @@ onUnmounted(() => {
           name="IconZoomOut" class="w-6 h-6"
         />
       </Button>
+      <Drawer direction="right">
+        <DrawerTrigger>
+          <Button
+            variant="outline"
+          >
+            Thông tin phiên
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader class="flex items-center justify-between border-b mb-4 border-slate-600">
+            <DrawerTitle>Thông tin phiên</DrawerTitle>
+            <DrawerClose
+              class="bg-gray-400 border hover:bg-gray-600 rounded flex justify-center items-center p-1 transition-colors duration-200"
+            >
+              <Icon name="IconClose" class="w-5 h-5 text-background" />
+            </DrawerClose>
+          </DrawerHeader>
+          <div class="px-6">
+            <div class="space-y-2 text-md">
+              <div class="flex justify-between">
+                <span class="text-slate-900">Phòng:</span>
+                <span class="font-semibold text-xl">{{ tenPhong }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-900">PIN:</span>
+                <span class="font-mono text-xl">{{ pin }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-900">Tổng slides:</span>
+                <span class="text-xl">{{ length }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-900">Slide hiện tại:</span>
+                <span class="text-xl">{{ current + 1 }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-900">Thành viên:</span>
+                <span class="text-xl">{{ memberCount }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-900">Trạng thái:</span>
+                <span
+                  :class="isConnected ? 'text-green-600' : 'text-red-600'"
+                  class="text-md"
+                >
+                  {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
+                </span>
+              </div>
+            </div>
+            <Dialog>
+              <DialogTrigger as-child>
+                <div class="flex flex-col items-center gap-2 bg-card rounded overflow-hidden relative mt-6">
+                  <div class="flex absolute inset-0 w-full h-full items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                    <Icon
+                      name="IconZoomOut" class="w-12 h-12 text-background"
+                    />
+                  </div>
+                  <img
+                    :src="qrCode"
+
+                    aspect-ratio="square"
+                  >
+                </div>
+              </DialogTrigger>
+              <DialogContent class="max-w-2xl max-h-fit">
+                <DialogHeader>
+                  <DialogTitle class="text-center text-3xl">
+                    Mã QR
+                  </DialogTitle>
+                  <Separator class="my-2 h-[2px] bg-slate-600" />
+                </DialogHeader>
+                <div class="flex flex-col items-center gap-2 bg-card rounded relative">
+                  <img
+                    :src="qrCode"
+
+                    class="h-[400px]"
+                    aspect-ratio="square"
+                  >
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   </div>
 </template>

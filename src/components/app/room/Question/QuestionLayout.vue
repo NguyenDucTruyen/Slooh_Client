@@ -214,7 +214,7 @@ const deletableOption = computed(() => {
         v-model:option="slide.luaChon[index]"
         :index="index"
         :deletable="deletableOption"
-        :is-previewing="previewSlideStore.isPreviewing"
+        :editable="editable"
         @update-result="handleUpdateResult"
         @delete-option="slide.luaChon.splice(index, 1)"
       />

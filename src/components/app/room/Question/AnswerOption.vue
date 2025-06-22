@@ -4,7 +4,7 @@ import type { LuaChon } from '@/types'
 const props = defineProps<{
   index: number
   deletable?: boolean
-  isPreviewing?: boolean
+  editable?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'updateResult', value: LuaChon): void
@@ -44,12 +44,12 @@ watch(() => option.value.ketQua, (newValue) => {
         special-type="question"
         placeholder="Nhập nội dung câu trả lời..."
         class="w-full bg-transparent border-none h-full"
-        :class="[props.isPreviewing ? 'text-2xl max-h-[160px]' : 'text-xl max-h-[140px]']"
-        :editable="true"
+        :class="[!editable ? 'text-2xl max-h-[160px]' : 'text-xl max-h-[140px]']"
+        :editable="editable"
       />
     </div>
     <div
-      v-if="!props.isPreviewing"
+      v-if="editable"
       class="flex flex-col gap-2 items-center justify-center font-bold text-2xl w-12 min-w-12 text-foreground/80 h-full rounded-e-md lg:rounded-e-lg"
     >
       <input

@@ -1,11 +1,31 @@
+<script setup lang="ts">
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
+</script>
+
 <template>
-  <!-- Welcome -->
-  <div class="flex flex-col items-center justify-center h-screen gap-4">
-    <h1 class="text-2xl font-bold text-center">
-      Chào mừng bạn đến với Slooh
-    </h1>
-    <p class="text-sm text-center">
-      Đăng nhập để trải nghiệm những điều thú vị nhất
-    </p>
-  </div>
+  <Drawer direction="right">
+    <DrawerTrigger>Open</DrawerTrigger>
+    <DrawerContent>
+      <DrawerHeader>
+        <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+        <DrawerDescription>This action cannot be undone.</DrawerDescription>
+      </DrawerHeader>
+      <DrawerFooter>
+        <DrawerClose>
+          <Button variant="outline">
+            Đóng
+          </Button>
+        </DrawerClose>
+      </DrawerFooter>
+    </DrawerContent>
+  </Drawer>
 </template>

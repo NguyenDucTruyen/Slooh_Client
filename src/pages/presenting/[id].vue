@@ -226,11 +226,18 @@ async function copyPin() {
       <template
         v-else
       >
-        <div v-if="!isSessionActive" class="text-center">
-          <div class="flex flex-col gap-4 p-4 rounded bg-card mb-4">
+        <template v-if="!isSessionActive">
+          <div class="flex flex-col gap-2 p-4 rounded bg-card mb-4 text-center">
             <div class="text-primary font-semibold text-3xl">
               {{ roomData?.tenPhong }}
             </div>
+            <Icon name="IconSuccess" class="w-16 h-16 text-success mx-auto" />
+            <h2 class="text-xl font-semibold">
+              Phiên trình chiếu đã được tạo thành công
+            </h2>
+            <p class="text-gray-600">
+              Chia sẻ mã PIN hoặc mã QR với thành viên để họ tham gia.
+            </p>
             <Button @click="isSessionActive = true">
               Bắt đầu trình chiếu
             </Button>
@@ -238,14 +245,6 @@ async function copyPin() {
           <!-- Header -->
           <div class="mb-4">
             <div class="flex justify-center gap-4">
-              <!-- <span
-                :class="isConnected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'"
-                class="text-sm px-3 py-1 rounded"
-              >
-                {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
-              </span> -->
-
-              <!-- Session PIN -->
               <template
                 v-if="sessionPin"
               >
@@ -294,126 +293,22 @@ async function copyPin() {
               </template>
             </div>
           </div>
-        </div>
+        </template>
         <!-- Main Content -->
-        <div v-if="isSessionActive" class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
-          <!-- Slide Preview -->
-          <Presenting
-            v-if="currentSlide"
-            :slide="currentSlide"
-            :current="session.sessionData.currentPage"
-            :length="totalSlides"
-            class="col-span-3 h-full"
-            @next="navigateToPage(session.sessionData.currentPage + 1)"
-            @previous="navigateToPage(session.sessionData.currentPage - 1)"
-            @exit="endSession"
-          />
-
-          <!-- Controls Panel -->
-          <div class="space-y-6">
-            <!-- Navigation Controls -->
-            <Card>
-              <CardHeader>
-                <CardTitle>Điều khiển</CardTitle>
-              </CardHeader>
-              <CardContent class="space-y-4">
-                <!-- Previous/Next buttons -->
-                <div class="flex gap-2">
-                  <Button
-                    :disabled="session.sessionData.currentPage <= 0"
-                    variant="outline"
-                    class="flex-1"
-                    @click="navigateToPage(session.sessionData.currentPage - 1)"
-                  >
-                    ← Trước
-                  </Button>
-                  <Button
-                    :disabled="session.sessionData.currentPage >= totalSlides - 1"
-                    variant="outline"
-                    class="flex-1"
-                    @click="navigateToPage(session.sessionData.currentPage + 1)"
-                  >
-                    Sau →
-                  </Button>
-                </div>
-                <div v-if="isCurrentPageQuestion" class="w-full">
-                  <Button variant="default" class="w-full" @click="startQuestion">
-                    Bắt đầu câu hỏi
-                  </Button>
-                </div>
-
-                <Separator />
-
-                <!-- Page selector -->
-                <div class="space-y-2">
-                  <label class="text-sm font-medium">Chuyển đến trang:</label>
-                  <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto">
-                    <Button
-                      v-for="(slide, index) in roomData?.trangs"
-                      :key="index"
-                      :variant="index === session.sessionData.currentPage ? 'default' : 'outline'"
-                      size="sm"
-                      class="text-xs"
-                      @click="navigateToPage(index)"
-                    >
-                      {{ index + 1 }}
-                    </Button>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <!-- Session controls -->
-                <div class="space-y-2">
-                  <Button variant="outline" class="w-full" @click="showLeaderboard">
-                    Bảng xếp hạng
-                  </Button>
-                  <Button variant="destructive" class="w-full" @click="endSession">
-                    Kết thúc phiên
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <!-- Session Info -->
-            <Card>
-              <CardHeader>
-                <CardTitle>Thông tin phiên</CardTitle>
-              </CardHeader>
-              <CardContent class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Phòng:</span>
-                  <span class="font-medium">{{ roomData?.tenPhong }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">PIN:</span>
-                  <span class="font-mono">{{ sessionPin }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Tổng slides:</span>
-                  <span>{{ totalSlides }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Slide hiện tại:</span>
-                  <span>{{ session.sessionData.currentPage + 1 }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Thành viên:</span>
-                  <span>{{ session.memberCount }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Trạng thái:</span>
-                  <span
-                    :class="isConnected ? 'text-green-600' : 'text-red-600'"
-                    class="text-xs"
-                  >
-                    {{ isConnected ? 'Đã kết nối' : 'Mất kết nối' }}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        <Presenting
+          v-if="isSessionActive && currentSlide"
+          :slide="currentSlide"
+          :current="session.sessionData.currentPage"
+          :length="totalSlides"
+          :ten-phong="roomData?.tenPhong"
+          :pin="sessionPin || ''"
+          :member-count="session.memberCount"
+          :is-connected="isConnected"
+          :qr-code="qrcode?.value"
+          @next="navigateToPage(session.sessionData.currentPage + 1)"
+          @previous="navigateToPage(session.sessionData.currentPage - 1)"
+          @exit="endSession"
+        />
         <div v-else-if="isSessionError" class="text-center py-12">
           <div class="text-red-500 mb-4">
             <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">

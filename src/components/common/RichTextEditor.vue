@@ -158,7 +158,7 @@ function handleAlign(name: string) {
     <div class="relative w-full">
       <div
         ref="editor"
-        :contenteditable="!previewSlideStore.isPreviewing && specialType !== 'answer'"
+        :contenteditable="!previewSlideStore.isPreviewing && specialType !== 'answer' && editable"
         class="w-full min-h-[60px] text-3xl bg-card/80 backdrop-blur-sm p-4 rounded-md border-0 focus:outline-none focus:ring-0 empty:before:content-[attr(placeholder)] empty:before:text-gray-400/50 overflow-auto scrollbar-hidden"
         :class="{
           'text-center': currentAlign === 'center',
