@@ -17,6 +17,7 @@ export interface QuestionStartedData {
 export interface MemberJoinedData {
   tenThanhVien: string
   maThanhVienPhien: string
+  anhDaiDien?: string
 }
 
 export interface MemberLeftData {
@@ -84,4 +85,54 @@ export enum SocketEvent {
   // System events
   ERROR = 'error',
   DISCONNECT = 'disconnect',
+}
+
+// Response types
+export interface BaseResponse {
+  success: boolean
+  message?: string
+}
+
+export interface CreateSessionResponse extends BaseResponse {
+  data?: {
+    maPhien: string
+    maPin: string
+  }
+}
+
+export interface JoinSessionResponse extends BaseResponse {
+  data: {
+    isHost: boolean
+    maPhien: string
+    maThanhVienPhien: string
+    phong: Phong
+  }
+}
+
+export interface SubmitAnswerResponse extends BaseResponse {
+  correct?: boolean
+}
+
+// State types
+export interface SessionState {
+  isHost: boolean
+  currentPage: number
+  maPhien?: string
+  maPin?: string
+  maThanhVienPhien?: string
+  members: Member[]
+  leaderboard: any[] // TODO: Type this properly
+  finalLeaderboard: any[] // TODO: Type this properly
+}
+
+export interface QuestionState {
+  isActive: boolean
+  trangIndex: number
+  startTime: number
+}
+
+export interface Member {
+  maThanhVienPhien: string
+  tenThanhVien: string
+  anhDaiDien?: string
 }

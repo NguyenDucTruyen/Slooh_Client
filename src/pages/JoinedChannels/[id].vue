@@ -3,6 +3,7 @@ import type { Kenh, NguoiDung, Phong, ThanhVienKenh } from '@/types'
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
+import { usePhienStore } from '@/stores/phien'
 import { HoatDongPhong, TrangThai, TrangThaiThanhVien, VaiTroKenh } from '@/types'
 import { useAsyncState } from '@vueuse/core'
 

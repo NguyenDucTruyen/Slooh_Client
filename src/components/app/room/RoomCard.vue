@@ -203,6 +203,7 @@ async function handleNavigateToPreview() {
         type="button"
         class="w-full"
         :disabled="item.hoatDong === HoatDongPhong.OFFLINE"
+        @click="$router.push(`/session/room/${item.maPhong}`)"
       >
         Tham gia
         <Icon name="IconArrowRight" class="w-6 h-6" />

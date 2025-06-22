@@ -16,6 +16,8 @@ interface EmitEvents {
   (event: 'next'): void
   (event: 'previous'): void
   (event: 'exit'): void
+  (event: 'startQuestion'): void
+  (event: 'endQuestion'): void
 }
 const props = defineProps<{
   slide: Slide
@@ -121,9 +123,11 @@ onUnmounted(() => {
     @click="toggleNavigationVisibility"
     @mousemove="handleMouseMove"
   >
-    <SlideEditor
+    <SlidePresenting
       :slide="slide"
       :editable="false"
+      @start="$emit('startQuestion')"
+      @end="$emit('endQuestion')"
     />
     <div
       :class="

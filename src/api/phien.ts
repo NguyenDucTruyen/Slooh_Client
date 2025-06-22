@@ -29,6 +29,11 @@ export interface DetailPhien extends PhienTrinhChieu {
 export interface DetailPhienResponse {
   data: DetailPhien
 }
+export interface GetPinByRoomIdResponse {
+  data: {
+    maPin: string
+  }
+}
 
 export interface LeaderboardResponse {
   // Add leaderboard type definition as needed
@@ -64,5 +69,10 @@ export const phienApi = {
   // End session
   endPhien: (maPhien: string): Promise<AxiosResponse<void>> => {
     return $delete(`/phien/${maPhien}`)
+  },
+
+  // Get PIN by Room ID
+  getPinByRoomId: (maPhong: string): Promise<AxiosResponse<GetPinByRoomIdResponse>> => {
+    return $get(`/phien/pin/room/${maPhong}`)
   },
 }

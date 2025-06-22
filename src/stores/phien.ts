@@ -1,4 +1,4 @@
-import { phienApi } from '@/api/phien'
+import { type GetPinByRoomIdResponse, phienApi } from '@/api/phien'
 import { defineStore } from 'pinia'
 
 export const usePhienStore = defineStore('phine', () => {
@@ -24,10 +24,17 @@ export const usePhienStore = defineStore('phine', () => {
     const response = await phienApi.getLeaderboard(maPhien)
     return response.data
   }
+
+  // Get PIN by Room ID
+  const getPinByRoomId = async (maPhong: string): Promise<GetPinByRoomIdResponse> => {
+    const response = await phienApi.getPinByRoomId(maPhong) as unknown as GetPinByRoomIdResponse
+    return response
+  }
   return {
     createPhien,
     getPhienByPin,
     getPhienById,
     getLeaderboard,
+    getPinByRoomId,
   }
 })

@@ -10,13 +10,14 @@
 
 <script setup lang="ts">
 import Presenting from '@/components/app/room/presenting/Presenting.vue'
+import BaseImg from '@/components/common/BaseImg.vue'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { toast } from '@/components/ui/toast'
 import { useRoomStore } from '@/stores/room'
 import { useSessionStore } from '@/stores/session'
+import { LoaiSlide } from '@/types'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 const router = useRouter()
@@ -53,7 +54,7 @@ const sessionPin = computed(() => session.sessionData.maPin)
 const isConnected = computed(() => session.isConnected)
 
 const isCurrentPageQuestion = computed(() => {
-  return currentSlide.value?.loaiTrang === 'CAU_HOI'
+  return currentSlide.value?.loaiTrang === LoaiSlide.CAU_HOI
 })
 
 // Redirect if not authorized
@@ -141,10 +142,6 @@ function startQuestion() {
 
   try {
     session.startQuestion(session.sessionData.currentPage)
-    toast({
-      title: 'Câu hỏi đã bắt đầu',
-      description: 'Thành viên có thể bắt đầu trả lời',
-    })
   }
   catch (error: any) {
     toast({
@@ -180,7 +177,13 @@ async function endSession() {
       title: 'Kết thúc phiên',
       description: 'Phiên trình chiếu đã kết thúc',
     })
-    router.push({ name: 'rooms' })
+    if (roomData.value.maKenh) {
+      // If this is a channel session, redirect to channel page
+      router.push({ name: 'channels-id', params: { id: roomData.value.maKenh } })
+    }
+    else {
+      router.push({ name: 'PublicRoom' })
+    }
   }
   catch (error: any) {
     toast({
@@ -214,8 +217,8 @@ async function copyPin() {
 </script>
 
 <template>
-  <div class="min-h-screen p-4">
-    <div class="w-full h-full rounded-lg overflow-hidden p-0">
+  <div class="min-h-screen p-4 w-full justify-center">
+    <div class="h-full overflow-hidden p-0 grid">
       <!-- Loading State -->
       <div v-if="isConnecting" class="text-center p-12 bg-card">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
@@ -227,71 +230,98 @@ async function copyPin() {
         v-else
       >
         <template v-if="!isSessionActive">
-          <div class="flex flex-col gap-2 p-4 rounded bg-card mb-4 text-center">
-            <div class="text-primary font-semibold text-3xl">
-              {{ roomData?.tenPhong }}
-            </div>
-            <Icon name="IconSuccess" class="w-16 h-16 text-success mx-auto" />
-            <h2 class="text-xl font-semibold">
-              Phiên trình chiếu đã được tạo thành công
-            </h2>
-            <p class="text-gray-600">
-              Chia sẻ mã PIN hoặc mã QR với thành viên để họ tham gia.
-            </p>
-            <Button @click="isSessionActive = true">
-              Bắt đầu trình chiếu
-            </Button>
-          </div>
-          <!-- Header -->
-          <div class="mb-4">
-            <div class="flex justify-center gap-4">
-              <template
-                v-if="sessionPin"
+          <div class="flex gap-4 justify-center">
+            <div class="space-y-2 p-4 rounded bg-card mb-4 text-center px-12 inline-block">
+              <div
+                v-if="roomData?.kenh"
+                class="text-primary font-medium text-2xl"
               >
-                <div class="flex flex-col items-center gap-2 bg-card p-4 rounded">
-                  <span class="text-foreground text-4xl">Mã PIN:</span>
-                  <button
-                    variant="outline"
-                    size="sm"
-                    class="font-mono text-7xl font-bold"
-                    @click="copyPin"
-                  >
-                    {{ sessionPin }}
-                  </button>
-                </div>
-
-                <Dialog v-model:open="showQRDialog">
-                  <DialogTrigger as-child>
-                    <div class="flex flex-col items-center gap-2 bg-card rounded overflow-hidden relative" @click="showQRDialog = true">
-                      <div class="flex absolute inset-0 w-full h-full items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                        <Icon
-                          name="IconZoomOut" class="w-12 h-12 text-background"
-                        />
-                      </div>
-                      <img
-                        :src="qrcode?.value"
-                        aspect-ratio="square"
-                      >
-                    </div>
-                  </DialogTrigger>
-                  <DialogContent class="max-w-2xl max-h-fit">
-                    <DialogHeader>
-                      <DialogTitle class="text-center text-3xl">
-                        Mã QR
-                      </DialogTitle>
-                      <Separator class="my-2 h-[2px] bg-slate-600" />
-                    </DialogHeader>
-                    <div class="flex flex-col items-center gap-2 bg-card rounded relative">
-                      <img
-                        :src="qrcode?.value"
-                        class="h-[400px]"
-                        aspect-ratio="square"
-                      >
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </template>
+                Kênh: {{ roomData?.kenh.tenKenh }}
+              </div>
+              <div class="text-primary font-semibold text-3xl">
+                {{ roomData?.tenPhong }}
+              </div>
+              <Icon name="IconSuccess" class="w-16 h-16 text-success mx-auto" />
+              <h2 class="text-xl font-semibold">
+                Phiên trình chiếu đã được tạo thành công
+              </h2>
+              <p class="text-foreground">
+                {{ session.memberCount }} thành viên đã tham gia
+              </p>
+              <Button
+                @click="() => {
+                  isSessionActive = true
+                  session.navigateToPage(0)
+                }"
+              >
+                Bắt đầu trình chiếu
+              </Button>
             </div>
+
+            <div
+              v-if="!roomData?.kenh"
+              class="grid gap-4 mb-4"
+            >
+              <div class="flex flex-col items-center gap-2 bg-card p-4 rounded">
+                <span class="text-foreground text-4xl">Mã PIN:</span>
+                <button
+                  variant="outline"
+                  size="sm"
+                  class="font-mono text-5xl font-bold"
+                  @click="copyPin"
+                >
+                  {{ sessionPin }}
+                </button>
+              </div>
+
+              <Dialog v-model:open="showQRDialog">
+                <DialogTrigger as-child>
+                  <div class="flex flex-col items-center gap-2 bg-card rounded overflow-hidden relative" @click="showQRDialog = true">
+                    <div class="flex absolute inset-0 w-full h-full items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                      <Icon
+                        name="IconZoomOut" class="w-12 h-12 text-background"
+                      />
+                    </div>
+                    <img
+                      :src="qrcode?.value"
+                      aspect-ratio="square"
+                    >
+                  </div>
+                </DialogTrigger>
+                <DialogContent class="max-w-2xl max-h-fit">
+                  <DialogHeader>
+                    <DialogTitle class="text-center text-3xl">
+                      Mã QR
+                    </DialogTitle>
+                    <Separator class="my-2 h-[2px] bg-slate-600" />
+                  </DialogHeader>
+                  <div class="flex flex-col items-center gap-2 bg-card rounded relative">
+                    <img
+                      :src="qrcode?.value"
+                      class="h-[400px]"
+                      aspect-ratio="square"
+                    >
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+          <div class="flex gap-4 justify-center">
+            <template
+              v-for="(member, index) in session.sessionData.members"
+              :key="index"
+            >
+              <div class="flex items-center gap-2 bg-card px-4 py-2 rounded">
+                <BaseImg
+                  :src="member.anhDaiDien"
+                  :alt="member.tenThanhVien"
+                  class="w-12 h-12 rounded-full object-cover"
+                />
+                <div class="text-foreground text-lg font-semibold max-w-32 truncate">
+                  {{ member.tenThanhVien }}
+                </div>
+              </div>
+            </template>
           </div>
         </template>
         <!-- Main Content -->
@@ -308,6 +338,8 @@ async function copyPin() {
           @next="navigateToPage(session.sessionData.currentPage + 1)"
           @previous="navigateToPage(session.sessionData.currentPage - 1)"
           @exit="endSession"
+          @start-question="startQuestion"
+          @end-question="showLeaderboard"
         />
         <div v-else-if="isSessionError" class="text-center py-12">
           <div class="text-red-500 mb-4">

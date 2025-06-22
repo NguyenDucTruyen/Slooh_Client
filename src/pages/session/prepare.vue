@@ -22,9 +22,6 @@ import { useForm } from 'vee-validate'
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-if (!route.query.pin) {
-  router.push({ name: 'PublicRoom' })
-}
 
 // Get pin from query parameters and convert to array of strings
 const queryPin = ref(route.query.pin as string || '')
@@ -40,7 +37,7 @@ const form = useForm({
 })
 
 const onSubmit = form.handleSubmit(async (_values) => {
-  // Handle form submission
+  router.push(`/session/${queryPin.value}/?name=${encodeURIComponent(form.values.name as string)}`)
 })
 </script>
 
@@ -65,7 +62,6 @@ const onSubmit = form.handleSubmit(async (_values) => {
               class="flex gap-2 items-center col-span-4"
               otp
               type="number"
-              disabled
             >
               <PinInputGroup>
                 <PinInputSlot
@@ -91,6 +87,7 @@ const onSubmit = form.handleSubmit(async (_values) => {
             </Button>
             <Button
               type="submit"
+              @click="onSubmit"
             >
               Tham gia phiên
             </Button>
