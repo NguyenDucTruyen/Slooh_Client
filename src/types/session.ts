@@ -38,7 +38,7 @@ export interface LeaderboardData {
 }
 
 export interface SubmitAnswerPayload {
-  maLuaChon: string
+  maLuaChon: string | string[]
   thoiGian: number
 }
 
@@ -110,7 +110,9 @@ export interface JoinSessionResponse extends BaseResponse {
 }
 
 export interface SubmitAnswerResponse extends BaseResponse {
-  correct?: boolean
+  data: {
+    correct?: boolean
+  }
 }
 
 // State types

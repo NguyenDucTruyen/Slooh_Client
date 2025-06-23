@@ -55,7 +55,6 @@ export const useSessionStore = defineStore('session', () => {
   const setupSocketListeners = () => {
     if (!socket.value)
       return
-    console.log('Listening', socket.value)
     // Connection events
     socket.value.on('connect', () => {
       isConnected.value = true
@@ -89,16 +88,13 @@ export const useSessionStore = defineStore('session', () => {
 
       if (existingIndex === -1) {
         sessionData.value.members.push(newMember)
-        console.log('Member joined:', newMember)
       }
       else {
         sessionData.value.members[existingIndex] = newMember
       }
-      console.log('Updated members:', sessionData.value.members)
     })
 
     socket.value.on(SocketEvent.MEMBER_LEFT, (data: MemberLeftData) => {
-      console.log('Member left:', data)
       sessionData.value.members = sessionData.value.members.filter(
         member => member.maThanhVienPhien !== data.maThanhVienPhien,
       )
@@ -117,7 +113,7 @@ export const useSessionStore = defineStore('session', () => {
     })
 
     socket.value.on(SocketEvent.ANSWER_SUBMITTED, (data: AnswerSubmittedData) => {
-      // Optional: Update UI or state when an answer is submitted
+      console.log('Answer submitted:', data)
       if (data.correct !== undefined) {
         // Handle correct/incorrect answer feedback if needed
       }
@@ -255,7 +251,7 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
-  const submitAnswer = async (maLuaChon: string, thoiGian: number): Promise<SubmitAnswerResponse> => {
+  const submitAnswer = async (maLuaChon: string | string[], thoiGian: number): Promise<SubmitAnswerResponse> => {
     if (!socket.value)
       throw new Error('Socket not initialized')
 
@@ -331,6 +327,9 @@ export const useSessionStore = defineStore('session', () => {
       })
 
       resetSessionData()
+      if (document.fullscreenElement) {
+        document.exitFullscreen()
+      }
       return response
     }
     catch (err) {

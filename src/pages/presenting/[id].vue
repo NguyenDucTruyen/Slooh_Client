@@ -339,7 +339,7 @@ async function copyPin() {
           @previous="navigateToPage(session.sessionData.currentPage - 1)"
           @exit="endSession"
           @start-question="startQuestion"
-          @end-question="showLeaderboard"
+          @view-leaderboard="showLeaderboard"
         />
         <div v-else-if="isSessionError" class="text-center py-12">
           <div class="text-red-500 mb-4">

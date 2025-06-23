@@ -25,9 +25,7 @@ const userStore = useUserStore()
 
 // Get pin from query parameters and convert to array of strings
 const queryPin = ref(route.query.pin as string || '')
-const pinArray = computed(() => {
-  return queryPin.value.split('').slice(0, 6)
-})
+const pinArray = ref(queryPin.value.split('').slice(0, 6))
 
 const form = useForm({
   validationSchema: toTypedSchema(formJoinSessionValidator),
@@ -37,7 +35,7 @@ const form = useForm({
 })
 
 const onSubmit = form.handleSubmit(async (_values) => {
-  router.push(`/session/${queryPin.value}/?name=${encodeURIComponent(form.values.name as string)}`)
+  router.push(`/session/${pinArray.value.join('')}/?name=${encodeURIComponent(form.values.name as string)}`)
 })
 </script>
 
@@ -57,7 +55,7 @@ const onSubmit = form.handleSubmit(async (_values) => {
           <div class="grid gap-2 grid-cols-5 items-center">
             <Label class="text-sm font-medium">Mã PIN</Label>
             <PinInput
-              :model-value="pinArray"
+              v-model="pinArray"
               placeholder="○"
               class="flex gap-2 items-center col-span-4"
               otp

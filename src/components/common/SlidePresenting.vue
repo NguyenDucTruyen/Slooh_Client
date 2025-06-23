@@ -153,8 +153,10 @@ onUnmounted(() => {
             v-else
             class="relative w-full"
           >
-            <div class="absolute bottom-full border-2 mb-4 right-0 z-10 rounded-full px-6 py-4 bg-primary text-2xl text-background font-semibold min-w-36 text-center">
-              Còn {{ countDownEndQuestion }}s
+            <div
+              class="absolute bottom-full border-2 mb-4 right-0 z-10 rounded-full px-6 py-4 bg-primary text-2xl text-background font-semibold min-w-36 text-center"
+            >
+              {{ countDownEndQuestion > 0 ? `Còn ${countDownEndQuestion}s` : 'Hết giờ' }}
             </div>
             <div
               class="grid grid-cols-2 gap-x-5 gap-y-2.5 lg:gap-x-10 lg:gap-y-4 shrink-0 w-full rounded-lg"
@@ -163,17 +165,13 @@ onUnmounted(() => {
                 <AnswerOption
                   v-model:option="slide.luaChon[index]"
                   :index="index"
-                  :class="{ 'border-[4px] border-success': countDownEndQuestion <= 0 && option.ketQua === true }"
+                  :show-result="countDownEndQuestion <= 0"
                 />
               </template>
             </div>
           </div>
         </template>
       </template>
-      <!-- <QuestionLayout
-        v-else-if="slide.loaiTrang === LoaiSlide.CAU_HOI"
-        v-model:slide="slide"
-        :editable="editable" -->
     </div>
   </div>
 </template>

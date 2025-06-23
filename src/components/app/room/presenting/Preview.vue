@@ -92,7 +92,7 @@ onUnmounted(() => {
       v-model:slide="previewSlideStore.previewSlide[previewSlideStore.currentSlideIndex]"
     />
     <div
-      :class="cn('absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2  p-2 rounded-md bg-white/70 backdrop-blur-md items-center',
+      :class="cn('absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2  p-2 rounded-md bg-white/70 backdrop-blur-md items-center z-10',
                  'transition-opacity duration-300 opacity-0',
                  { 'opacity-100': showNavigation },
       )"

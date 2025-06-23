@@ -155,6 +155,7 @@ export interface LuaChon {
   maTrang?: string
   noiDung: string
   ketQua: boolean
+  isSelected?: boolean
 }
 
 export interface PhienTrinhChieu {

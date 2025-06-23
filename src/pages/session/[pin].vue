@@ -9,9 +9,9 @@
 
 <script setup lang="ts">
 import type { Phong, Slide } from '@/types'
-import { phienApi } from '@/api/phien'
-import SlidePresenting from '@/components/common/SlidePresenting.vue'
-import { useRoomStore } from '@/stores/room'
+import Option from '@/components/app/room/presenting/Option.vue'
+import { toast } from '@/components/ui/toast'
+import { useConfirmStore } from '@/stores/confirm'
 import { useSessionStore } from '@/stores/session'
 import { LoaiCauTraLoi, LoaiSlide, SocketEvent } from '@/types'
 import { useAsyncState } from '@vueuse/core'
@@ -25,6 +25,7 @@ const LOAITRALOI = {
 const router = useRouter()
 const route = useRoute()
 const session = useSessionStore()
+const confirmStore = useConfirmStore()
 // const roomStore = useRoomStore()
 
 // State
@@ -32,7 +33,6 @@ const currentSlide = ref<Slide | null>(null)
 const isConnecting = ref(false)
 const isSessionError = ref(false)
 const showNotice = ref(true)
-const questionStarted = ref(false)
 const roomData = ref<Phong | null>(null)
 
 const showOption = ref(false)
@@ -73,10 +73,15 @@ const { isLoading } = useAsyncState(async () => {
     // Join the session
     const response = await session.joinSession(pin, name)
     roomData.value = response.data.phong
-    console.log('Session joined:', response)
   }
   catch (error: any) {
     console.error('Error joining session:', error)
+    toast({
+      title: 'Lỗi khi tham gia phiên',
+      description: error || 'Phiên không tồn tại hoặc đã kết thúc.',
+      variant: 'destructive',
+      duration: 5000,
+    })
     isSessionError.value = true
   }
   finally {
@@ -94,16 +99,21 @@ onMounted(() => {
     }
 
     // Reset states
-    if (currentSlide.value?.loaiTrang === LoaiSlide.NOI_DUNG) {
-      showNotice.value = true
-      questionStarted.value = false
+    if (currentSlide.value) {
+      if (currentSlide.value.loaiTrang === LoaiSlide.NOI_DUNG) {
+        showNotice.value = true
+      }
+      else {
+        currentSlide.value.luaChon?.forEach((option) => {
+          option.isSelected = false
+        })
+      }
     }
   })
 
   // Listen for question start events
   session.socket?.on(SocketEvent.QUESTION_STARTED, () => {
     if (currentSlide.value?.loaiTrang === LoaiSlide.CAU_HOI) {
-      questionStarted.value = true
       showNotice.value = false
     }
   })
@@ -155,6 +165,26 @@ watch(currentSlide, (newValue) => {
             countDownEndQuestion.value--
           }
           else {
+            console.log('End question countdown finished')
+            const selectedIds = currentSlide.value?.luaChon?.reduce((acc, option) => {
+              if (option.isSelected) {
+                acc.push(option.maLuaChon || '')
+              }
+              return acc
+            }, [] as string[]) || []
+            session.submitAnswer(
+              currentSlide.value?.loaiCauTraLoi === LoaiCauTraLoi.MULTI_SELECT ? selectedIds : selectedIds[0] || '',
+              countDownEndQuestion.value,
+            ).then((res) => {
+              toast({
+                title: 'Đã gửi câu trả lời',
+                description: `${res.data.correct ? 'Câu trả lời đúng!' : 'Câu trả lời sai!'}`,
+                variant: res.data.correct ? 'default' : 'destructive',
+                duration: 3000,
+              })
+            }).catch((err) => {
+              console.error('Error submitting answer:', err)
+            })
             clearIntervalEndQuestion()
           }
         }, 1000)
@@ -167,10 +197,55 @@ onUnmounted(() => {
   clearIntervalShowOption()
   clearIntervalEndQuestion()
 })
+
+function handleOptionSelect(selectedIndex: number) {
+  if (!currentSlide.value || !currentSlide.value.luaChon)
+    return
+  currentSlide.value.luaChon[selectedIndex].isSelected = !currentSlide.value.luaChon[selectedIndex].isSelected
+  if (currentSlide.value.loaiCauTraLoi !== LoaiCauTraLoi.MULTI_SELECT) {
+    currentSlide.value.luaChon.forEach((option, index) => {
+      if (index !== selectedIndex) {
+        option.isSelected = false
+      }
+    })
+  }
+}
+async function handleExitSession() {
+  const result = await confirmStore.showConfirmDialog({
+    title: 'Thoát phiên',
+    message: 'Bạn có chắc chắn muốn thoát khỏi phiên trình chiếu này?',
+    confirmText: 'Thoát',
+    cancelText: 'Hủy',
+  })
+  if (result) {
+    session.disconnect()
+    router.push({ name: 'PublicRoom' })
+  }
+}
+function handleReload() {
+  window.location.reload()
+}
 </script>
 
 <template>
   <div class="relative w-full h-full flex items-center justify-center bg-slate-900/80">
+    <div
+      class="absolute top-4 right-4 z-10 flex gap-4"
+    >
+      <!-- Reload page -->
+      <Button
+        variant="outline"
+        @click="handleReload"
+      >
+        Tải lại
+      </Button>
+      <Button
+        variant="destructive"
+        @click="handleExitSession"
+      >
+        Thoát phiên
+      </Button>
+    </div>
     <!-- Loading state -->
     <div
       v-if="isLoading || isConnecting"
@@ -188,10 +263,10 @@ onUnmounted(() => {
       class="text-center space-y-4"
     >
       <Icon name="IconClose" class="w-16 h-16 text-destructive mx-auto" />
-      <h2 class="text-2xl font-semibold">
+      <h2 class="text-2xl font-semibold text-background">
         Không thể tham gia phiên trình chiếu
       </h2>
-      <p class="text-muted-foreground">
+      <p class="text-secondary">
         Có lỗi xảy ra khi tham gia phiên hoặc phiên không tồn tại.
       </p>
       <Button @click="router.push('/')">
@@ -230,17 +305,21 @@ onUnmounted(() => {
           v-else
           class="flex relative w-full h-full flex-col items-center justify-end p-4"
         >
-          <div class="border-2 mb-4 right-0 z-10 rounded-full px-6 py-4 bg-primary text-2xl text-background font-semibold min-w-36 text-center">
-            Còn {{ countDownEndQuestion }}s
+          <div
+            class="border-2 mb-4 right-0 z-10 rounded-full px-6 py-4 bg-primary text-2xl text-background font-semibold min-w-36 text-center"
+          >
+            {{ countDownEndQuestion > 0 ? `Còn ${countDownEndQuestion}s` : 'Hết giờ' }}
           </div>
           <div
             class="grid lg:grid-cols-2 gap-y-2.5 lg:gap-x-10 lg:gap-y-4 shrink-0 w-full rounded-lg"
           >
             <template v-for="(option, index) in currentSlide!.luaChon" :key="index">
-              <AnswerOption
+              <Option
                 v-model:option="currentSlide!.luaChon![index]"
                 :index="index"
-                :class="{ 'border-[4px] border-success': countDownEndQuestion <= 0 && option.ketQua === true }"
+                :type="currentSlide!.loaiCauTraLoi"
+                :show-result="countDownEndQuestion <= 0"
+                @select-option="handleOptionSelect(index)"
               />
             </template>
           </div>

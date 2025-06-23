@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { LuaChon } from '@/types'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<{
   index: number
   deletable?: boolean
   editable?: boolean
+  showResult?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'updateResult', value: LuaChon): void
@@ -35,7 +37,13 @@ watch(() => option.value.ketQua, (newValue) => {
 
     }"
   >
-    <div class="flex items-center justify-center font-bold text-2xl w-12 min-w-12 text-slate-900 h-full bg-white rounded-s-md lg:rounded-s-lg">
+    <div
+      :class="cn('flex items-center justify-center font-bold text-2xl w-12 min-w-12 text-slate-900 h-full bg-white rounded-s-md lg:rounded-s-lg',
+                 `before:content-[''] before:absolute before:inset-0 before:rounded-lg before:border-[4px] before:border-transparent before:z-[1] `,
+                 {
+                   'before:bg-black/60': props.showResult && !option.ketQua,
+                 })"
+    >
       {{ LIST_OPTIONS[props.index] }}
     </div>
     <div class="flex-1 max-w-[calc(100%-96px)] h-full">

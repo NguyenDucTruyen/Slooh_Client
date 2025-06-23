@@ -224,7 +224,7 @@ onUnmounted(() => {
               <AnswerOption
                 v-model:option="currentSlide!.luaChon![index]"
                 :index="index"
-                :class="{ 'border-[4px] border-success': countDownEndQuestion <= 0 && option.ketQua === true }"
+                :show-result="countDownEndQuestion <= 0"
               />
             </template>
           </div>
