@@ -99,6 +99,11 @@ async function handleExit() {
     emit('exit')
   }
 }
+function handleViewLeaderboard() {
+  setTimeout(() => {
+    emit('viewLeaderboard')
+  }, 5000)
+}
 
 onMounted(() => {
   requestFullscreen()
@@ -119,6 +124,7 @@ onUnmounted(() => {
       :slide="slide"
       :editable="false"
       @start="$emit('startQuestion')"
+      @end="handleViewLeaderboard"
     />
     <div
       :class="

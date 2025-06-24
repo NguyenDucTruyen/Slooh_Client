@@ -9,6 +9,7 @@
 </route>
 
 <script setup lang="ts">
+import Leaderboard from '@/components/app/room/presenting/Leaderboard.vue'
 import Presenting from '@/components/app/room/presenting/Presenting.vue'
 import BaseImg from '@/components/common/BaseImg.vue'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ const isConnecting = ref(false)
 const isSessionActive = ref(false)
 const isSessionError = ref(false)
 const showQRDialog = ref(false)
+const showLeaderboardDialog = ref(false)
 const roomData = ref<any>(null)
 const qrcode = ref()
 
@@ -154,11 +156,8 @@ function startQuestion() {
 
 function showLeaderboard() {
   try {
+    showLeaderboardDialog.value = true
     session.showLeaderboard()
-    toast({
-      title: 'Bảng xếp hạng',
-      description: 'Đã hiển thị bảng xếp hạng cho thành viên',
-    })
   }
   catch (error: any) {
     toast({
@@ -324,6 +323,12 @@ async function copyPin() {
             </template>
           </div>
         </template>
+
+        <Leaderboard
+          v-model:is-open="showLeaderboardDialog"
+          :leaderboard="session.sessionData.leaderboard || []"
+        />
+
         <!-- Main Content -->
         <Presenting
           v-if="isSessionActive && currentSlide"

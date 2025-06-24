@@ -89,7 +89,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
     }
     const updatedValues = {
       ...values,
-      avatar: avatarLink || 'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png',
+      avatar: avatarLink || 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/300px-User-avatar.svg.png',
     }
     await userStore.updateUser(userStore.user!.maNguoiDung, updatedValues)
     toast({

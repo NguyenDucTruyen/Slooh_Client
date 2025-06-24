@@ -29,13 +29,7 @@ export interface AnswerSubmittedData {
   correct?: boolean
 }
 
-export interface LeaderboardData {
-  leaderboard: Array<{
-    tenThanhVien: string
-    diem: number
-    rank: number
-  }>
-}
+export type LeaderboardData = { rank: number, tenThanhVien: string, anhDaiDien: string, tongDiem: number, isUser: boolean }[]
 
 export interface SubmitAnswerPayload {
   maLuaChon: string | string[]
@@ -123,7 +117,7 @@ export interface SessionState {
   maPin?: string
   maThanhVienPhien?: string
   members: Member[]
-  leaderboard: any[] // TODO: Type this properly
+  leaderboard: LeaderboardData // TODO: Type this properly
   finalLeaderboard: any[] // TODO: Type this properly
 }
 

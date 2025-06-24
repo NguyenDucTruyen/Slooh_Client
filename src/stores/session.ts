@@ -36,7 +36,7 @@ export const useSessionStore = defineStore('session', () => {
     isHost: false,
     currentPage: 0,
     members: [],
-    leaderboard: [],
+    leaderboard: [] as unknown as LeaderboardData,
     finalLeaderboard: [],
   })
 
@@ -120,11 +120,13 @@ export const useSessionStore = defineStore('session', () => {
     })
 
     socket.value.on(SocketEvent.LEADERBOARD, (data: LeaderboardData) => {
-      sessionData.value.leaderboard = data.leaderboard
+      setTimeout(() => {
+        sessionData.value.leaderboard = data
+      }, 700)
     })
 
     socket.value.on(SocketEvent.ENDED, (data: LeaderboardData) => {
-      sessionData.value.finalLeaderboard = data.leaderboard
+      sessionData.value.finalLeaderboard = data
       questionState.value.isActive = false
     })
   }
@@ -149,7 +151,7 @@ export const useSessionStore = defineStore('session', () => {
       isHost: false,
       currentPage: 0,
       members: [],
-      leaderboard: [],
+      leaderboard: [] as unknown as LeaderboardData,
       finalLeaderboard: [],
     }
     questionState.value = {
@@ -237,7 +239,7 @@ export const useSessionStore = defineStore('session', () => {
       if (response.success) {
         sessionData.value.isHost = false
         sessionData.value.maPin = maPin
-        sessionData.value.maThanhVienPhien = response.maThanhVienPhien
+        sessionData.value.maThanhVienPhien = response.data.maThanhVienPhien
       }
 
       return response
