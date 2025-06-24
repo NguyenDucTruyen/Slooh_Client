@@ -18,7 +18,7 @@ import { Separator } from '@/components/ui/separator'
 import { toast } from '@/components/ui/toast'
 import { useRoomStore } from '@/stores/room'
 import { useSessionStore } from '@/stores/session'
-import { LoaiSlide } from '@/types'
+import { type LeaderboardData, LoaiSlide } from '@/types'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 
 const router = useRouter()
@@ -247,14 +247,22 @@ async function copyPin() {
               <p class="text-foreground">
                 {{ session.memberCount }} thành viên đã tham gia
               </p>
-              <Button
-                @click="() => {
-                  isSessionActive = true
-                  session.navigateToPage(0)
-                }"
-              >
-                Bắt đầu trình chiếu
-              </Button>
+              <div class="flex gap-4 justify-center">
+                <Button
+                  variant="destructive"
+                  @click="endSession"
+                >
+                  Kết thúc phiên
+                </Button>
+                <Button
+                  @click="() => {
+                    isSessionActive = true
+                    session.navigateToPage(0)
+                  }"
+                >
+                  Bắt đầu trình chiếu
+                </Button>
+              </div>
             </div>
 
             <div

@@ -17,7 +17,7 @@ const confirmStore = useConfirmStore()
           {{ confirmStore.message }}
         </p>
       </div>
-      <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-x-2">
+      <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-x-2 gap-2">
         <Button variant="outline" @click="confirmStore.cancel">
           {{ confirmStore.cancelText }}
         </Button>

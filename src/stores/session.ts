@@ -80,6 +80,7 @@ export const useSessionStore = defineStore('session', () => {
         maThanhVienPhien: data.maThanhVienPhien,
         tenThanhVien: data.tenThanhVien,
         anhDaiDien: data.anhDaiDien || '',
+        isUser: data.isUser || false,
       }
 
       const existingIndex = sessionData.value.members.findIndex(
@@ -92,6 +93,14 @@ export const useSessionStore = defineStore('session', () => {
       else {
         sessionData.value.members[existingIndex] = newMember
       }
+      sessionData.value.leaderboard.push({
+        maThanhVienPhien: data.maThanhVienPhien,
+        tenThanhVien: data.tenThanhVien,
+        anhDaiDien: data.anhDaiDien || '',
+        tongDiem: 0,
+        rank: sessionData.value.leaderboard.length + 1,
+        isUser: data.isUser || false,
+      })
     })
 
     socket.value.on(SocketEvent.MEMBER_LEFT, (data: MemberLeftData) => {

@@ -30,10 +30,8 @@ defineEmits<{
         >
           <div
             v-for="user in leaderboard"
-            :key="user.tenThanhVien"
-            class="flex items-center gap-3 p-3 rounded-lg transition-all duration-500 ease-in-out transform" :class="[
-              user.isUser ? 'bg-primary/20' : 'bg-card',
-            ]"
+            :key="user.maThanhVienPhien"
+            class="flex items-center gap-3 p-3 rounded-lg transition-all duration-500 ease-in-out transform border border-gray-300 bg-slate-100"
           >
             <div
               class="flex items-center justify-center w-8 h-8 rounded-full font-bold"
@@ -56,6 +54,7 @@ defineEmits<{
             <div class="flex-1 min-w-0">
               <div class="font-medium truncate">
                 {{ user.tenThanhVien }}
+                <Icon v-if="user.isUser" name="IconCheck" class="inline-block ml-1 w-6 h-6 text-primary" />
               </div>
             </div>
 

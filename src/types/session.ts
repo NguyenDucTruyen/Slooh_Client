@@ -18,6 +18,8 @@ export interface MemberJoinedData {
   tenThanhVien: string
   maThanhVienPhien: string
   anhDaiDien?: string
+  isUser?: boolean
+  isHost?: boolean
 }
 
 export interface MemberLeftData {
@@ -29,7 +31,7 @@ export interface AnswerSubmittedData {
   correct?: boolean
 }
 
-export type LeaderboardData = { rank: number, tenThanhVien: string, anhDaiDien: string, tongDiem: number, isUser: boolean }[]
+export type LeaderboardData = { rank: number, tenThanhVien: string, anhDaiDien: string, tongDiem: number, isUser: boolean, maThanhVienPhien: string }[]
 
 export interface SubmitAnswerPayload {
   maLuaChon: string | string[]
@@ -131,4 +133,5 @@ export interface Member {
   maThanhVienPhien: string
   tenThanhVien: string
   anhDaiDien?: string
+  isUser?: boolean
 }
