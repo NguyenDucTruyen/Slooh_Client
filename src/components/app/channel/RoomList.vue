@@ -16,6 +16,7 @@ const emit = defineEmits<{
   (e: 'delete'): void
   (e: 'create'): void
   (e: 'search', value: string): void
+  (e: 'createWithAI'): void
 }>()
 
 const confirmStore = useConfirmStore()
@@ -63,6 +64,18 @@ async function deleteSelectedRoom() {
         >
           Xóa
         </Button>
+        
+      <Button
+        type="button"
+        variant="outline"
+        @click="$emit('createWithAI')"
+      >
+        <Icon
+          name="IconPlus"
+          class="h-4 w-4 mr-2"
+        />
+        Tạo với AI
+      </Button>
         <Button
           type="button"
           @click="$emit('create')"

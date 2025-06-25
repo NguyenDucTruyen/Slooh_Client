@@ -2,13 +2,13 @@
 import type { Kenh, NguoiDung, Phong } from '@/types'
 import MemberList from '@/components/app/channel/MemberList.vue'
 import RoomList from '@/components/app/channel/RoomList.vue'
+import CreateRoomWithAIModal from '@/components/app/room/CreateRoomWithAIModal.vue'
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
 import { useRoomStore } from '@/stores/room'
 import { TrangThaiThanhVien, VaiTroKenh } from '@/types'
 import { useAsyncState } from '@vueuse/core'
-import { Loader2 } from 'lucide-vue-next'
 
 interface PhongData extends Phong {
   isSelected: boolean
@@ -35,6 +35,7 @@ const searchUserValue = ref('')
 const isAddUserModalOpen = ref(false)
 const isCreateRoomModalOpen = ref(false)
 const breadCrumbItems = ref<any[]>([])
+const isCreateRoomWithAIModalOpen = ref(false)
 const membersResponse = ref<Partial<NguoiDungData>[]>([])
 const requestJoinMembers = ref<Partial<NguoiDungData>[]>([])
 const queryConfig = ref({
@@ -280,6 +281,31 @@ const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>
     Promise.reject(error)
   },
 })
+
+function openCreateRoomWithAIModal() {
+  isCreateRoomWithAIModalOpen.value = true
+}
+
+async function handleCreateRoomWithAI(data: { file: File, tenPhong: string, maKenh: string | null, userPrompt?: string }) {
+  try {
+    data.maKenh = maKenh
+    const response = await roomStore.createRoomWithAI(data)
+    router.push({ name: 'rooms-id', params: { id: response.maPhong } })
+    toast({
+      title: 'Thành công',
+      description: 'Tạo phòng với AI thành công',
+    })
+    isCreateRoomWithAIModalOpen.value = false
+  }
+  catch (error) {
+    toast({
+      title: 'Lỗi',
+      description: 'Có lỗi xảy ra khi tạo phòng với AI',
+      variant: 'destructive',
+    })
+    Promise.reject(error)
+  }
+}
 </script>
 
 <template>
@@ -321,6 +347,7 @@ const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>
             @delete="deleteSelectedRoom"
             @search="handleSearch"
             @clone="handleCloneRoom"
+            @create-with-a-i="openCreateRoomWithAIModal"
           />
         </TransitionGroup>
       </TabsContent>
@@ -353,5 +380,9 @@ const { state: channels, isLoading: isFetchingChannels } = useAsyncState<Kenh[]>
     :channels="channels"
     :room-id="temprarySelectedRoom"
     @add="handleCloneRoomSubmit"
+  />
+  <CreateRoomWithAIModal
+    v-model:open="isCreateRoomWithAIModalOpen"
+    @create="handleCreateRoomWithAI"
   />
 </template>

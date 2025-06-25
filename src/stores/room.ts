@@ -1,7 +1,11 @@
-import type { BodyUpdateRoom } from '@/types'
+import type { BodyUpdateRoom, Phong } from '@/types'
 import * as roomApi from '@/api/room'
 import { defineStore } from 'pinia'
 
+interface ResponseCreateRoom {
+  message: string
+  data: Phong
+}
 export const useRoomStore = defineStore('room', () => {
   async function createRoom(data: { tenPhong: string, maKenh: string }) {
     const response = await roomApi.createRoom(data)
@@ -37,6 +41,11 @@ export const useRoomStore = defineStore('room', () => {
     return response.data
   }
 
+  async function createRoomWithAI(data: roomApi.BodyCreateRoomWithAI) {
+    const response = await roomApi.createRoomWithAI(data) as ResponseCreateRoom
+    return response.data
+  }
+
   return {
     createRoom,
     getRoomDetail,
@@ -45,5 +54,6 @@ export const useRoomStore = defineStore('room', () => {
     getPublicRoomList,
     deleteRoom,
     cloneRoom,
+    createRoomWithAI,
   }
 })

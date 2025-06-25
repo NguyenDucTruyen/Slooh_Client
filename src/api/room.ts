@@ -5,6 +5,7 @@ export interface BodyCreateRoomWithAI {
   file: File
   tenPhong: string
   maKenh: string | null
+  userPrompt?: string
 }
 export function createRoom(data: { tenPhong: string, maKenh: string }) {
   return $post('/phong', data)
@@ -46,10 +47,14 @@ export async function createRoomWithAI(data: BodyCreateRoomWithAI) {
   else {
     formData.append('maKenh', '')
   }
+  if (data.userPrompt) {
+    formData.append('userPrompt', data.userPrompt)
+  }
+  console.log('Creating room with AI:', data)
   return await new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockCreateRoomWithAIResponse())
-    }, 3000)
+    }, 9000)
   })
   // return $post('/phong/extract-from-file', formData)
 }

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Kenh, Phong } from '@/types'
+import CreateRoomWithAIModal from '@/components/app/room/CreateRoomWithAIModal.vue'
 import ModalCloneRoom from '@/components/app/room/ModalCloneRoom.vue'
 import SearchHeader from '@/components/common/SearchHeader.vue'
 import PageContainer from '@/components/layout/PageContainer.vue'
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
-import { usePreviewSlideStore } from '@/stores/preview'
 import { useRoomStore } from '@/stores/room'
 import { useUserStore } from '@/stores/user'
 import { useAsyncState } from '@vueuse/core'
@@ -24,6 +24,7 @@ const userStore = useUserStore()
 
 const searchValue = ref('')
 const isCreateRoomModalOpen = ref(false)
+const isCreateRoomWithAIModalOpen = ref(false)
 const visibleModalCloneRoom = ref(false)
 const isPinModalOpen = ref(false)
 const temprarySelectedRoom = ref<string | null>(null)
@@ -82,6 +83,10 @@ function openCreateRoomModal() {
   isCreateRoomModalOpen.value = true
 }
 
+function openCreateRoomWithAIModal() {
+  isCreateRoomWithAIModalOpen.value = true
+}
+
 async function handleCreateRoom(name: string) {
   try {
     const response = await roomStore.createPublicRoom(name)
@@ -92,6 +97,26 @@ async function handleCreateRoom(name: string) {
     })
   }
   catch (error) {
+    Promise.reject(error)
+  }
+}
+
+async function handleCreateRoomWithAI(data: { file: File, tenPhong: string, maKenh: string | null, userPrompt?: string }) {
+  try {
+    const response = await roomStore.createRoomWithAI(data)
+    router.push({ name: 'rooms-id', params: { id: response.maPhong } })
+    toast({
+      title: 'Thành công',
+      description: 'Tạo phòng với AI thành công',
+    })
+    isCreateRoomWithAIModalOpen.value = false
+  }
+  catch (error) {
+    toast({
+      title: 'Lỗi',
+      description: 'Có lỗi xảy ra khi tạo phòng với AI',
+      variant: 'destructive',
+    })
     Promise.reject(error)
   }
 }
@@ -240,6 +265,17 @@ function handleOpenPinModal() {
       </Button>
       <Button
         type="button"
+        variant="outline"
+        @click="openCreateRoomWithAIModal"
+      >
+        <Icon
+          name="IconPlus"
+          class="h-4 w-4 mr-2"
+        />
+        Tạo với AI
+      </Button>
+      <Button
+        type="button"
         @click="openCreateRoomModal"
       >
         <Icon
@@ -290,6 +326,10 @@ function handleOpenPinModal() {
   <CreateRoomModal
     v-model:open="isCreateRoomModalOpen"
     @create="handleCreateRoom"
+  />
+  <CreateRoomWithAIModal
+    v-model:open="isCreateRoomWithAIModalOpen"
+    @create="handleCreateRoomWithAI"
   />
   <ModalCloneRoom
     v-if="!isFetchingChannels && temprarySelectedRoom"
