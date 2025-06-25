@@ -39,8 +39,8 @@ watch(() => option.value.ketQua, (newValue) => {
   >
     <div
       :class="cn('flex items-center justify-center font-bold text-2xl w-12 min-w-12 text-slate-900 h-full bg-white rounded-s-md lg:rounded-s-lg',
-                 `before:content-[''] before:absolute before:inset-0 before:rounded-lg before:border-[4px] before:border-transparent before:z-[1] `,
                  {
+                   'before:content-[\'\'] before:absolute before:inset-0 before:rounded-lg before:border-[4px] before:border-transparent before:z-[1]': !editable,
                    'before:bg-black/60': props.showResult && !option.ketQua,
                  })"
     >

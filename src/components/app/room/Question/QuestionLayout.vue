@@ -95,6 +95,7 @@ function handleDrop(e: DragEvent) {
   }
 }
 function handleUpdateResult(option: LuaChon) {
+  console.log('handleUpdateResult', option)
   if (slide.value.luaChon && slide.value.loaiCauTraLoi !== LoaiCauTraLoi.MULTI_SELECT) {
     slide.value.luaChon.forEach((item) => {
       if (item !== option) {

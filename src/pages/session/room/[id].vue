@@ -9,6 +9,8 @@
 
 <script setup lang="ts">
 import type { Phong, Slide } from '@/types'
+import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/toast'
 import { usePhienStore } from '@/stores/phien'
 import { useSessionStore } from '@/stores/session'
 import { LoaiCauTraLoi, LoaiSlide, SocketEvent } from '@/types'
@@ -34,6 +36,10 @@ const roomData = ref<Phong | null>(null)
 const showOption = ref(false)
 const countDownShowOption = ref(5)
 const countDownEndQuestion = ref(10) // Add countdown for question end
+
+const startAnswerTime = ref(0)
+const hasSubmitted = ref(false)
+const answerTime = ref(0)
 let intervalShowOptionId: any = null
 let intervalEndQuestionId: any = null
 // Get pin from route params
@@ -91,7 +97,7 @@ const { isLoading } = useAsyncState(async () => {
 
   // Reset everything when session ends
   session.socket?.on(SocketEvent.ENDED, () => {
-    router.push('/')
+    router.push(`/joinedchannels/${roomData.value?.maKenh}`)
   })
 }, null, { immediate: true, onError: () => {
   isSessionError.value = true
@@ -115,11 +121,90 @@ function clearIntervalEndQuestion() {
   }
 }
 
+function handleSubmitAnswer() {
+  if (hasSubmitted.value || !currentSlide.value)
+    return
+
+  const selectedIds = currentSlide.value.luaChon?.reduce((acc, option) => {
+    if (option.isSelected) {
+      acc.push(option.maLuaChon || '')
+    }
+    return acc
+  }, [] as string[]) || []
+
+  if (selectedIds.length === 0)
+    return
+
+  // Just record the submission time and mark as submitted
+  hasSubmitted.value = true
+  answerTime.value = Math.max(0, countDownEndQuestion.value)
+
+  toast({
+    title: 'Đã ghi nhận câu trả lời',
+    description: 'Kết quả sẽ được hiển thị khi hết thời gian',
+    variant: 'info',
+    duration: 3000,
+  })
+}
+
+function handleSubmitFinalAnswer() {
+  if (!currentSlide.value)
+    return
+
+  const selectedIds = currentSlide.value.luaChon?.reduce((acc, option) => {
+    if (option.isSelected) {
+      acc.push(option.maLuaChon || '')
+    }
+    return acc
+  }, [] as string[]) || []
+
+  // Use the recorded answer time if submitted, otherwise 0
+  const timeRemaining = hasSubmitted.value ? answerTime.value : 0
+
+  session.submitAnswer(
+    currentSlide.value.loaiCauTraLoi === LoaiCauTraLoi.MULTI_SELECT ? selectedIds : selectedIds[0] || '',
+    timeRemaining,
+  ).then((res) => {
+    toast({
+      title: 'Kết quả câu trả lời',
+      description: `${res.data.correct ? 'Câu trả lời đúng!' : 'Câu trả lời sai!'}`,
+      variant: res.data.correct ? 'default' : 'destructive',
+      duration: 3000,
+    })
+  }).catch((err) => {
+    console.error('Error submitting answer:', err)
+    toast({
+      title: 'Lỗi gửi câu trả lời',
+      description: 'Đã xảy ra lỗi khi gửi câu trả lời',
+      variant: 'destructive',
+    })
+  })
+}
+
+function handleOptionSelect(index: number) {
+  if (!currentSlide.value || !currentSlide.value.luaChon)
+    return
+  currentSlide.value.luaChon[index].isSelected = !currentSlide.value.luaChon[index].isSelected
+  if (currentSlide.value.loaiCauTraLoi !== LoaiCauTraLoi.MULTI_SELECT) {
+    currentSlide.value.luaChon.forEach((option, i) => {
+      if (i !== index) {
+        option.isSelected = false
+      }
+    })
+  }
+}
+
+const hasSelectedOption = computed(() => {
+  return currentSlide.value?.luaChon?.some(option => option.isSelected) || false
+})
+
 watch(currentSlide, (newValue) => {
   clearIntervalShowOption()
   clearIntervalEndQuestion()
 
   showOption.value = false
+  hasSubmitted.value = false
+  answerTime.value = 0
   countDownShowOption.value = 5
   countDownEndQuestion.value = newValue?.thoiGianGioiHan || 10
 
@@ -131,6 +216,7 @@ watch(currentSlide, (newValue) => {
       else {
         clearIntervalShowOption()
         showOption.value = true
+        startAnswerTime.value = Date.now() // Start tracking answer time
         countDownShowOption.value = 5
 
         // Start end question countdown after options are shown
@@ -139,6 +225,7 @@ watch(currentSlide, (newValue) => {
             countDownEndQuestion.value--
           }
           else {
+            handleSubmitFinalAnswer() // Submit all answers when time is up
             clearIntervalEndQuestion()
           }
         }, 1000)
@@ -197,9 +284,9 @@ onUnmounted(() => {
 
       <!-- Question screen -->
       <div v-else-if="currentSlide?.loaiTrang === LoaiSlide.CAU_HOI" class="w-full h-full">
-        <div v-if="!showOption" class="flex flex-col h-full justify-center items-center">
+        <div v-if="!showOption" class="flex flex-col h-full justify-center items-center p-6">
           <h2
-            class="text-2xl font-semibold text-background mb-4"
+            class="text-2xl text-center font-semibold text-background mb-4"
           >
             Trả lời câu hỏi: {{ LOAITRALOI[currentSlide.loaiCauTraLoi!] }}
           </h2>
@@ -214,20 +301,32 @@ onUnmounted(() => {
           v-else
           class="flex relative w-full h-full flex-col items-center justify-end p-4"
         >
-          <div class="border-2 mb-4 right-0 z-10 rounded-full px-6 py-4 bg-primary text-2xl text-background font-semibold min-w-36 text-center">
-            Còn {{ countDownEndQuestion }}s
+          <div
+            class="border-2 mb-4 right-0 z-10 rounded-full px-6 py-4 bg-primary text-2xl text-background font-semibold min-w-36 text-center"
+          >
+            {{ countDownEndQuestion > 0 ? `Còn ${countDownEndQuestion}s` : 'Hết giờ' }}
           </div>
           <div
             class="grid lg:grid-cols-2 gap-y-2.5 lg:gap-x-10 lg:gap-y-4 shrink-0 w-full rounded-lg"
           >
             <template v-for="(option, index) in currentSlide!.luaChon" :key="index">
-              <AnswerOption
+              <Option
                 v-model:option="currentSlide!.luaChon![index]"
                 :index="index"
+                :type="currentSlide!.loaiCauTraLoi"
                 :show-result="countDownEndQuestion <= 0"
+                @select-option="handleOptionSelect(index)"
               />
             </template>
           </div>
+          <Button
+            class="w-full max-w-96 py-6 text-xl"
+            :disabled="!hasSelectedOption || hasSubmitted || countDownEndQuestion <= 0"
+            :variant="hasSubmitted ? 'ghost' : 'default'"
+            @click="handleSubmitAnswer()"
+          >
+            {{ hasSubmitted ? 'Đã gửi câu trả lời' : 'Gửi câu trả lời' }}
+          </Button>
         </div>
       </div>
       <!-- Default slide content -->

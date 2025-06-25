@@ -340,9 +340,9 @@ function handleReload() {
 
       <!-- Question screen -->
       <div v-else-if="currentSlide?.loaiTrang === LoaiSlide.CAU_HOI" class="w-full h-full">
-        <div v-if="!showOption" class="flex flex-col h-full justify-center items-center">
+        <div v-if="!showOption" class="flex flex-col h-full justify-center items-center p-6">
           <h2
-            class="text-2xl font-semibold text-background mb-4"
+            class="text-2xl font-semibold text-background mb-4 text-center"
           >
             Trả lời câu hỏi: {{ LOAITRALOI[currentSlide.loaiCauTraLoi!] }}
           </h2>
@@ -370,7 +370,7 @@ function handleReload() {
                 v-model:option="currentSlide!.luaChon![index]"
                 :index="index"
                 :type="currentSlide!.loaiCauTraLoi"
-                :show-result="hasSubmitted || countDownEndQuestion <= 0"
+                :show-result="countDownEndQuestion <= 0"
                 @select-option="handleOptionSelect(index)"
               />
             </template>

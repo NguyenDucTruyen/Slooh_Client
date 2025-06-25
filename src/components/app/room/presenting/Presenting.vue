@@ -102,7 +102,7 @@ async function handleExit() {
 function handleViewLeaderboard() {
   setTimeout(() => {
     emit('viewLeaderboard')
-  }, 5000)
+  }, 3000)
 }
 
 onMounted(() => {

@@ -93,6 +93,9 @@ export const useSessionStore = defineStore('session', () => {
       else {
         sessionData.value.members[existingIndex] = newMember
       }
+      // sessionData.value.leaderboard = sessionData.value.leaderboard.filter(
+      //   member => member.maThanhVienPhien !== data.maThanhVienPhien,
+      // )
       sessionData.value.leaderboard.push({
         maThanhVienPhien: data.maThanhVienPhien,
         tenThanhVien: data.tenThanhVien,
@@ -105,6 +108,9 @@ export const useSessionStore = defineStore('session', () => {
 
     socket.value.on(SocketEvent.MEMBER_LEFT, (data: MemberLeftData) => {
       sessionData.value.members = sessionData.value.members.filter(
+        member => member.maThanhVienPhien !== data.maThanhVienPhien,
+      )
+      sessionData.value.leaderboard = sessionData.value.leaderboard.filter(
         member => member.maThanhVienPhien !== data.maThanhVienPhien,
       )
     })
