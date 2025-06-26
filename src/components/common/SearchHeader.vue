@@ -16,7 +16,7 @@ defineEmits<{
       :placeholder="placeholder"
       @update:model-value="$emit('search', $event)"
     />
-    <div class="flex gap-4">
+    <div class="flex gap-4 flex-wrap">
       <slot />
     </div>
   </div>

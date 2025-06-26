@@ -29,7 +29,7 @@ defineEmits<{
             </div>
           </RouterLink>
         </slot>
-        <div class="hidden sm:flex flex-col items-center justify-center py-2">
+        <div class="flex flex-col items-center justify-center py-2">
           <h1 class="text-xl text-center font-bold mb-1">
             {{ title }}
           </h1>

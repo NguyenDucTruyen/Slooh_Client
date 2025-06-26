@@ -51,12 +51,12 @@ async function deleteSelectedRoom() {
 
 <template>
   <div>
-    <div class="w-full flex items-center justify-between">
+    <div class="w-full flex items-center justify-between flex-wrap gap-2">
       <InputSearch
         v-model="searchValue"
         placeholder="Tìm kiếm phòng trình chiếu"
       />
-      <div class="flex gap-4">
+      <div class="flex gap-4 flex-wrap max-sm:flex-col max-sm:w-full">
         <Button
           type="button"
           variant="destructive"

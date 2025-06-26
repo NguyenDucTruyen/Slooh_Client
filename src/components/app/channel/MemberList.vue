@@ -92,7 +92,7 @@ function handleEmitAcceptRequest(member: NguoiDungData, value: boolean) {
     </h4>
 
     <div class="mt-2 w-full mx-auto grid grid-cols-1 gap-4">
-      <div class="flex justify-between">
+      <div class="flex justify-between flex-wrap gap-4">
         <InputSearch
           v-model="searchUserValue"
           placeholder="Tìm kiếm thành viên"
