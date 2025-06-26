@@ -33,6 +33,13 @@ const data = ref({
       url: '/admin',
       name: ['admin-statistic']
     },
+    {
+      id: 5,
+      icon: 'IconReport',
+      title: 'Báo cáo',
+      url: '/admin/reports',
+      name: ['admin-reports', 'admin-reports-id'],
+    },
   ].sort((a, b) => a.id - b.id),
 
 })

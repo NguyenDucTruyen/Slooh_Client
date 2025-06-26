@@ -10,7 +10,13 @@
 <script setup lang="ts">
 import type { Phong, Slide } from '@/types'
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { toast } from '@/components/ui/toast'
+import { useConfirmStore } from '@/stores/confirm'
 import { usePhienStore } from '@/stores/phien'
 import { useSessionStore } from '@/stores/session'
 import { LoaiCauTraLoi, LoaiSlide, SocketEvent } from '@/types'
@@ -26,6 +32,8 @@ const router = useRouter()
 const route = useRoute()
 const session = useSessionStore()
 const phienStore = usePhienStore()
+const confirmStore = useConfirmStore()
+
 // State
 const currentSlide = ref<Slide | null>(null)
 const isConnecting = ref(false)
@@ -40,6 +48,10 @@ const countDownEndQuestion = ref(10) // Add countdown for question end
 const startAnswerTime = ref(0)
 const hasSubmitted = ref(false)
 const answerTime = ref(0)
+
+const isReportModalOpen = ref(false)
+const selectedRoomForReport = ref<{ maPhong: string, tenPhong: string } | null>(null)
+
 let intervalShowOptionId: any = null
 let intervalEndQuestionId: any = null
 // Get pin from route params
@@ -238,10 +250,63 @@ onUnmounted(() => {
   clearIntervalShowOption()
   clearIntervalEndQuestion()
 })
+async function handleExitSession() {
+  const result = await confirmStore.showConfirmDialog({
+    title: 'Thoát phiên',
+    message: 'Bạn có chắc chắn muốn thoát khỏi phiên trình chiếu này?',
+    confirmText: 'Thoát',
+    cancelText: 'Hủy',
+  })
+  if (result) {
+    session.disconnect()
+    router.push({ name: 'JoinedChannels' })
+  }
+}
+function handleReload() {
+  window.location.reload()
+}
+function handleReportRoom() {
+  selectedRoomForReport.value = { maPhong: roomData.value!.maPhong, tenPhong: roomData.value!.tenPhong }
+  isReportModalOpen.value = true
+}
+
+function handleReportSuccess() {
+  selectedRoomForReport.value = null
+}
 </script>
 
 <template>
   <div class="relative w-full h-full flex items-center justify-center bg-slate-900/80">
+    <Popover>
+      <PopoverTrigger class="absolute top-4 left-4 z-50">
+        <Button class="rounded-sm px-2" variant="secondary">
+          <Icon name="IconEllipsis" class="w-6 h-6" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" class="w-40 bg-card p-0">
+        <div class="flex flex-col w-full gap-1 p-1 bg-slate-300 rounded-sm">
+          <Button
+            variant="outline"
+            @click="handleReportRoom"
+          >
+            Báo cáo
+            <Icon name="IconReport" class="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            @click="handleReload"
+          >
+            Tải lại trang
+          </Button>
+          <Button
+            variant="destructive"
+            @click="handleExitSession"
+          >
+            Thoát phiên
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
     <!-- Loading state -->
     <div
       v-if="isLoading || isConnecting"
@@ -320,7 +385,7 @@ onUnmounted(() => {
             </template>
           </div>
           <Button
-            class="w-full max-w-96 py-6 text-xl"
+            class="w-full max-w-96 py-6 text-xl mt-4"
             :disabled="!hasSelectedOption || hasSubmitted || countDownEndQuestion <= 0"
             :variant="hasSubmitted ? 'ghost' : 'default'"
             @click="handleSubmitAnswer()"
@@ -331,10 +396,17 @@ onUnmounted(() => {
       </div>
       <!-- Default slide content -->
       <div v-else class="w-full h-full flex items-center justify-center text-background text-2xl">
-        Vui lòng chờ, đang tải nội dung...
+        Vui lòng chờ chờ nội dung trình chiếu
       </div>
     </template>
   </div>
+  <ReportRoomModal
+    v-if="selectedRoomForReport"
+    v-model:open="isReportModalOpen"
+    :ma-phong="selectedRoomForReport.maPhong"
+    :ten-phong="selectedRoomForReport.tenPhong"
+    @success="handleReportSuccess"
+  />
 </template>
 
 <style scoped>

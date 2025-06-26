@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Kenh, NguoiDung, Phong, ThanhVienKenh } from '@/types'
+import ReportRoomModal from '@/components/app/room/ReportRoomModal.vue'
 import { toast } from '@/components/ui/toast'
 import { useChannelStore } from '@/stores/channel'
 import { useConfirmStore } from '@/stores/confirm'
-import { usePhienStore } from '@/stores/phien'
 import { HoatDongPhong, TrangThai, TrangThaiThanhVien, VaiTroKenh } from '@/types'
 import { useAsyncState } from '@vueuse/core'
 
@@ -24,6 +24,8 @@ const searchValue = ref('')
 const searchUserValue = ref('')
 const breadCrumbItems = ref<any[]>([])
 
+const isReportModalOpen = ref(false)
+const selectedRoomForReport = ref<{ maPhong: string, tenPhong: string } | null>(null)
 const roomsResponse = ref<PhongData[]>([])
 const membersResponse = ref<Partial<NguoiDungData>[]>([])
 
@@ -113,6 +115,16 @@ async function leaveChannel() {
     router.push({ name: 'JoinedChannels' })
   }
 }
+
+// Report functionality
+function handleReportRoom(maPhong: string, tenPhong: string) {
+  selectedRoomForReport.value = { maPhong, tenPhong }
+  isReportModalOpen.value = true
+}
+
+function handleReportSuccess() {
+  selectedRoomForReport.value = null
+}
 </script>
 
 <template>
@@ -157,6 +169,8 @@ async function leaveChannel() {
               :key="room.maPhong"
               v-model="room.isSelected"
               :item="room"
+              :can-report="true"
+              @report="handleReportRoom"
             />
           </div>
           <div
@@ -201,4 +215,13 @@ async function leaveChannel() {
       </Tabs>
     </div>
   </PageContainer>
+
+  <!-- Report Modal -->
+  <ReportRoomModal
+    v-if="selectedRoomForReport"
+    v-model:open="isReportModalOpen"
+    :ma-phong="selectedRoomForReport.maPhong"
+    :ten-phong="selectedRoomForReport.tenPhong"
+    @success="handleReportSuccess"
+  />
 </template>

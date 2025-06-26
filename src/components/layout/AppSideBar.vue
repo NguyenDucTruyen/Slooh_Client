@@ -42,6 +42,16 @@ const data = ref({
       authorized: true,
       name: ['JoinedChannels', 'JoinedChannels-id'],
     },
+    {
+      id: 6,
+      icon: 'IconTrash',
+      iconActive: 'IconTrash',
+      title: 'Báo cáo của tôi',
+      url: '/my-reports',
+      content: 'Đăng nhập để xem báo cáo của bạn',
+      authorized: true,
+      name: ['my-reports'],
+    },
   ],
 })
 </script>
@@ -84,4 +94,5 @@ const data = ref({
       </div>
     </div>
   </div>
+  
 </template>

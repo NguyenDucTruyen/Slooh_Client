@@ -46,7 +46,7 @@ const { isLoading, state, execute } = useAsyncState<NguoiDung[]>(
       limit: response.limit,
       totalPages: response.totalPages,
     }
-    return response.users
+    return response.users.filter(user => user.quyen !== Quyen.ADMIN) // Exclude admin users
   },
   [],
   { immediate: false }, // Don't execute immediately, let route watcher handle it

@@ -66,6 +66,11 @@ export enum VaiTroPhien {
   CHU_PHIEN = 'CHU_PHIEN',
 }
 
+export enum TrangThaiBaoCao {
+  CHUA_XU_LY = 'CHUA_XU_LY',
+  DA_XU_LY = 'DA_XU_LY',
+}
+
 export interface NguoiDung {
   maNguoiDung: string
   hoTen: string
@@ -166,13 +171,25 @@ export interface PhienTrinhChieu {
 }
 
 export interface BaoCao {
-  id: string
-  idNguoiDung: string
-  idPhongTrinhChieu?: string
-  idCauHoi?: string
+  maBaoCao: string
+  maNguoiDung: string
+  maPhong: string
   noiDung: string
-  trangThai: 'dang_xu_ly' | 'da_xu_ly' | 'tu_choi'
-  thoiGian: string
+  hinhAnh?: string
+  trangThai: TrangThaiBaoCao
+  ngayTao: string
+  ngayCapNhat: string
+  ngayXoa?: string
+  nguoiDung?: NguoiDung
+  phong?: Phong & {
+    kenh: Kenh
+  }
+}
+
+export interface BaoCaoStats {
+  total: number
+  chuaXuLy: number
+  daXuLy: number
 }
 
 export interface ThanhVienPhienTrinhChieu {

@@ -20,6 +20,7 @@ interface Props {
 const { item, isAuthor } = defineProps<Props>()
 defineEmits<{
   (e: 'clone', maPhong: string): void
+  (e: 'report', maPhong: string, tenPhong: string): void
 }>()
 const previewSlideStore = usePreviewSlideStore()
 const roomStore = useRoomStore()
@@ -137,9 +138,7 @@ async function handleNavigateToPreview() {
         {{ item.tenPhong }}
       </h2>
 
-      <Popover
-        v-if="isAuthor"
-      >
+      <Popover>
         <PopoverTrigger>
           <button class="px-1 hover:bg-gray-200 rounded-sm">
             <Icon name="IconList" class="w-6 h-6" />
@@ -147,26 +146,38 @@ async function handleNavigateToPreview() {
         </PopoverTrigger>
         <PopoverContent align="start" class="w-40 bg-card p-0">
           <div class="flex flex-col w-full">
-            <RouterLink
-              :to="`/rooms/${item.maPhong}`"
-              class="w-full"
+            <template
+              v-if="isAuthor"
             >
-              <button class="w-full text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2">
-                <Icon name="IconEdit" class="w-4 h-4" />
-                Chỉnh sửa
-              </button>
-            </RouterLink>
-            <Separator />
-            <button
-              v-if="item.trangThai === TrangThai.HOAT_DONG"
-              class="text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2"
-              @click="$emit('clone', item.maPhong)"
-            >
-              <Icon name="IconCopy" class="w-4 h-4" />
+              <RouterLink
+                :to="`/rooms/${item.maPhong}`"
+                class="w-full"
+              >
+                <button class="w-full text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2">
+                  <Icon name="IconEdit" class="w-4 h-4" />
+                  Chỉnh sửa
+                </button>
+              </RouterLink>
+              <Separator />
+              <button
+                v-if="item.trangThai === TrangThai.HOAT_DONG"
+                class="text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2"
+                @click="$emit('clone', item.maPhong)"
+              >
+                <Icon name="IconCopy" class="w-4 h-4" />
 
-              Nhân đôi
+                Nhân đôi
+              </button>
+              <Separator />
+            </template>
+            <button
+              v-else
+              class="w-full text-slate-800 font-normal hover:bg-gray-200 px-2 py-1 flex items-center gap-2"
+              @click="$emit('report', item.maPhong, item.tenPhong)"
+            >
+              <Icon name="IconReport" class="w-4 h-4 !text-red-500" />
+              Báo cáo
             </button>
-            <Separator />
           </div>
         </PopoverContent>
       </Popover>
@@ -223,7 +234,8 @@ async function handleNavigateToPreview() {
   min-block-size: 40px;
 }
 .title {
-  @apply text-xl font-semibold;
+  font-size: 1.25rem;
+  font-weight: 600;
   width: 100%;
   display: -webkit-box;
   overflow: hidden;
