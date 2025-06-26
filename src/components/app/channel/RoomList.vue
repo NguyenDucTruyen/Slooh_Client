@@ -2,6 +2,7 @@
 import type { Phong } from '@/types'
 import { useConfirmStore } from '@/stores/confirm'
 import { useDebounceFn } from '@vueuse/core'
+import { SparklesIcon } from 'lucide-vue-next'
 
 interface PhongData extends Phong {
   isSelected: boolean
@@ -64,24 +65,28 @@ async function deleteSelectedRoom() {
         >
           Xóa
         </Button>
-        
-      <Button
-        type="button"
-        variant="outline"
-        @click="$emit('createWithAI')"
-      >
-        <Icon
-          name="IconPlus"
-          class="h-4 w-4 mr-2"
-        />
-        Tạo với AI
-      </Button>
         <Button
           type="button"
           @click="$emit('create')"
         >
           <Icon name="IconPlus" class="w-6 h-6" />
           <span>Tạo phòng trình chiếu</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          class="relative bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white border-none transition-all duration-300 hover:scale-105"
+          @click="$emit('createWithAI')"
+        >
+          <SparklesIcon class="h-5 w-5 mr-2 animate-pulse text-white" />
+          <span class="font-medium">Tạo với AI</span>
+          <div class="absolute -top-1 -right-1">
+            <span class="flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500" />
+            </span>
+          </div>
         </Button>
       </div>
     </div>

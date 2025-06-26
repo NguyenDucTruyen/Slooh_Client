@@ -416,7 +416,7 @@ function handleReportSuccess() {
         </div>
       </div>
       <!-- Default slide content -->
-      <div v-else class="w-full h-full flex items-center justify-center text-background text-2xl">
+      <div v-else class="w-full h-full flex items-center justify-center text-background text-xl font-semibold px-6 text-center">
         Vui lòng chờ chờ nội dung trình chiếu
       </div>
     </template>

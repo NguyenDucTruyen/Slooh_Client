@@ -50,13 +50,12 @@ export async function createRoomWithAI(data: BodyCreateRoomWithAI) {
   if (data.userPrompt) {
     formData.append('userPrompt', data.userPrompt)
   }
-  console.log('Creating room with AI:', data)
+  return $post('/phong/extract-from-file', formData)
   return await new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockCreateRoomWithAIResponse())
     }, 9000)
   })
-  // return $post('/phong/extract-from-file', formData)
 }
 
 function mockCreateRoomWithAIResponse() {

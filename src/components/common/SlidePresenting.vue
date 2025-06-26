@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CachTrinhBay, LoaiSlide, type Slide } from '@/types'
+import { CachTrinhBay, LoaiCauTraLoi, LoaiSlide, type Slide } from '@/types'
 
 defineProps<{
   visible?: boolean
@@ -11,6 +11,11 @@ const emit = defineEmits<{
   (event: 'start'): void
   (event: 'end'): void
 }>()
+const LOAITRALOI = {
+  [LoaiCauTraLoi.SINGLE_SELECT]: 'Trắc nghiệm một lựa chọn',
+  [LoaiCauTraLoi.MULTI_SELECT]: 'Trắc nghiệm nhiều lựa chọn',
+  [LoaiCauTraLoi.TRUE_FALSE]: 'Đúng/Sai',
+} as const
 
 const slide = defineModel('slide', {
   type: Object as () => Slide,
@@ -20,6 +25,7 @@ const slide = defineModel('slide', {
 const showOption = ref(false)
 const countDownShowOption = ref(5)
 const countDownEndQuestion = ref(10) // Add countdown for question end
+
 let intervalShowOptionId: any = null
 let intervalEndQuestionId: any = null
 
@@ -142,12 +148,19 @@ onUnmounted(() => {
         <template
           v-if="slide.luaChon"
         >
-          <div
-            v-if="!showOption"
-            class="mb-12 z-10 rounded-full w-24 leading-[96px] flex justify-center items-center bg-gray-800 text-white cursor-pointer hover:bg-gray-700 transition-colors duration-200 text-5xl font-semibold"
-            @click="showOption = true"
-          >
-            {{ countDownShowOption }}
+          <div v-if="!showOption" class="z-10 flex flex-col h-full justify-center items-center p-6">
+            <h2
+              class="text-3xl text-center font-semibold text-background mb-4"
+            >
+              Trả lời câu hỏi: {{ LOAITRALOI[slide.loaiCauTraLoi!] }}
+            </h2>
+
+            <div
+              class="mb-12 z-10 rounded-full w-24 leading-[96px] flex justify-center items-center bg-gray-800 text-white cursor-pointer hover:bg-gray-700 transition-colors duration-200 text-5xl font-semibold"
+              @click="showOption = true"
+            >
+              {{ countDownShowOption }}
+            </div>
           </div>
           <div
             v-else
